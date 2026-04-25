@@ -9,12 +9,14 @@
   <body>
     <header class="site-header">
       <div class="container">
-        <a class="back-link" href="./index.html">← Back to home</a>
+        <nav class="header-links" aria-label="Post navigation">
+          <a class="back-link" href="./index.html">← Back to home</a>
+          <a class="back-link" data-back-to-section href="#">← Back to section</a>
+        </nav>
         <p class="eyebrow">Section: <span data-post-section></span></p>
         <h1 data-post-title>Loading...</h1>
         <p class="tagline" data-post-summary></p>
         <p class="eyebrow" data-post-date></p>
-        <p><a class="back-link" data-back-to-section href="#">Go to section</a></p>
       </div>
     </header>
 

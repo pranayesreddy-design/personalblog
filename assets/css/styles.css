@@ -405,6 +405,13 @@ h3 {
   text-decoration: none;
 }
 
+.header-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
 .section-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
