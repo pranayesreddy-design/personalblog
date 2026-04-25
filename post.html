@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post | Krishna Pranay</title>
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="back-link" href="./index.html">← Back to home</a>
+        <p class="eyebrow">Section: <span data-post-section></span></p>
+        <h1 data-post-title>Loading...</h1>
+        <p class="tagline" data-post-summary></p>
+        <p class="eyebrow" data-post-date></p>
+        <p><a class="back-link" data-back-to-section href="#">Go to section</a></p>
+      </div>
+    </header>
+
+    <main>
+      <article class="container card post-body" data-post-body>
+        <div class="post-flow" data-post-flow></div>
+      </article>
+      <section class="container">
+        <p class="empty-state" data-post-error></p>
+      </section>
+    </main>
+
+    <footer class="site-footer" data-shared-footer></footer>
+
+    <script src="./assets/js/site-config.js"></script>
+    <script src="./assets/js/shared-ui.js"></script>
+    <script src="./assets/js/post.js"></script>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Pixel grass">
+  <rect width="256" height="256" fill="#0f1a0f"/>
+  <rect x="0" y="176" width="256" height="80" fill="#1f3f1f"/>
+  <rect x="16" y="176" width="16" height="16" fill="#55d64a"/>
+  <rect x="32" y="160" width="16" height="32" fill="#63e858"/>
+  <rect x="48" y="176" width="16" height="16" fill="#55d64a"/>
+  <rect x="80" y="176" width="16" height="16" fill="#55d64a"/>
+  <rect x="96" y="160" width="16" height="32" fill="#63e858"/>
+  <rect x="112" y="144" width="16" height="48" fill="#75f06a"/>
+  <rect x="128" y="160" width="16" height="32" fill="#63e858"/>
+  <rect x="144" y="176" width="16" height="16" fill="#55d64a"/>
+  <rect x="176" y="176" width="16" height="16" fill="#55d64a"/>
+  <rect x="192" y="160" width="16" height="32" fill="#63e858"/>
+  <rect x="208" y="176" width="16" height="16" fill="#55d64a"/>
+  <rect x="224" y="144" width="16" height="48" fill="#75f06a"/>
+  <rect x="0" y="192" width="256" height="64" fill="#2f5a2f"/>
+</svg>

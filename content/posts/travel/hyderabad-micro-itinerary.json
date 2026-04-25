@@ -1,0 +1,24 @@
+{
+  "title": "3-Day Hyderabad Micro Itinerary",
+  "date": "2026-04-10",
+  "summary": "Food spots, old city walk, and a realistic weekend pace for first-time visitors.",
+  "blocks": [
+    {
+      "type": "image",
+      "src": "assets/images/posts/travel/hyderabad-micro-itinerary.svg",
+      "alt": "Skyline and monument illustration for Hyderabad itinerary post"
+    },
+    {
+      "type": "text",
+      "value": "Day one should stay compact: old city landmarks, one food street, and a short evening walk instead of trying to cover everything."
+    },
+    {
+      "type": "text",
+      "value": "Day two is better for museums and cafe stops around central neighborhoods so transit fatigue remains low."
+    },
+    {
+      "type": "text",
+      "value": "Keep day three light with one priority list and a buffer block. That protects the trip from delays and still gives a complete experience."
+    }
+  ]
+}

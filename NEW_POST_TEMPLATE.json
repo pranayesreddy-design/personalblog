@@ -1,0 +1,21 @@
+{
+  "title": "Post title",
+  "date": "YYYY-MM-DD",
+  "summary": "One-line summary for cards and previews.",
+  "blocks": [
+    {
+      "type": "text",
+      "value": "Opening paragraph."
+    },
+    {
+      "type": "image",
+      "src": "assets/images/posts/<section-key>/<post-slug>.svg",
+      "alt": "Accessible image description",
+      "caption": "Optional caption"
+    },
+    {
+      "type": "text",
+      "value": "Next paragraph."
+    }
+  ]
+}

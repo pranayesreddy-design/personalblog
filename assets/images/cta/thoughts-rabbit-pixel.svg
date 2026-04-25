@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Pixel rabbit">
+  <rect width="256" height="256" fill="#131326"/>
+  <rect x="88" y="32" width="24" height="64" fill="#e8e8ef"/>
+  <rect x="120" y="24" width="24" height="72" fill="#e8e8ef"/>
+  <rect x="96" y="40" width="8" height="48" fill="#f2a9c8"/>
+  <rect x="128" y="32" width="8" height="56" fill="#f2a9c8"/>
+  <rect x="72" y="96" width="112" height="96" fill="#e8e8ef"/>
+  <rect x="88" y="112" width="16" height="16" fill="#111111"/>
+  <rect x="152" y="112" width="16" height="16" fill="#111111"/>
+  <rect x="112" y="144" width="32" height="16" fill="#f2a9c8"/>
+  <rect x="104" y="160" width="48" height="8" fill="#b86087"/>
+  <rect x="64" y="176" width="128" height="32" fill="#d8d8e2"/>
+</svg>

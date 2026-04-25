@@ -1,0 +1,61 @@
+{
+  "title": "Spinfinity Table Tennis Arena",
+  "date": "2026-04-25",
+  "summary": "How I built and ran Spinfinity as my earlier business chapter.",
+  "blocks": [
+    {
+      "type": "image",
+      "src": "assets/images/posts/thoughts/spinfinity/logo.png",
+      "alt": "Spinfinity logo with crossed table tennis paddles",
+      "caption": "Spinfinity Table Tennis Arena"
+    },
+    {
+      "type": "image",
+      "src": "assets/images/posts/thoughts/spinfinity/signboard.png",
+      "alt": "Spinfinity illuminated signboard",
+      "caption": "The first physical identity of Spinfinity."
+    },
+    {
+      "type": "image",
+      "src": "assets/images/posts/thoughts/spinfinity/opening-poster.png",
+      "alt": "Spinfinity opening poster with launch details",
+      "caption": "Opening-day poster and first launch communication."
+    },
+    {
+      "type": "image",
+      "src": "assets/images/posts/thoughts/spinfinity/setup-desk.png",
+      "alt": "Initial setup with desk and operations board at Spinfinity",
+      "caption": "Early setup days: operations were simple and hands-on."
+    },
+    {
+      "type": "image",
+      "src": "assets/images/posts/thoughts/spinfinity/selfie-window.png",
+      "alt": "Reflection selfie from inside Spinfinity arena",
+      "caption": "A candid moment from the first chapter."
+    },
+    {
+      "type": "text",
+      "value": "I. Why I Started Spinfinity"
+    },
+    {
+      "type": "text",
+      "value": "This is a placeholder draft for my Spinfinity story. I plan to write about why I started it, what problem I was solving, and what I learned while running it."
+    },
+    {
+      "type": "text",
+      "value": "II. What Worked and What Did Not"
+    },
+    {
+      "type": "text",
+      "value": "I will add the operational lessons here, including community-building, customer behavior, and execution mistakes that changed how I think about business."
+    },
+    {
+      "type": "text",
+      "value": "III. What It Taught Me"
+    },
+    {
+      "type": "text",
+      "value": "This section will capture the long-term lessons from Spinfinity that still shape my decisions today."
+    }
+  ]
+}

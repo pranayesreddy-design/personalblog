@@ -1,0 +1,37 @@
+{
+  "title": "Galton Cat Capital",
+  "date": "2026-04-25",
+  "summary": "Why I started Galton Cat Capital and how I plan to build it as a trading firm.",
+  "blocks": [
+    {
+      "type": "image",
+      "src": "assets/images/posts/money/galton-cat-logo-dark.png",
+      "alt": "Galton's Cat Capital logo",
+      "caption": "Galton's Cat Capital"
+    },
+    {
+      "type": "text",
+      "value": "I. Why I Registered Galton Cat Capital"
+    },
+    {
+      "type": "text",
+      "value": "This is a placeholder draft for my Galton Cat Capital story. I plan to write clearly about the core idea, long-term direction, and principles that will guide the firm."
+    },
+    {
+      "type": "text",
+      "value": "II. My Trading Philosophy"
+    },
+    {
+      "type": "text",
+      "value": "I will document risk discipline, decision process, and the structure I use to avoid emotional trading."
+    },
+    {
+      "type": "text",
+      "value": "III. Build Plan"
+    },
+    {
+      "type": "text",
+      "value": "This section will cover how I want to compound process quality first, then performance, and only then scale."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Pixel Galton cat">
+  <rect width="256" height="256" fill="#0d111a"/>
+  <rect x="20" y="26" width="84" height="16" fill="#18243a"/>
+  <rect x="28" y="34" width="68" height="16" fill="#21314d"/>
+  <rect x="152" y="26" width="84" height="16" fill="#18243a"/>
+  <rect x="160" y="34" width="68" height="16" fill="#21314d"/>
+
+  <rect x="104" y="58" width="48" height="16" fill="#cdd6e7"/>
+  <rect x="96" y="74" width="64" height="16" fill="#b7c6e0"/>
+  <rect x="88" y="90" width="24" height="16" fill="#b7c6e0"/>
+  <rect x="144" y="90" width="24" height="16" fill="#b7c6e0"/>
+  <rect x="80" y="106" width="96" height="16" fill="#9fb2d2"/>
+  <rect x="88" y="122" width="80" height="16" fill="#8ea4c9"/>
+  <rect x="96" y="138" width="64" height="16" fill="#7f97bf"/>
+  <rect x="104" y="154" width="48" height="16" fill="#708ab6"/>
+
+  <rect x="110" y="98" width="8" height="8" fill="#0d111a"/>
+  <rect x="138" y="98" width="8" height="8" fill="#0d111a"/>
+  <rect x="120" y="118" width="16" height="8" fill="#0d111a"/>
+
+  <rect x="52" y="186" width="152" height="8" fill="#1f2c45"/>
+  <rect x="68" y="198" width="120" height="8" fill="#2d4061"/>
+</svg>

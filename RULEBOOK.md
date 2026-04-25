@@ -1,0 +1,128 @@
+# Krishna Pranay Blog Rulebook
+
+This file defines the semantics and structure for every new page/section.
+
+## 1) Core principles
+
+1. Keep pages modular and data-driven.
+2. Reuse shared assets from `assets/css` and `assets/js`.
+3. Never hardcode section content inside HTML page templates.
+4. Use consistent naming and folder conventions.
+
+## 2) Folder semantics
+
+- `index.html` = homepage that lists all sections.
+- `sections/<section-key>.html` = section template page.
+- `content/sections/<section-key>.json` = posts/content data for that section.
+- `post.html` = reusable single-post template.
+- `content/posts/<section-key>/<post-slug>.json` = full article content.
+- `assets/js/site-config.js` = global site metadata + section registry.
+- `assets/js/home.js` = homepage rendering logic.
+- `assets/js/section.js` = reusable section page logic.
+- `assets/js/post.js` = reusable single-post rendering logic.
+- `assets/css/styles.css` = shared styles.
+
+## 3) Naming conventions
+
+- Use lowercase kebab-case for section keys and filenames.
+  - Good: `market-psychology`
+  - Bad: `MarketPsychology`
+- Section keys in `site-config.js` must exactly match:
+  - `sections/<key>.html`
+  - `content/sections/<key>.json`
+  - `body data-section="<key>"`
+
+## 4) Page template contract
+
+Every section HTML page must:
+
+1. Include `data-section="<key>"` on `<body>`.
+2. Include these target nodes:
+   - `[data-section-title]`
+   - `[data-section-description]`
+   - `[data-post-list]`
+3. Load scripts in this order:
+   1. `../assets/js/site-config.js`
+   2. `../assets/js/section.js`
+
+## 5) Content contract
+
+Each section data file must follow this JSON shape:
+
+```json
+{
+  "posts": [
+    {
+      "slug": "post-slug",
+      "title": "Post title",
+      "date": "YYYY-MM-DD",
+      "summary": "1-2 sentence summary",
+      "image": "assets/images/posts/<section-key>/<post-slug>.svg",
+      "imageAlt": "Accessible short image description"
+    }
+  ]
+}
+```
+
+Rules:
+- Keep `slug` in lowercase kebab-case.
+- Keep `date` format as `YYYY-MM-DD`.
+- Keep summaries concise and informative.
+- Keep `image` path relative to project root.
+- Keep `imageAlt` meaningful for accessibility.
+- Add newest posts first.
+
+## 6) Single-post content contract
+
+Each file in `content/posts/<section-key>/<post-slug>.json` must follow:
+
+```json
+{
+  "title": "Post title",
+  "date": "YYYY-MM-DD",
+  "summary": "1-2 sentence summary",
+  "blocks": [
+    {
+      "type": "text",
+      "value": "Paragraph text"
+    },
+    {
+      "type": "image",
+      "src": "assets/images/posts/<section-key>/<post-slug>-1.svg",
+      "alt": "Accessible gallery image description",
+      "caption": "Optional caption"
+    }
+  ],
+  "content": [
+    "Paragraph 1",
+    "Paragraph 2"
+  ]
+}
+```
+
+Rules:
+- `<post-slug>.json` must match the `slug` in section list JSON.
+- `blocks` must be an ordered array to keep post flow natural.
+- supported block types: `text`, `image`.
+- text block contract: `{ "type": "text", "value": "..." }`
+- image block contract: `{ "type": "image", "src": "...", "alt": "...", "caption": "..." }`
+- each image block must include `src`; keep `alt` meaningful for accessibility.
+- mix text and image blocks in the order you want them to appear (fluid storytelling).
+- when user provides new raw content, normalize grammar and punctuation while preserving tone/meaning.
+- merge over-fragmented one-line blocks into coherent paragraphs when readability improves.
+- keep clear section labels as heading-style text blocks (e.g., short title lines without trailing punctuation).
+
+## 7) How to add a new section
+
+1. Add a section object in `assets/js/site-config.js`.
+2. Create `sections/<new-key>.html` by copying an existing section page.
+3. Update `<title>` and `<body data-section="...">`.
+4. Create `content/sections/<new-key>.json` using the content contract.
+5. Open `index.html` in browser and verify the new section card appears and links correctly.
+
+## 8) How to add a new post
+
+1. Open `content/sections/<key>.json`.
+2. Insert a post object at the top of `posts` with `slug`, `title`, `date`, and `summary`.
+3. Create `content/posts/<key>/<slug>.json` using an ordered `blocks` array.
+4. Refresh section page and click "Read post" to verify the article opens.

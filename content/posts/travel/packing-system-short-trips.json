@@ -1,0 +1,24 @@
+{
+  "title": "Packing System for Short Trips",
+  "date": "2026-03-26",
+  "summary": "A repeatable packing template with one-bag constraints and weather-based swaps.",
+  "blocks": [
+    {
+      "type": "image",
+      "src": "assets/images/posts/travel/packing-system-short-trips.svg",
+      "alt": "Travel bag illustration for packing system post"
+    },
+    {
+      "type": "text",
+      "value": "Start with one base list: clothing, hygiene, documents, and tech. Avoid deciding from scratch every trip."
+    },
+    {
+      "type": "text",
+      "value": "Use a strict item cap and replace instead of adding. This keeps luggage stable and avoids overpacking."
+    },
+    {
+      "type": "text",
+      "value": "Make weather swaps the only variable: outerwear in, extra layers out. The system stays predictable and fast."
+    }
+  ]
+}
