@@ -1,20 +1,12 @@
 {
   "posts": [
     {
-      "slug": "hyderabad-micro-itinerary",
-      "title": "3-Day Hyderabad Micro Itinerary",
-      "date": "2026-04-10",
-      "summary": "Food spots, old city walk, and a realistic weekend pace for first-time visitors.",
-      "image": "assets/images/posts/travel/hyderabad-micro-itinerary.svg",
-      "imageAlt": "Skyline and monument illustration for Hyderabad itinerary post"
-    },
-    {
-      "slug": "packing-system-short-trips",
-      "title": "Packing System for Short Trips",
-      "date": "2026-03-26",
-      "summary": "A repeatable packing template with one-bag constraints and weather-based swaps.",
-      "image": "assets/images/posts/travel/packing-system-short-trips.svg",
-      "imageAlt": "Travel bag illustration for packing system post"
+      "slug": "goa-beers-beaches-guide",
+      "title": "Goaaaaaaaaaaaaaaaa",
+      "date": "2026-04-26",
+      "summary": "Beers, beaches, and a practical Goa route across North Goa, Old Goa, and South Goa.",
+      "image": "assets/images/posts/travel/goa-sunset-landscape.png",
+      "imageAlt": "Goa sunset over the sea"
     }
   ]
 }

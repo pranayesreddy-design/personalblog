@@ -445,6 +445,26 @@ h3 {
   padding: 0.3rem;
 }
 
+.post-card--travel .post-image {
+  width: calc(100% + 2.3rem);
+  max-width: none;
+  margin: -1.1rem -1.15rem 0.9rem;
+  border-radius: 14px 14px 0 0;
+  border: none;
+  aspect-ratio: 4 / 3;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  object-position: center center;
+  background: #0b0b0b;
+  padding: 0;
+}
+
+.post-card--travel {
+  width: min(100%, 520px);
+  justify-self: start;
+}
+
 .card p {
   margin: 0.65rem 0 1.05rem;
   color: var(--muted);
@@ -577,6 +597,23 @@ h3 {
   margin: 0;
   color: #f0f0f0;
   font-style: italic;
+}
+
+.flow-list {
+  margin: 0 0 0.72rem;
+  max-width: 72ch;
+  color: #dfdfdf;
+  line-height: 1.62;
+  padding-left: 1.45rem;
+}
+
+.flow-list li {
+  margin: 0.3rem 0;
+}
+
+.flow-list .flow-list {
+  margin: 0.28rem 0 0.1rem;
+  padding-left: 1.25rem;
 }
 
 .flow-image {

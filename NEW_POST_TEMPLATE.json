@@ -2,7 +2,16 @@
   "title": "Post title",
   "date": "YYYY-MM-DD",
   "summary": "One-line summary for cards and previews.",
-  "blocks": [
+  "markdownFile": "content/posts/<section-key>/<post-slug>.md",
+  "blocks": [],
+  "notes": "Use markdownFile for easier editing. Keep blocks only when you need explicit block-level control.",
+  "exampleMarkdownSyntax": [
+    "## Section heading",
+    "Paragraph text goes here.",
+    "![Accessible alt text](assets/images/posts/<section-key>/<post-slug>.png \"Optional caption\")",
+    "> Optional quote line"
+  ],
+  "legacyBlocksExample": [
     {
       "type": "text",
       "value": "Opening paragraph."
@@ -12,10 +21,6 @@
       "src": "assets/images/posts/<section-key>/<post-slug>.svg",
       "alt": "Accessible image description",
       "caption": "Optional caption"
-    },
-    {
-      "type": "text",
-      "value": "Next paragraph."
     }
   ]
 }

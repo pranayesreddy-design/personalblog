@@ -81,36 +81,23 @@ Each file in `content/posts/<section-key>/<post-slug>.json` must follow:
   "title": "Post title",
   "date": "YYYY-MM-DD",
   "summary": "1-2 sentence summary",
-  "blocks": [
-    {
-      "type": "text",
-      "value": "Paragraph text"
-    },
-    {
-      "type": "image",
-      "src": "assets/images/posts/<section-key>/<post-slug>-1.svg",
-      "alt": "Accessible gallery image description",
-      "caption": "Optional caption"
-    }
-  ],
-  "content": [
-    "Paragraph 1",
-    "Paragraph 2"
-  ]
+  "markdownFile": "content/posts/<section-key>/<post-slug>.md"
 }
 ```
 
 Rules:
 - `<post-slug>.json` must match the `slug` in section list JSON.
-- `blocks` must be an ordered array to keep post flow natural.
-- supported block types: `text`, `image`.
-- text block contract: `{ "type": "text", "value": "..." }`
-- image block contract: `{ "type": "image", "src": "...", "alt": "...", "caption": "..." }`
-- each image block must include `src`; keep `alt` meaningful for accessibility.
-- mix text and image blocks in the order you want them to appear (fluid storytelling).
+- Prefer `markdownFile` for authoring comfort.
+- Markdown supports:
+  - headings via `## Heading`
+  - paragraphs separated by blank lines
+  - images via `![alt](path "optional caption")`
+  - quotes via `> quote text`
+- Keep markdown files at `content/posts/<section-key>/<post-slug>.md`.
+- Legacy `blocks` and `content` arrays are still supported for backward compatibility.
 - when user provides new raw content, normalize grammar and punctuation while preserving tone/meaning.
 - merge over-fragmented one-line blocks into coherent paragraphs when readability improves.
-- keep clear section labels as heading-style text blocks (e.g., short title lines without trailing punctuation).
+- keep clear section labels as headings with concise wording.
 
 ## 7) How to add a new section
 
@@ -124,5 +111,6 @@ Rules:
 
 1. Open `content/sections/<key>.json`.
 2. Insert a post object at the top of `posts` with `slug`, `title`, `date`, and `summary`.
-3. Create `content/posts/<key>/<slug>.json` using an ordered `blocks` array.
-4. Refresh section page and click "Read post" to verify the article opens.
+3. Create `content/posts/<key>/<slug>.md` with the post body.
+4. Create `content/posts/<key>/<slug>.json` with metadata and `markdownFile`.
+5. Refresh section page and click "Read post" to verify the article opens.

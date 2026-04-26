@@ -27,7 +27,8 @@ Use this checklist whenever you add a new section/page.
 
 5. Add the first post:
    - copy `NEW_POST_TEMPLATE.json`
-   - save it as `content/posts/<key>/<slug>.json`
+   - create `content/posts/<key>/<slug>.md` for the post body
+   - save metadata as `content/posts/<key>/<slug>.json` with `markdownFile`
    - add matching metadata entry in `content/sections/<key>.json`
 
 6. Preview:

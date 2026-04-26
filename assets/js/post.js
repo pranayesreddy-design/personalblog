@@ -34,7 +34,7 @@ function escapeHtml(value) {
 
 function classifyTextBlock(value) {
   const trimmed = value.trim();
-  const headingPattern = /^[IVXLC]+\.\s+[A-Za-z0-9 ,&'()/-]+$/;
+  const headingPattern = /^[IVXLC]+\.\s+[A-Za-z0-9 ,:&'()/-]+$/;
   const quotePattern = /^(["“]).+\1(\s*[-–—]\s*.+)?$/;
 
   if (headingPattern.test(trimmed)) {
@@ -89,6 +89,152 @@ function renderImageBlock(block) {
   `;
 }
 
+function parseMarkdownToBlocks(markdownText) {
+  const lines = String(markdownText || "").replace(/\r\n/g, "\n").split("\n");
+  const blocks = [];
+  let paragraphLines = [];
+
+  function parseListChunk(startIndex) {
+    const listLines = [];
+    let cursor = startIndex;
+
+    while (cursor < lines.length) {
+      const line = lines[cursor];
+      if (!line.trim()) {
+        let lookAhead = cursor + 1;
+        while (lookAhead < lines.length && !lines[lookAhead].trim()) {
+          lookAhead += 1;
+        }
+        const nextLine = lines[lookAhead] || "";
+        const nextIsListLine = /^(\s*)\d+\.\s+(.+)$/.test(nextLine) || /^(\s*)[-*]\s+(.+)$/.test(nextLine);
+        if (nextIsListLine) {
+          cursor = lookAhead;
+          continue;
+        }
+        break;
+      }
+
+      const orderedMatch = line.match(/^(\s*)(\d+)\.\s+(.+)$/);
+      const unorderedMatch = line.match(/^(\s*)[-*]\s+(.+)$/);
+      if (!orderedMatch && !unorderedMatch) {
+        break;
+      }
+
+      if (orderedMatch) {
+        listLines.push({
+          level: Math.floor((orderedMatch[1] || "").length / 2),
+          ordered: true,
+          marker: Number(orderedMatch[2]),
+          value: orderedMatch[3].trim()
+        });
+      } else {
+        listLines.push({
+          level: Math.floor((unorderedMatch[1] || "").length / 2),
+          ordered: false,
+          marker: null,
+          value: unorderedMatch[2].trim()
+        });
+      }
+
+      cursor += 1;
+    }
+
+    const root = { children: [] };
+    const stack = [{ level: -1, node: root }];
+
+    listLines.forEach((line) => {
+      while (stack.length > 1 && line.level <= stack[stack.length - 1].level) {
+        stack.pop();
+      }
+
+      const parent = stack[stack.length - 1].node;
+      const item = {
+        ordered: line.ordered,
+        marker: line.marker,
+        value: line.value,
+        children: []
+      };
+      parent.children.push(item);
+      stack.push({ level: line.level, node: item });
+    });
+
+    return {
+      block: {
+        type: "list",
+        items: root.children
+      },
+      nextIndex: cursor
+    };
+  }
+
+  const flushParagraph = () => {
+    if (!paragraphLines.length) {
+      return;
+    }
+    const value = paragraphLines.join(" ").replace(/\s+/g, " ").trim();
+    if (value) {
+      blocks.push({ type: "text", value });
+    }
+    paragraphLines = [];
+  };
+
+  for (let index = 0; index < lines.length;) {
+    const rawLine = lines[index];
+    const trimmed = rawLine.trim();
+
+    if (!trimmed) {
+      flushParagraph();
+      index += 1;
+      continue;
+    }
+
+    const imageMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]+)")?\)$/);
+    if (imageMatch) {
+      flushParagraph();
+      blocks.push({
+        type: "image",
+        alt: imageMatch[1] || "Post image",
+        src: imageMatch[2],
+        caption: imageMatch[3] || ""
+      });
+      index += 1;
+      continue;
+    }
+
+    const headingMatch = trimmed.match(/^#{1,6}\s+(.+)$/);
+    if (headingMatch) {
+      flushParagraph();
+      blocks.push({ type: "heading", value: headingMatch[1].trim() });
+      index += 1;
+      continue;
+    }
+
+    const quoteMatch = trimmed.match(/^>\s+(.+)$/);
+    if (quoteMatch) {
+      flushParagraph();
+      blocks.push({ type: "quote", value: quoteMatch[1].trim() });
+      index += 1;
+      continue;
+    }
+
+    const orderedListMatch = rawLine.match(/^(\s*)\d+\.\s+(.+)$/);
+    const unorderedListMatch = rawLine.match(/^(\s*)[-*]\s+(.+)$/);
+    if (orderedListMatch || unorderedListMatch) {
+      flushParagraph();
+      const { block, nextIndex } = parseListChunk(index);
+      blocks.push(block);
+      index = nextIndex;
+      continue;
+    }
+
+    paragraphLines.push(trimmed);
+    index += 1;
+  }
+
+  flushParagraph();
+  return blocks;
+}
+
 function buildBlocksFromLegacyFields(post) {
   const blocks = [];
 
@@ -124,15 +270,67 @@ function buildBlocksFromLegacyFields(post) {
   return blocks;
 }
 
-function renderPostFlow(post) {
+async function resolvePostBlocks(post, version) {
+  if (typeof post.markdownFile === "string" && post.markdownFile.trim()) {
+    const markdownPath = post.markdownFile.replace(/^\.\//, "").trim();
+    const markdownUrl = `./${encodeURI(markdownPath)}?v=${version}`;
+    const response = await fetch(markdownUrl);
+    if (!response.ok) {
+      throw new Error("Unable to load markdown content.");
+    }
+    const markdownText = await response.text();
+    return parseMarkdownToBlocks(markdownText);
+  }
+
+  if (Array.isArray(post.blocks) && post.blocks.length) {
+    return post.blocks;
+  }
+
+  return buildBlocksFromLegacyFields(post);
+}
+
+function renderListItems(items) {
+  if (!Array.isArray(items) || !items.length) {
+    return "";
+  }
+
+  const groups = [];
+  items.forEach((item) => {
+    const lastGroup = groups[groups.length - 1];
+    if (!lastGroup || lastGroup.ordered !== item.ordered) {
+      groups.push({ ordered: item.ordered, items: [item] });
+      return;
+    }
+    lastGroup.items.push(item);
+  });
+
+  return groups
+    .map((group) => {
+      const listTag = group.ordered ? "ol" : "ul";
+      const startValue = group.ordered && Number.isInteger(group.items[0].marker)
+        ? group.items[0].marker
+        : 1;
+      const startAttr = group.ordered && startValue > 1 ? ` start="${startValue}"` : "";
+      const innerHtml = group.items
+        .map((item) => {
+          const value = escapeHtml(item.value || "");
+          const childHtml = item.children && item.children.length
+            ? renderListItems(item.children)
+            : "";
+          return `<li>${value}${childHtml}</li>`;
+        })
+        .join("");
+
+      return `<${listTag} class="flow-list"${startAttr}>${innerHtml}</${listTag}>`;
+    })
+    .join("");
+}
+
+function renderPostFlow(blocks) {
   const flowNode = document.querySelector("[data-post-flow]");
   if (!flowNode) {
     return;
   }
-
-  const blocks = Array.isArray(post.blocks) && post.blocks.length
-    ? post.blocks
-    : buildBlocksFromLegacyFields(post);
 
   if (!blocks.length) {
     flowNode.innerHTML = '<p class="empty-state">Post body is empty.</p>';
@@ -144,6 +342,15 @@ function renderPostFlow(post) {
     .map((block) => {
       if (block.type === "image" && block.src) {
         return renderImageBlock(block);
+      }
+      if (block.type === "heading" && block.value) {
+        return `<h3 class="flow-heading">${escapeHtml(String(block.value).trim())}</h3>`;
+      }
+      if (block.type === "quote" && block.value) {
+        return `<blockquote class="flow-quote"><p>${escapeHtml(String(block.value).trim())}</p></blockquote>`;
+      }
+      if (block.type === "list" && Array.isArray(block.items) && block.items.length) {
+        return renderListItems(block.items);
       }
       if (block.type === "text" && block.value) {
         const rendered = renderTextBlock(block, !hasLeadParagraph);
@@ -201,7 +408,8 @@ async function renderPost() {
       return;
     }
 
-    renderPostFlow(post);
+    const blocks = await resolvePostBlocks(post, version);
+    renderPostFlow(blocks);
   } catch (error) {
     renderPostError("Unable to load post.");
   }

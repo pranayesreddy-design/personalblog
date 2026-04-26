@@ -1,5 +1,6 @@
 function createPostCard(sectionMeta, post) {
   const postUrl = `../post.html?section=${encodeURIComponent(sectionMeta.key)}&slug=${encodeURIComponent(post.slug)}`;
+  const cardClass = sectionMeta.key === "travel" ? "card post-card post-card--travel" : "card post-card";
   const imageNode = post.image
     ? `<img class="post-image" src="../${post.image}" alt="${post.imageAlt || post.title}" loading="lazy" />`
     : "";
@@ -7,7 +8,7 @@ function createPostCard(sectionMeta, post) {
     ? `style="background-image: linear-gradient(120deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.18)), url('../${sectionMeta.ctaBackground}');"`
     : "";
   return `
-    <article class="card post-card">
+    <article class="${cardClass}">
       ${imageNode}
       <p class="eyebrow">${post.date}</p>
       <h3>${post.title}</h3>

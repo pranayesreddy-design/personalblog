@@ -1,7 +1,7 @@
 window.BLOG_CONFIG = {
   siteTitle: "Krishna Pranay",
   siteTagline: "Travel, thoughts, and money insights.",
-  contentVersion: "2026-04-26-2",
+  contentVersion: "2026-04-26-8",
   siteSubline: "Sampling a hundred things along the way. I love poker, table tennis, new experiences, and whatever else keeps life interesting.",
   footerText: "Scroll down for star gazing and make a wish if you see a shooting star.",
   experiments: [
