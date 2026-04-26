@@ -80,6 +80,7 @@ If you are flying to Goa, you can land either at Dabolim (GOI), which is almost 
   - Ros Omelette
   - Serradura and Bebinca - really good Goan desserts. I would die for serradura. I would rather die eating serradura or tiramisu than anything else.
   - Cashew Feni - a local alcoholic drink.
+  - People's beer - my favourtie bottled beer!
 
 ## V. My Two Cents
 
