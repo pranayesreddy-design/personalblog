@@ -1,14 +1,6 @@
 {
   "posts": [
     {
-      "slug": "spinfinity-table-tennis-arena",
-      "title": "Spinfinity Table Tennis Arena",
-      "date": "2026-04-25",
-      "summary": "How I built and ran Spinfinity as my earlier business chapter.",
-      "image": "assets/images/posts/thoughts/spinfinity/logo.png",
-      "imageAlt": "Spinfinity logo with crossed table tennis paddles"
-    },
-    {
       "slug": "selfishness-and-love-objectivistic-perspective",
       "title": "Selfishness and Love in Objectivistic Perspective",
       "date": "2021",

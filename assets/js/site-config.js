@@ -1,7 +1,7 @@
 window.BLOG_CONFIG = {
   siteTitle: "Krishna Pranay",
   siteTagline: "Travel, thoughts, and money insights.",
-  contentVersion: "2026-04-25-7",
+  contentVersion: "2026-04-26-2",
   siteSubline: "Sampling a hundred things along the way. I love poker, table tennis, new experiences, and whatever else keeps life interesting.",
   footerText: "Scroll down for star gazing and make a wish if you see a shooting star.",
   experiments: [
@@ -14,10 +14,10 @@ window.BLOG_CONFIG = {
       link: "./post.html?section=thoughts&slug=spinfinity-table-tennis-arena"
     },
     {
-      name: "Galton Cat Capital",
+      name: "Galton's Cat Capital",
       status: "Current Venture",
       description: "My newly registered trading firm documenting process, discipline, and edge.",
-      ctaLabel: "Open Galton",
+      ctaLabel: "Open Galton's",
       ctaBackground: "assets/images/cta/galton-cat-pixel.svg",
       link: "./post.html?section=money&slug=galton-cat-capital"
     }

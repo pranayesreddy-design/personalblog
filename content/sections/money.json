@@ -1,14 +1,6 @@
 {
   "posts": [
     {
-      "slug": "galton-cat-capital",
-      "title": "Galton Cat Capital",
-      "date": "2026-04-25",
-      "summary": "Why I started Galton Cat Capital and how I plan to build it as a trading firm.",
-      "image": "assets/images/posts/money/galton-cat-logo-dark.png",
-      "imageAlt": "Galton's Cat Capital logo"
-    },
-    {
       "slug": "money-noise",
       "title": "Some Money Is Just Noise",
       "date": "2026-04-25",
