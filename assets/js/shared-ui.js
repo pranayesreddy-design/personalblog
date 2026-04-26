@@ -17,36 +17,8 @@ function renderSharedFooter() {
   });
 }
 
-function applyTwinkleState(enabled, buttonNode) {
-  document.body.classList.toggle("sky-twinkle-on", enabled);
-  if (buttonNode) {
-    buttonNode.textContent = enabled ? "Twinkle: On" : "Twinkle: Off";
-    buttonNode.setAttribute("aria-pressed", enabled ? "true" : "false");
-  }
-}
-
-function renderSkyToggle() {
-  if (document.querySelector("[data-sky-toggle]")) {
-    return;
-  }
-
-  const button = document.createElement("button");
-  button.className = "sky-toggle";
-  button.type = "button";
-  button.setAttribute("data-sky-toggle", "true");
-  button.setAttribute("aria-label", "Toggle star twinkle mode");
-
-  const saved = window.localStorage.getItem("skyTwinkleEnabled");
-  const initialState = saved === "1";
-  applyTwinkleState(initialState, button);
-
-  button.addEventListener("click", () => {
-    const nextState = !document.body.classList.contains("sky-twinkle-on");
-    applyTwinkleState(nextState, button);
-    window.localStorage.setItem("skyTwinkleEnabled", nextState ? "1" : "0");
-  });
-
-  document.body.appendChild(button);
+function enableSkyEffects() {
+  document.body.classList.add("sky-twinkle-on");
 }
 
 function renderShootingStars() {
@@ -81,8 +53,8 @@ function enforceScrollToTop() {
 
 function renderSharedUi() {
   enforceScrollToTop();
+  enableSkyEffects();
   renderSharedFooter();
-  renderSkyToggle();
   renderShootingStars();
 }
 
