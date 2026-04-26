@@ -89,3 +89,5 @@ If you are flying to Goa, you can land either at Dabolim (GOI), which is almost 
   - Do not miss a sunset. No two sunsets are the same.
   - There are plenty of places in Goa. Even a year is not enough to cover everything. In the rush to cover all spots, do not miss living in the moment. It is okay to miss a few places. There is always a next time.
   - Be careful while riding bikes. Wear helmets.
+
+If you are wondering why Bogmalo Beach (the one in the picture) is not mentioned, it is because, although beautiful, it is in central Goa, and going there just for that may not be worth it. It is right next to Dabolim Airport, so if you have time before your flight, definitely check it out. Also, Claudi's Corner here is a nice restaurant. This beach is the closest one to our campus, so we used to come here almost every weekend. That is why this beach holds a special place in my heart...
