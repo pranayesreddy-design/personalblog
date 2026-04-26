@@ -67,7 +67,20 @@ function renderShootingStars() {
   document.body.appendChild(layer);
 }
 
+function enforceScrollToTop() {
+  if ("scrollRestoration" in window.history) {
+    window.history.scrollRestoration = "manual";
+  }
+
+  const scrollToTop = () => window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+  // Run immediately and again on next frame to override browser restore.
+  scrollToTop();
+  window.requestAnimationFrame(scrollToTop);
+}
+
 function renderSharedUi() {
+  enforceScrollToTop();
   renderSharedFooter();
   renderSkyToggle();
   renderShootingStars();
