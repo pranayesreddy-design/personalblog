@@ -1,12 +1,152 @@
 {
-  "posts": [
+  "groups": [
     {
-      "slug": "goa-beers-beaches-guide",
-      "title": "Goaaaaaaaaaaaaaaaa",
-      "date": "2026-04-26",
-      "summary": "Beers, beaches, and a practical Goa route across North Goa, Old Goa, and South Goa.",
-      "image": "assets/images/posts/travel/goa-sunset-landscape.png",
-      "imageAlt": "Goa sunset over the sea"
+      "title": "Asia",
+      "description": "Current Asia travel stack with placeholders.",
+      "postsTitle": "Rest of Asia",
+      "posts": [
+        {
+          "slug": "thailand-placeholder",
+          "title": "Thailand (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future Thailand travel notes, itinerary ideas, and food spots.",
+          "ctaLabel": "Thai Me Up"
+        },
+        {
+          "slug": "vietnam-placeholder",
+          "title": "Vietnam (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future Vietnam notes for cities, rides, and local food trails.",
+          "ctaLabel": "Pho-get the Map"
+        },
+        {
+          "slug": "tokyo-placeholder",
+          "title": "Tokyo (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future Tokyo notes for neighborhoods, transit hacks, and food trails.",
+          "ctaLabel": "Get Lost in Tokyo Neon"
+        },
+        {
+          "slug": "uae-placeholder",
+          "title": "UAE (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future UAE notes covering Dubai, Abu Dhabi, and Khor Fakkan in one itinerary.",
+          "ctaLabel": "Desert to Skyline",
+          "indexChildren": [
+            {
+              "slug": "yas-island-themepark-guide-placeholder",
+              "title": "Yas Island Themepark Guide (Placeholder)"
+            }
+          ]
+        },
+        {
+          "slug": "yas-island-themepark-guide-placeholder",
+          "title": "Yas Island Themepark Guide (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future Yas Island guide for Ferrari World, Warner Bros., SeaWorld, and practical tips.",
+          "ctaLabel": "Yas Speedrun",
+          "indexHidden": true
+        }
+      ],
+      "subgroups": [
+        {
+          "title": "India",
+          "description": "India-specific travel stories under Asia.",
+          "posts": [
+            {
+              "slug": "goa-beers-beaches-guide",
+              "title": "Goaaaaaaaaaaaaaaaa",
+              "date": "2026-04-26",
+              "summary": "Beers, beaches, and a practical Goa route across North Goa, Old Goa, and South Goa.",
+              "image": "assets/images/posts/travel/goa-sunset-landscape.png",
+              "imageAlt": "Goa sunset over the sea",
+              "ctaLabel": "Sunset, Salt, Repeat"
+            },
+            {
+              "slug": "pondi-placeholder",
+              "title": "Pondi (Placeholder)",
+              "date": "2026-04-26",
+              "summary": "Future Pondi notes for cafes, French quarter walks, and seaside spots.",
+              "ctaLabel": "Pondi Slow Mornings"
+            },
+            {
+              "slug": "orissa-placeholder",
+              "title": "Orissa (Placeholder)",
+              "date": "2026-04-26",
+              "summary": "Future Orissa notes for temples, coast routes, and local food.",
+              "ctaLabel": "Temple and Tide"
+            },
+            {
+              "slug": "manali-placeholder",
+              "title": "Manali (Placeholder)",
+              "date": "2026-04-26",
+              "summary": "Future Manali notes for mountain routes, stays, and seasonal plans.",
+              "ctaLabel": "Manali Mist Mode"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Europe",
+      "description": "Upcoming Europe placeholders.",
+      "posts": [
+        {
+          "slug": "london-placeholder",
+          "title": "London (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future London planning notes, neighborhoods, and trip hacks.",
+          "ctaLabel": "Mind the London"
+        },
+        {
+          "slug": "paris-placeholder",
+          "title": "Paris (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future Paris notes for museums, cafes, and walks.",
+          "ctaLabel": "Paris and Ponder"
+        }
+      ]
+    },
+    {
+      "title": "US",
+      "description": "US destinations queued as placeholders.",
+      "posts": [
+        {
+          "slug": "new-york-placeholder",
+          "title": "New York (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future New York itinerary ideas, neighborhoods, and eats.",
+          "ctaLabel": "Concrete Jungle Me"
+        },
+        {
+          "slug": "philadelphia-placeholder",
+          "title": "Philadelphia (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future Philadelphia notes for city trails and food spots.",
+          "ctaLabel": "Cheesesteak and Stroll"
+        },
+        {
+          "slug": "las-vegas-placeholder",
+          "title": "Las Vegas (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future Las Vegas notes for shows, routes, and budget planning.",
+          "ctaLabel": "Roll the Vegas Dice"
+        },
+        {
+          "slug": "grand-canyon-placeholder",
+          "title": "Grand Canyon (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future Grand Canyon notes for trails, views, and planning.",
+          "ctaLabel": "Stare into the Canyon"
+        },
+        {
+          "slug": "san-francisco-placeholder",
+          "title": "San Francisco (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future San Francisco notes for neighborhoods, cafes, and routes.",
+          "ctaLabel": "Fog Walk SF"
+        }
+      ]
     }
   ]
 }

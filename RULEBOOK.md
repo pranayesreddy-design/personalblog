@@ -57,6 +57,7 @@ Each section data file must follow this JSON shape:
       "title": "Post title",
       "date": "YYYY-MM-DD",
       "summary": "1-2 sentence summary",
+      "ctaLabel": "Quirky custom button label",
       "image": "assets/images/posts/<section-key>/<post-slug>.svg",
       "imageAlt": "Accessible short image description"
     }
@@ -68,6 +69,8 @@ Rules:
 - Keep `slug` in lowercase kebab-case.
 - Keep `date` format as `YYYY-MM-DD`.
 - Keep summaries concise and informative.
+- Add a quirky `ctaLabel` for every post card button.
+- Keep each `ctaLabel` unique per post (avoid repeating generic labels).
 - Keep `image` path relative to project root.
 - Keep `imageAlt` meaningful for accessibility.
 - Add newest posts first.
@@ -110,7 +113,7 @@ Rules:
 ## 8) How to add a new post
 
 1. Open `content/sections/<key>.json`.
-2. Insert a post object at the top of `posts` with `slug`, `title`, `date`, and `summary`.
+2. Insert a post object at the top of `posts` with `slug`, `title`, `date`, `summary`, and a unique quirky `ctaLabel`.
 3. Create `content/posts/<key>/<slug>.md` with the post body.
 4. Create `content/posts/<key>/<slug>.json` with metadata and `markdownFile`.
 5. Refresh section page and click "Read post" to verify the article opens.

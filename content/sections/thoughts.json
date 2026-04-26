@@ -5,8 +5,16 @@
       "title": "Selfishness and Love in Objectivistic Perspective",
       "date": "2021",
       "summary": "An essay that I have written for my philosophy assignment during college",
+      "ctaLabel": "Question the Premise",
       "image": "assets/images/posts/thoughts/ayn-rand.png",
       "imageAlt": "Ayn Rand portrait"
+    },
+    {
+      "slug": "if-i-die-tomorrow",
+      "title": "If I Die Tomorrow (Placeholder)",
+      "date": "2026-04-26",
+      "summary": "Placeholder for a future reflection on priorities, regrets, and what truly matters.",
+      "ctaLabel": "Read Before Midnight"
     }
   ]
 }

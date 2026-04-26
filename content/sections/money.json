@@ -5,6 +5,7 @@
       "title": "Some Money Is Just Noise",
       "date": "2026-04-25",
       "summary": "A framework to stop wasting mental energy on tiny amounts and focus on decisions that actually move your life.",
+      "ctaLabel": "Tune Out the Noise",
       "image": "assets/images/posts/money/some-money-is-just-noise.png",
       "imageAlt": "Pixel-style Money Noise artwork showing noise versus signal"
     },
@@ -13,6 +14,7 @@
       "title": "The Gold Mines in Supply Chains",
       "date": "2022-09-14",
       "summary": "A reminder that huge wealth often hides in the supply chain behind everyday products.",
+      "ctaLabel": "Mine the Margins",
       "image": "assets/images/posts/money/gold-mines-in-supply-chains.jpeg",
       "imageAlt": "Convocation gowns image from the original post"
     }

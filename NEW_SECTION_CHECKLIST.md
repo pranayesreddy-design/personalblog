@@ -29,6 +29,7 @@ Use this checklist whenever you add a new section/page.
    - copy `NEW_POST_TEMPLATE.json`
    - create `content/posts/<key>/<slug>.md` for the post body
    - save metadata as `content/posts/<key>/<slug>.json` with `markdownFile`
+   - in `content/sections/<key>.json`, add a unique quirky `ctaLabel` for each post card button
    - add matching metadata entry in `content/sections/<key>.json`
 
 6. Preview:

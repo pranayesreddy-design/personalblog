@@ -3,27 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Travel | Krishna Pranay</title>
+    <title>Travel Index | Krishna Pranay</title>
     <link rel="icon" type="image/png" href="../assets/images/favicon-astronaut.png?v=3" />
     <link rel="stylesheet" href="../assets/css/styles.css" />
   </head>
-  <body data-section="travel">
+  <body>
     <header class="site-header">
       <div class="container">
-        <a class="back-link" href="../index.html">← Back to home</a>
-        <h1 data-section-title></h1>
-        <p class="tagline" data-section-description></p>
-        <p class="tagline section-subline" data-section-subline hidden></p>
+        <nav class="header-links" aria-label="Travel index navigation">
+          <a class="back-link" href="../index.html">← Back to home</a>
+          <a class="back-link" href="./travel.html">← Back to travel</a>
+        </nav>
+        <h1>Travel Index</h1>
+        <p class="tagline">Nested map of regions, subsections, and place tiles.</p>
       </div>
     </header>
 
     <main>
       <section class="container">
-        <div class="section-heading-row">
-          <h2>Posts</h2>
-          <a class="index-chip" href="./travel-index.html">Index</a>
-        </div>
-        <div class="section-grid" data-post-list></div>
+        <nav class="card section-index" data-travel-index></nav>
       </section>
     </main>
 
@@ -31,6 +29,6 @@
 
     <script src="../assets/js/site-config.js"></script>
     <script src="../assets/js/shared-ui.js"></script>
-    <script src="../assets/js/section.js"></script>
+    <script src="../assets/js/travel-index.js"></script>
   </body>
 </html>
