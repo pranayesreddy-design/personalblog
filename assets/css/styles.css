@@ -699,6 +699,15 @@ h3 {
   min-height: 200px;
 }
 
+.related-card .post-image {
+  aspect-ratio: 16 / 9;
+  max-height: 130px;
+  object-fit: cover;
+  object-position: center;
+  background: transparent;
+  padding: 0;
+}
+
 .post-flow {
   font-size: 1rem;
 }

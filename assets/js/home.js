@@ -4,11 +4,22 @@ function buildCtaStyle(imagePath) {
     : "";
 }
 
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function createSectionCard(section) {
   const ctaLabel = section.ctaLabel || `Open ${section.title}`;
   const ctaStyle = buildCtaStyle(section.ctaBackground);
+  const overlayLabel = escapeHtml(`Open ${section.title || "section"}`);
   return `
-    <article class="card">
+    <article class="card post-card--clickable">
+      <a class="card-link-overlay" href="${section.page}" aria-label="${overlayLabel}"></a>
       <h3>${section.title}</h3>
       <p>${section.description}</p>
       <a class="button section-cta" ${ctaStyle} href="${section.page}">${ctaLabel}</a>
@@ -19,8 +30,10 @@ function createSectionCard(section) {
 function createExperimentCard(experiment) {
   const ctaLabel = experiment.ctaLabel || "Read story";
   const ctaStyle = buildCtaStyle(experiment.ctaBackground);
+  const overlayLabel = escapeHtml(`Open ${experiment.name || "experiment"}`);
   return `
-    <article class="card venture-card">
+    <article class="card venture-card post-card--clickable">
+      <a class="card-link-overlay" href="${experiment.link}" aria-label="${overlayLabel}"></a>
       <p class="eyebrow venture-status">${experiment.status}</p>
       <h3>${experiment.name}</h3>
       <p>${experiment.description}</p>

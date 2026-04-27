@@ -443,18 +443,44 @@ async function renderRelatedReads(sectionKey, currentSlug, sectionMeta, version)
       ? `style="background-image: linear-gradient(120deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.18)), url('./${escapeHtml(sectionMeta.ctaBackground)}');"`
       : "";
 
+    const relatedPostPreviews = await Promise.all(
+      relatedPosts.map(async (post) => {
+        try {
+          const previewResponse = await fetch(`./content/posts/${sectionKey}/${encodeURIComponent(post.slug)}.json?v=${version}`);
+          const previewData = await previewResponse.json();
+          return {
+            ...post,
+            image: previewData.image || post.image || "",
+            imageAlt: previewData.imageAlt || post.imageAlt || post.title || "Related post image"
+          };
+        } catch (error) {
+          return {
+            ...post,
+            image: post.image || "",
+            imageAlt: post.imageAlt || post.title || "Related post image"
+          };
+        }
+      })
+    );
+
     relatedNode.innerHTML = `
       <h2>Related Reads</h2>
       <div class="section-grid related-grid">
-        ${relatedPosts
+        ${relatedPostPreviews
           .map((post) => {
             const postUrl = `./post.html?section=${encodeURIComponent(sectionKey)}&slug=${encodeURIComponent(post.slug)}`;
             const title = escapeHtml(post.title || post.slug);
             const summary = escapeHtml(post.summary || "");
             const date = escapeHtml(post.date || "");
             const ctaLabel = escapeHtml(post.ctaLabel || "Read next");
+            const overlayLabel = escapeHtml(`Open ${post.title || "post"}`);
+            const imageNode = post.image
+              ? `<img class="post-image" src="./${escapeHtml(post.image)}" alt="${escapeHtml(post.imageAlt || post.title || "Related post image")}" loading="lazy" />`
+              : "";
             return `
-              <article class="card related-card">
+              <article class="card related-card post-card--clickable">
+                <a class="card-link-overlay" href="${postUrl}" aria-label="${overlayLabel}"></a>
+                ${imageNode}
                 ${date ? `<p class="eyebrow">${date}</p>` : ""}
                 <h3>${title}</h3>
                 ${summary ? `<p>${summary}</p>` : ""}
