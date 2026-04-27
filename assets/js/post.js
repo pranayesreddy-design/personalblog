@@ -371,6 +371,121 @@ function renderPostError(message) {
   }
 }
 
+function flattenSectionPosts(data) {
+  const collected = [];
+  const seen = new Set();
+  let order = 0;
+
+  function appendPost(post, context) {
+    if (!post || !post.slug || seen.has(post.slug)) {
+      return;
+    }
+    seen.add(post.slug);
+    collected.push({
+      post,
+      order: order += 1,
+      groupIndex: context && Number.isInteger(context.groupIndex) ? context.groupIndex : null,
+      subgroupIndex: context && Number.isInteger(context.subgroupIndex) ? context.subgroupIndex : null
+    });
+  }
+
+  const flatPosts = Array.isArray(data.posts) ? data.posts : [];
+  flatPosts.forEach((post) => appendPost(post, null));
+
+  const groups = Array.isArray(data.groups) ? data.groups : [];
+  groups.forEach((group, groupIndex) => {
+    const groupPosts = Array.isArray(group.posts) ? group.posts : [];
+    groupPosts.forEach((post) => appendPost(post, { groupIndex, subgroupIndex: null }));
+
+    const subgroups = Array.isArray(group.subgroups) ? group.subgroups : [];
+    subgroups.forEach((subgroup, subgroupIndex) => {
+      const subgroupPosts = Array.isArray(subgroup.posts) ? subgroup.posts : [];
+      subgroupPosts.forEach((post) => appendPost(post, { groupIndex, subgroupIndex }));
+    });
+  });
+
+  return collected;
+}
+
+async function renderRelatedReads(sectionKey, currentSlug, sectionMeta, version) {
+  const relatedNode = document.querySelector("[data-related-reads]");
+  if (!relatedNode) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`./content/sections/${sectionKey}.json?v=${version}`);
+    const data = await response.json();
+    const entries = flattenSectionPosts(data);
+    const currentEntry = entries.find((entry) => entry.post.slug === currentSlug) || null;
+    const relatedPosts = entries
+      .filter((entry) => entry.post.slug !== currentSlug && !entry.post.indexHidden)
+      .sort((a, b) => {
+        const aScore = getRelatedScore(a, currentEntry);
+        const bScore = getRelatedScore(b, currentEntry);
+        if (aScore !== bScore) {
+          return bScore - aScore;
+        }
+        return a.order - b.order;
+      })
+      .slice(0, 4)
+      .map((entry) => entry.post);
+
+    if (!relatedPosts.length) {
+      relatedNode.hidden = true;
+      relatedNode.innerHTML = "";
+      return;
+    }
+
+    const ctaStyle = sectionMeta && sectionMeta.ctaBackground
+      ? `style="background-image: linear-gradient(120deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.18)), url('./${escapeHtml(sectionMeta.ctaBackground)}');"`
+      : "";
+
+    relatedNode.innerHTML = `
+      <h2>Related Reads</h2>
+      <div class="section-grid related-grid">
+        ${relatedPosts
+          .map((post) => {
+            const postUrl = `./post.html?section=${encodeURIComponent(sectionKey)}&slug=${encodeURIComponent(post.slug)}`;
+            const title = escapeHtml(post.title || post.slug);
+            const summary = escapeHtml(post.summary || "");
+            const date = escapeHtml(post.date || "");
+            const ctaLabel = escapeHtml(post.ctaLabel || "Read next");
+            return `
+              <article class="card related-card">
+                ${date ? `<p class="eyebrow">${date}</p>` : ""}
+                <h3>${title}</h3>
+                ${summary ? `<p>${summary}</p>` : ""}
+                <a class="button section-cta" ${ctaStyle} href="${postUrl}">${ctaLabel}</a>
+              </article>
+            `;
+          })
+          .join("")}
+      </div>
+    `;
+    relatedNode.hidden = false;
+  } catch (error) {
+    relatedNode.hidden = true;
+    relatedNode.innerHTML = "";
+  }
+}
+
+function getRelatedScore(candidateEntry, currentEntry) {
+  if (!currentEntry) {
+    return 1;
+  }
+
+  if (candidateEntry.groupIndex === currentEntry.groupIndex) {
+    const bothInSubgroup = Number.isInteger(candidateEntry.subgroupIndex) && Number.isInteger(currentEntry.subgroupIndex);
+    if (bothInSubgroup && candidateEntry.subgroupIndex === currentEntry.subgroupIndex) {
+      return 3;
+    }
+    return 2;
+  }
+
+  return 1;
+}
+
 async function renderPost() {
   const config = window.BLOG_CONFIG;
   const params = getPostParams();
@@ -438,6 +553,7 @@ async function renderPost() {
       });
     }
     renderPostFlow(blocks);
+    await renderRelatedReads(params.section, params.slug, sectionMeta, version);
   } catch (error) {
     renderPostError("Unable to load post.");
   }

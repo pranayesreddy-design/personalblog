@@ -117,3 +117,15 @@ Rules:
 3. Create `content/posts/<key>/<slug>.md` with the post body.
 4. Create `content/posts/<key>/<slug>.json` with metadata and `markdownFile`.
 5. Refresh section page and click "Read post" to verify the article opens.
+
+## 9) SEO + discoverability checklist for every new post
+
+When adding any new post, always do all of the following:
+
+1. Add the post to `content/sections/<key>.json` (this powers cards and Related Reads).
+2. Add a unique quirky `ctaLabel` in section data (do not reuse generic labels).
+3. Ensure `summary` is clear and search-friendly (concise, specific, human language).
+4. Ensure `imageAlt` is meaningful whenever an image is used.
+5. Add/update the post in `sitemap.xml` with the correct URL and `lastmod`.
+6. Keep `robots.txt` sitemap pointer intact: `Sitemap: https://krishnapranay.com/sitemap.xml`.
+7. After deployment, submit/inspect the URL in Google Search Console.
