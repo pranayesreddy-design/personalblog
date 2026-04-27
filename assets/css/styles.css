@@ -131,7 +131,6 @@ body {
     radial-gradient(0.9px 0.9px at 97% 26%, rgba(255, 255, 255, 0.43) 50%, transparent 55%),
     radial-gradient(1px 1px at 99% 61%, rgba(255, 255, 255, 0.47) 50%, transparent 55%),
     linear-gradient(180deg, #050505 0%, #070707 46%, #060606 100%);
-  background-attachment: fixed;
   color: var(--text);
   font-family: "Inter", "Segoe UI", "Helvetica Neue", sans-serif;
   line-height: 1.65;
@@ -232,8 +231,8 @@ body.sky-twinkle-on .shooting-star {
   left: -12%;
   --shoot-angle: 24deg;
   --travel-d: 72vw;
-  animation-duration: 14s;
-  animation-delay: 1.8s;
+  animation-duration: 24s;
+  animation-delay: 4.2s;
 }
 
 .shooting-star--2 {
@@ -241,8 +240,8 @@ body.sky-twinkle-on .shooting-star {
   left: 18%;
   --shoot-angle: 20deg;
   --travel-d: 62vw;
-  animation-duration: 17s;
-  animation-delay: 7.2s;
+  animation-duration: 30s;
+  animation-delay: 12.5s;
 }
 
 .shooting-star--3 {
@@ -250,8 +249,8 @@ body.sky-twinkle-on .shooting-star {
   left: 52%;
   --shoot-angle: 28deg;
   --travel-d: 48vw;
-  animation-duration: 19s;
-  animation-delay: 11.6s;
+  animation-duration: 36s;
+  animation-delay: 19.8s;
 }
 
 .shooting-star--4 {
@@ -259,8 +258,8 @@ body.sky-twinkle-on .shooting-star {
   left: 72%;
   --shoot-angle: 23deg;
   --travel-d: 38vw;
-  animation-duration: 16s;
-  animation-delay: 4.7s;
+  animation-duration: 32s;
+  animation-delay: 15.4s;
 }
 
 @keyframes twinkle-a {

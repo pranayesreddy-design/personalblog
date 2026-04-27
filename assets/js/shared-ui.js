@@ -54,7 +54,6 @@ function renderShootingStars() {
     <span class="shooting-star shooting-star--1"></span>
     <span class="shooting-star shooting-star--2"></span>
     <span class="shooting-star shooting-star--3"></span>
-    <span class="shooting-star shooting-star--4"></span>
   `;
 
   document.body.appendChild(layer);
