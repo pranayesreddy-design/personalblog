@@ -121,8 +121,19 @@ function renderTravelIndex(groups) {
 
 async function renderTravelIndexPage() {
   const indexNode = document.querySelector("[data-travel-index]");
+  const seo = window.SEO_UTILS;
   if (!indexNode || !window.BLOG_CONFIG) {
     return;
+  }
+
+  if (seo) {
+    seo.setSeo({
+      title: `Travel Index | ${window.BLOG_CONFIG.siteTitle || "Krishna Pranay"}`,
+      description: "Nested travel index for regions, cities, and guides.",
+      path: "/sections/travel-index.html",
+      type: "website",
+      image: "/assets/images/favicon-astronaut.png"
+    });
   }
 
   try {
@@ -130,6 +141,19 @@ async function renderTravelIndexPage() {
     const response = await fetch(`../content/sections/travel.json?v=${version}`);
     const data = await response.json();
     indexNode.innerHTML = renderTravelIndex(data.groups);
+    if (seo) {
+      const groupsCount = Array.isArray(data.groups) ? data.groups.length : 0;
+      seo.setStructuredData("travel-index", {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: "Travel Index",
+        url: seo.absoluteUrl("/sections/travel-index.html"),
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: groupsCount
+        }
+      });
+    }
   } catch (error) {
     indexNode.innerHTML = '<p class="empty-state">Unable to load travel index.</p>';
   }

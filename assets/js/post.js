@@ -374,6 +374,7 @@ function renderPostError(message) {
 async function renderPost() {
   const config = window.BLOG_CONFIG;
   const params = getPostParams();
+  const seo = window.SEO_UTILS;
 
   if (!config || !params.section || !params.slug) {
     renderPostError("Missing post parameters.");
@@ -409,6 +410,33 @@ async function renderPost() {
     }
 
     const blocks = await resolvePostBlocks(post, version);
+    if (seo) {
+      const firstImageBlock = blocks.find((block) => block && block.type === "image" && block.src);
+      const imagePath = firstImageBlock ? `/${String(firstImageBlock.src).replace(/^\/+/, "")}` : "/assets/images/favicon-astronaut.png";
+      const pagePath = `/post.html?section=${encodeURIComponent(params.section)}&slug=${encodeURIComponent(params.slug)}`;
+      const pageTitle = `${post.title || "Post"} | ${config.siteTitle || "Krishna Pranay"}`;
+      const pageDescription = post.summary || sectionMeta.description || config.siteTagline || "";
+      seo.setSeo({
+        title: pageTitle,
+        description: pageDescription,
+        path: pagePath,
+        type: "article",
+        image: imagePath
+      });
+      seo.setStructuredData("post-article", {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: post.title || "Post",
+        datePublished: post.date || "",
+        description: pageDescription,
+        image: seo.absoluteUrl(imagePath),
+        author: {
+          "@type": "Person",
+          name: config.owner || "Krishna Pranay"
+        },
+        mainEntityOfPage: seo.absoluteUrl(pagePath)
+      });
+    }
     renderPostFlow(blocks);
   } catch (error) {
     renderPostError("Unable to load post.");

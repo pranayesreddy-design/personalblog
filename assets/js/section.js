@@ -219,6 +219,7 @@ async function renderSection() {
   const pageNode = document.body;
   const sectionKey = pageNode.dataset.section;
   const config = window.BLOG_CONFIG;
+  const seo = window.SEO_UTILS;
 
   if (!sectionKey || !config) {
     return;
@@ -238,6 +239,15 @@ async function renderSection() {
 
   titleNode.textContent = sectionMeta.title;
   descriptionNode.textContent = sectionMeta.description;
+  if (seo) {
+    seo.setSeo({
+      title: `${sectionMeta.title} | ${config.siteTitle || "Krishna Pranay"}`,
+      description: sectionMeta.description || config.siteTagline || "",
+      path: `/sections/${sectionKey}.html`,
+      type: "website",
+      image: "/assets/images/favicon-astronaut.png"
+    });
+  }
   if (sublineNode) {
     if (sectionMeta.subline) {
       sublineNode.textContent = sectionMeta.subline;
@@ -252,6 +262,28 @@ async function renderSection() {
     const version = encodeURIComponent(config.contentVersion || "1");
     const response = await fetch(`../content/sections/${sectionKey}.json?v=${version}`);
     const data = await response.json();
+    if (seo) {
+      const groupedCount = Array.isArray(data.groups)
+        ? data.groups.reduce((acc, group) => {
+          const subgroupCount = Array.isArray(group.subgroups)
+            ? group.subgroups.reduce((subAcc, subgroup) => subAcc + toValidPosts(subgroup.posts).length, 0)
+            : 0;
+          return acc + toValidPosts(group.posts).length + subgroupCount;
+        }, 0)
+        : 0;
+      const postCount = groupedCount || toValidPosts(data.posts).length;
+      seo.setStructuredData(`section-${sectionKey}`, {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: sectionMeta.title,
+        description: sectionMeta.description || "",
+        url: seo.absoluteUrl(`/sections/${sectionKey}.html`),
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: postCount
+        }
+      });
+    }
     const groupedHtml = renderGroupedPosts(sectionMeta, data.groups);
     if (groupedHtml) {
       if (indexNode) {

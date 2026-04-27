@@ -29,6 +29,7 @@ function createExperimentCard(experiment) {
 
 function renderHome() {
   const config = window.BLOG_CONFIG;
+  const seo = window.SEO_UTILS;
   const titleNode = document.querySelector("[data-site-title]");
   const taglineNode = document.querySelector("[data-site-tagline]");
   const sublineNode = document.querySelector("[data-site-subline]");
@@ -39,6 +40,22 @@ function renderHome() {
 
   if (!config || !titleNode || !taglineNode || !gridNode) {
     return;
+  }
+
+  if (seo) {
+    seo.setSeo({
+      title: `${config.siteTitle}`,
+      description: config.siteTagline || "Travel, thoughts, and money insights.",
+      path: "/",
+      type: "website",
+      image: "/assets/images/favicon-astronaut.png"
+    });
+    seo.setStructuredData("home-website", {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: config.siteTitle || "Krishna Pranay",
+      url: seo.absoluteUrl("/")
+    });
   }
 
   titleNode.textContent = config.siteTitle;
