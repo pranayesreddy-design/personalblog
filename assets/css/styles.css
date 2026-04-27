@@ -3,6 +3,9 @@
   --bg-elevated: #0d0d0d;
   --panel: #111111;
   --panel-border: #222222;
+  --panel-border-line: 1px solid var(--panel-border);
+  --radius-card: 14px;
+  --radius-pill: 999px;
   --text: #f3f3f3;
   --muted: #a3a3a3;
   --accent: #e6e6e6;
@@ -194,7 +197,7 @@ main,
   width: 140px;
   height: 2px;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95));
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   opacity: 0;
   --shoot-angle: -24deg;
   --travel-d: 86vw;
@@ -408,7 +411,7 @@ h3 {
   border: 1px solid #3a3a3a;
   background: rgba(16, 16, 16, 0.9);
   color: #e8e8e8;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 0.34rem 0.72rem;
   font-size: 0.8rem;
   font-weight: 600;
@@ -476,10 +479,9 @@ h3 {
   gap: 1.4rem;
 }
 
-.post-group,
-.post-subgroup {
-  border: 1px solid var(--panel-border);
-  border-radius: 14px;
+.post-group {
+  border: var(--panel-border-line);
+  border-radius: var(--radius-card);
   background: rgba(12, 12, 12, 0.65);
   padding: 1rem;
 }
@@ -519,8 +521,8 @@ h3 {
 
 .card {
   background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: 14px;
+  border: var(--panel-border-line);
+  border-radius: var(--radius-card);
   padding: 1.1rem 1.15rem;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
   display: flex;
@@ -555,7 +557,7 @@ h3 {
 .post-image {
   width: 100%;
   border-radius: 11px;
-  border: 1px solid var(--panel-border);
+  border: var(--panel-border-line);
   margin-bottom: 0.9rem;
   object-fit: cover;
 }
@@ -572,7 +574,7 @@ h3 {
   width: calc(100% + 2.3rem);
   max-width: none;
   margin: -1.1rem -1.15rem 0.9rem;
-  border-radius: 14px 14px 0 0;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
   border: none;
   aspect-ratio: 4 / 3;
   height: auto;
@@ -600,7 +602,7 @@ h3 {
   font-weight: 700;
   background: var(--accent);
   padding: 0.5rem 0.82rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 0.92rem;
   transition: transform 120ms ease, background 120ms ease;
   margin-top: auto;
@@ -674,7 +676,6 @@ h3 {
   min-height: 36px;
   padding: 0.42rem 0.7rem;
   font-size: 0.82rem;
-  border-radius: 999px;
   background-image: linear-gradient(120deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.2));
 }
 
@@ -703,7 +704,8 @@ h3 {
   font-size: 1rem;
 }
 
-.flow-paragraph {
+.flow-paragraph,
+.flow-list {
   margin: 0 0 0.72rem;
   max-width: 72ch;
   color: #dfdfdf;
@@ -757,7 +759,7 @@ h3 {
   margin: 0 0 0.8rem;
   padding: 0.5rem;
   background: #0c0c0c;
-  border: 1px solid var(--panel-border);
+  border: var(--panel-border-line);
   border-radius: 12px;
 }
 
@@ -777,7 +779,7 @@ h3 {
 }
 
 .site-footer {
-  border-top: 1px solid var(--panel-border);
+  border-top: var(--panel-border-line);
   padding: 1.25rem 0 2.5rem;
   color: var(--muted);
   margin-top: 1rem;

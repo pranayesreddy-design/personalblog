@@ -23,14 +23,16 @@ function fillPostHeader(sectionTitle, postTitle, postDate, postSummary) {
   return true;
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
+const escapeHtml = window.SECTION_UTILS && window.SECTION_UTILS.escapeHtml
+  ? window.SECTION_UTILS.escapeHtml
+  : function localEscapeHtml(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  };
 
 function classifyTextBlock(value) {
   const trimmed = value.trim();

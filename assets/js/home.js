@@ -1,8 +1,12 @@
+function buildCtaStyle(imagePath) {
+  return imagePath
+    ? `style="background-image: linear-gradient(120deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.18)), url('${imagePath}');"`
+    : "";
+}
+
 function createSectionCard(section) {
   const ctaLabel = section.ctaLabel || `Open ${section.title}`;
-  const ctaStyle = section.ctaBackground
-    ? `style="background-image: linear-gradient(120deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.18)), url('${section.ctaBackground}');"`
-    : "";
+  const ctaStyle = buildCtaStyle(section.ctaBackground);
   return `
     <article class="card">
       <h3>${section.title}</h3>
@@ -14,9 +18,7 @@ function createSectionCard(section) {
 
 function createExperimentCard(experiment) {
   const ctaLabel = experiment.ctaLabel || "Read story";
-  const ctaStyle = experiment.ctaBackground
-    ? `style="background-image: linear-gradient(120deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.18)), url('${experiment.ctaBackground}');"`
-    : "";
+  const ctaStyle = buildCtaStyle(experiment.ctaBackground);
   return `
     <article class="card venture-card">
       <p class="eyebrow venture-status">${experiment.status}</p>
