@@ -17,6 +17,27 @@ function renderSharedFooter() {
   });
 }
 
+function initializeAnalytics() {
+  const analyticsId = window.BLOG_CONFIG && window.BLOG_CONFIG.analyticsId;
+  if (!analyticsId || document.querySelector("[data-ga-loader]")) {
+    return;
+  }
+
+  const gaScript = document.createElement("script");
+  gaScript.async = true;
+  gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(analyticsId)}`;
+  gaScript.setAttribute("data-ga-loader", "true");
+  document.head.appendChild(gaScript);
+
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function gtag() {
+    window.dataLayer.push(arguments);
+  };
+
+  window.gtag("js", new Date());
+  window.gtag("config", analyticsId);
+}
+
 function enableSkyEffects() {
   document.body.classList.add("sky-twinkle-on");
 }
@@ -52,6 +73,7 @@ function enforceScrollToTop() {
 }
 
 function renderSharedUi() {
+  initializeAnalytics();
   enforceScrollToTop();
   enableSkyEffects();
   renderSharedFooter();

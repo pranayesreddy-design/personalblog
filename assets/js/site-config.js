@@ -1,6 +1,7 @@
 window.BLOG_CONFIG = {
   siteTitle: "Krishna Pranay",
   siteUrl: "https://krishnapranay.com",
+  analyticsId: "G-F179WCY1P5",
   siteTagline: "Travel, thoughts, and money insights.",
   contentVersion: "2026-04-27-6",
   siteSubline: "Sampling a hundred things along the way. I love poker, table tennis, new experiences, and whatever else keeps life interesting.",

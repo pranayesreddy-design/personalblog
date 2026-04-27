@@ -126,6 +126,9 @@ When adding any new post, always do all of the following:
 2. Add a unique quirky `ctaLabel` in section data (do not reuse generic labels).
 3. Ensure `summary` is clear and search-friendly (concise, specific, human language).
 4. Ensure `imageAlt` is meaningful whenever an image is used.
-5. Add/update the post in `sitemap.xml` with the correct URL and `lastmod`.
-6. Keep `robots.txt` sitemap pointer intact: `Sitemap: https://krishnapranay.com/sitemap.xml`.
-7. After deployment, submit/inspect the URL in Google Search Console.
+5. Add at least 2 contextual internal links inside the post body where relevant.
+6. Set/verify a share-ready OG image for the post (or use a section-level fallback image).
+7. Add/update the post in `sitemap.xml` with the correct URL and `lastmod`.
+8. Keep `robots.txt` sitemap pointer intact: `Sitemap: https://krishnapranay.com/sitemap.xml`.
+9. After deployment, submit/inspect the URL in Google Search Console.
+10. Check analytics after publish to confirm pageviews are being captured for the new URL.
