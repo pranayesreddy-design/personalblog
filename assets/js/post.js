@@ -428,7 +428,7 @@ async function renderRelatedReads(sectionKey, currentSlug, sectionMeta, version)
         }
         return a.order - b.order;
       })
-      .slice(0, 4)
+      .slice(0, 3)
       .map((entry) => entry.post);
 
     if (!relatedPosts.length) {
