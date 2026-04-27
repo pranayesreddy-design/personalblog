@@ -19,7 +19,8 @@
       "type": "image",
       "src": "assets/images/posts/thoughts/spinfinity/opening-poster.png",
       "alt": "Spinfinity opening poster with launch details",
-      "caption": "Opening-day poster and first launch communication."
+      "caption": "Opening-day poster and first launch communication.",
+      "layout": "portrait"
     },
     {
       "type": "image",

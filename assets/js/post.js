@@ -80,15 +80,40 @@ function renderTextBlock(block, isLead) {
 }
 
 function renderImageBlock(block) {
+  const layout = block.layout === "landscape" || block.layout === "portrait"
+    ? block.layout
+    : "default";
+  const figureClass = layout === "default"
+    ? "flow-image"
+    : `flow-image flow-image--${layout}`;
   const caption = block.caption ? `<figcaption>${escapeHtml(block.caption)}</figcaption>` : "";
   const alt = escapeHtml(block.alt || "Post image");
   const src = escapeHtml(block.src);
   return `
-    <figure class="flow-image">
+    <figure class="${figureClass}">
       <img class="post-image" src="./${src}" alt="${alt}" loading="lazy" />
       ${caption}
     </figure>
   `;
+}
+
+function parseImageMeta(altText, captionText) {
+  const rawAlt = String(altText || "").trim();
+  const rawCaption = String(captionText || "").trim();
+  let layout = "default";
+  let caption = rawCaption;
+
+  const layoutMatch = rawCaption.match(/\|\s*(landscape|portrait|default)\s*$/i);
+  if (layoutMatch) {
+    layout = layoutMatch[1].toLowerCase();
+    caption = rawCaption.replace(/\|\s*(landscape|portrait|default)\s*$/i, "").trim();
+  }
+
+  return {
+    alt: rawAlt || "Post image",
+    caption,
+    layout
+  };
 }
 
 function parseMarkdownToBlocks(markdownText) {
@@ -193,11 +218,13 @@ function parseMarkdownToBlocks(markdownText) {
     const imageMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]+)")?\)$/);
     if (imageMatch) {
       flushParagraph();
+      const imageMeta = parseImageMeta(imageMatch[1], imageMatch[3] || "");
       blocks.push({
         type: "image",
-        alt: imageMatch[1] || "Post image",
+        alt: imageMeta.alt,
         src: imageMatch[2],
-        caption: imageMatch[3] || ""
+        caption: imageMeta.caption,
+        layout: imageMeta.layout
       });
       index += 1;
       continue;
@@ -244,7 +271,10 @@ function buildBlocksFromLegacyFields(post) {
     blocks.push({
       type: "image",
       src: post.image,
-      alt: post.imageAlt || post.title || "Post image"
+      alt: post.imageAlt || post.title || "Post image",
+      layout: (post.imageLayout === "landscape" || post.imageLayout === "portrait")
+        ? post.imageLayout
+        : "default"
     });
   }
 
@@ -263,7 +293,10 @@ function buildBlocksFromLegacyFields(post) {
           type: "image",
           src: image.src,
           alt: image.alt || "Post image",
-          caption: image.caption || ""
+          caption: image.caption || "",
+          layout: (image.layout === "landscape" || image.layout === "portrait")
+            ? image.layout
+            : "default"
         });
       }
     });
