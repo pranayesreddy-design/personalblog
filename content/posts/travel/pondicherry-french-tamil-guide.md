@@ -42,9 +42,9 @@ Pondicherry's beaches are not Goa, and that is fine. They are less about excess 
 
 Rock Beach is the one closest to White Town, and it is an easy addition to your itinerary. Come here early for a pleasant sunrise, or return at night for a breezy stroll along the promenade. It is the kind of place where you can walk aimlessly, watch the sea, and finish the evening with a gelato or ice cream from GMT.
 
-![Rock Beach sunrise view, Pondicherry](assets/images/posts/travel/pondicherry-rock-beach-sunrise-1.png "Sunrise at Rock Beach")
+![Rock Beach sunrise view, Pondicherry](assets/images/posts/travel/pondicherry-rock-beach-sunrise-1.png "Sunrise at Rock Beach | inline-landscape")
 
-![Rock Beach promenade at sunrise, Pondicherry](assets/images/posts/travel/pondicherry-rock-beach-sunrise-2.png "Sunrise at Rock Beach promenade")
+![Rock Beach promenade at sunrise, Pondicherry](assets/images/posts/travel/pondicherry-rock-beach-sunrise-2.png "Sunrise at Rock Beach promenade | inline-landscape")
 
 #### Eden Beach
 
