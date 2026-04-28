@@ -1,11 +1,8 @@
 {
-  "title": "Orissa (Placeholder)",
-  "date": "2026-04-26",
-  "summary": "Future Orissa notes for temples, coast routes, and local food.",
-  "blocks": [
-    {
-      "type": "text",
-      "value": "Orissa travel notes coming soon."
-    }
-  ]
+  "title": "Odisha Temple Run: Stone, Devotion, and the Sea",
+  "date": "2026-04-28",
+  "summary": "A compact Odisha route through Puri, Konark, Chilika, Dhauli, and Bhubaneswar.",
+  "markdownFile": "content/posts/travel/odisha-temple-run-stone-devotion-sea.md",
+  "image": "assets/images/posts/travel/odisha-konark-erotica-2.png",
+  "imageAlt": "More erotic carvings at Konark Sun Temple"
 }

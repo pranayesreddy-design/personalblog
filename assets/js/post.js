@@ -45,16 +45,23 @@ function toSafeHref(rawHref) {
   return "#";
 }
 
-function renderPlainTextWithLinks(textValue) {
+function renderPlainTextWithLinksAndStrong(textValue) {
   const raw = String(textValue || "");
-  const urlPattern = /(https?:\/\/[^\s<]+)/g;
+  const tokenPattern = /(\*\*([^*]+)\*\*)|(https?:\/\/[^\s<]+)/g;
   let html = "";
   let cursor = 0;
   let match;
 
-  while ((match = urlPattern.exec(raw))) {
+  while ((match = tokenPattern.exec(raw))) {
     html += escapeHtml(raw.slice(cursor, match.index));
-    const url = match[1];
+
+    if (match[2]) {
+      html += `<strong>${escapeHtml(match[2])}</strong>`;
+      cursor = match.index + match[1].length;
+      continue;
+    }
+
+    const url = match[3];
     const href = escapeHtml(toSafeHref(url));
     const label = escapeHtml(url);
     html += `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
@@ -74,14 +81,14 @@ function renderInlineText(value) {
 
   while ((match = markdownLinkPattern.exec(source))) {
     const before = source.slice(cursor, match.index);
-    html += renderPlainTextWithLinks(before);
+    html += renderPlainTextWithLinksAndStrong(before);
     const label = escapeHtml(match[1]);
     const href = escapeHtml(toSafeHref(match[2]));
     html += `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
     cursor = match.index + match[0].length;
   }
 
-  html += renderPlainTextWithLinks(source.slice(cursor));
+  html += renderPlainTextWithLinksAndStrong(source.slice(cursor));
   return html;
 }
 
