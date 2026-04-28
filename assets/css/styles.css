@@ -718,6 +718,16 @@ h3 {
   font-size: 1rem;
 }
 
+.post-flow a {
+  color: #b8cee8;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.post-flow a:hover {
+  color: #d9e7f8;
+}
+
 .flow-paragraph,
 .flow-list {
   margin: 0 0 0.72rem;
@@ -781,7 +791,7 @@ h3 {
 .flow-image .post-image {
   width: 100%;
   aspect-ratio: 4 / 3;
-  max-height: 260px;
+  max-height: none;
   margin: 0;
   display: block;
   object-fit: cover;
@@ -803,6 +813,49 @@ h3 {
 .flow-image--portrait .post-image {
   aspect-ratio: 3 / 4;
   max-height: 420px;
+}
+
+.flow-inline-gallery {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  margin: 0 0 0.8rem;
+}
+
+.flow-inline-gallery .flow-image--inline,
+.flow-inline-gallery .flow-image--inline-each,
+.flow-inline-gallery .flow-image--inline-landscape {
+  flex: 1 1 0;
+  width: auto;
+  max-width: none;
+  margin: 0;
+}
+
+.flow-inline-gallery .flow-image--inline .post-image,
+.flow-inline-gallery .flow-image--inline-each .post-image {
+  aspect-ratio: 3 / 4;
+}
+
+.flow-inline-gallery .flow-image--inline-landscape .post-image {
+  aspect-ratio: 4 / 3;
+}
+
+.flow-inline-gallery .flow-image--inline figcaption,
+.flow-inline-gallery .flow-image--inline-each figcaption,
+.flow-inline-gallery .flow-image--inline-landscape figcaption {
+  font-size: 0.82rem;
+}
+
+.flow-inline-gallery--shared .flow-image--inline + .flow-image--inline figcaption {
+  display: none;
+}
+
+.flow-inline-gallery-caption {
+  margin: -0.35rem 0 0.95rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-style: italic;
 }
 
 .flow-image figcaption {

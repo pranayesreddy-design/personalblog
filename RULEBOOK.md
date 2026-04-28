@@ -96,6 +96,8 @@ Rules:
   - paragraphs separated by blank lines
   - images via `![alt](path "optional caption")`
   - quotes via `> quote text`
+  - major section headings should use Roman numerals (`I.`, `II.`, `III.`...).
+  - sub-section/activity headings under a major section should use Arabic numerals (`1.`, `2.`, `3.`...).
 - Keep markdown files at `content/posts/<section-key>/<post-slug>.md`.
 - Legacy `blocks` and `content` arrays are still supported for backward compatibility.
 - when user provides new raw content, normalize grammar and punctuation while preserving tone/meaning.

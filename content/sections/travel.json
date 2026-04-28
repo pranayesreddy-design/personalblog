@@ -58,15 +58,17 @@
               "title": "Goaaaaaaaaaaaaaaaa",
               "date": "2026-04-26",
               "summary": "Beers, beaches, and a practical Goa route across North Goa, Old Goa, and South Goa.",
-              "image": "assets/images/posts/travel/goa-sunset-landscape.png",
-              "imageAlt": "Goa sunset over the sea",
+              "image": "assets/images/posts/travel/goa-se-cathedral-garden-view.png",
+              "imageAlt": "St. Cajetan Church courtyard",
               "ctaLabel": "Sunset, Salt, Repeat"
             },
             {
-              "slug": "pondi-placeholder",
-              "title": "Pondi (Placeholder)",
-              "date": "2026-04-26",
-              "summary": "Future Pondi notes for cafes, French quarter walks, and seaside spots.",
+              "slug": "pondicherry-french-tamil-guide",
+              "title": "Pondicherry: A Little Bit French, A Lot South Indian",
+              "date": "2026-04-28",
+              "summary": "A practical Pondicherry guide covering where to stay, what to do, day trips, and what to eat.",
+              "image": "assets/images/posts/travel/pondicherry-rock-beach-sunrise-1.png",
+              "imageAlt": "Sunrise at Rock Beach, Pondicherry",
               "ctaLabel": "Pondi Slow Mornings"
             },
             {

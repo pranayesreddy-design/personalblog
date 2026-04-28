@@ -34,6 +34,57 @@ const escapeHtml = window.SECTION_UTILS && window.SECTION_UTILS.escapeHtml
       .replace(/'/g, "&#39;");
   };
 
+function toSafeHref(rawHref) {
+  const href = String(rawHref || "").trim();
+  if (!href) {
+    return "#";
+  }
+  if (/^(https?:|mailto:|tel:)/i.test(href) || href.startsWith("/") || href.startsWith("./") || href.startsWith("../")) {
+    return href;
+  }
+  return "#";
+}
+
+function renderPlainTextWithLinks(textValue) {
+  const raw = String(textValue || "");
+  const urlPattern = /(https?:\/\/[^\s<]+)/g;
+  let html = "";
+  let cursor = 0;
+  let match;
+
+  while ((match = urlPattern.exec(raw))) {
+    html += escapeHtml(raw.slice(cursor, match.index));
+    const url = match[1];
+    const href = escapeHtml(toSafeHref(url));
+    const label = escapeHtml(url);
+    html += `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+    cursor = match.index + url.length;
+  }
+
+  html += escapeHtml(raw.slice(cursor));
+  return html;
+}
+
+function renderInlineText(value) {
+  const source = String(value || "");
+  const markdownLinkPattern = /\[([^\]]+)\]\(([^)\s]+)\)/g;
+  let html = "";
+  let cursor = 0;
+  let match;
+
+  while ((match = markdownLinkPattern.exec(source))) {
+    const before = source.slice(cursor, match.index);
+    html += renderPlainTextWithLinks(before);
+    const label = escapeHtml(match[1]);
+    const href = escapeHtml(toSafeHref(match[2]));
+    html += `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+    cursor = match.index + match[0].length;
+  }
+
+  html += renderPlainTextWithLinks(source.slice(cursor));
+  return html;
+}
+
 function classifyTextBlock(value) {
   const trimmed = value.trim();
   const headingPattern = /^[IVXLC]+\.\s+[A-Za-z0-9 ,:&'()/-]+$/;
@@ -56,7 +107,7 @@ function renderTextBlock(block, isLead) {
     return { html: "", isParagraph: false };
   }
 
-  const safeValue = escapeHtml(value);
+  const safeValue = renderInlineText(value);
   const kind = classifyTextBlock(value);
 
   if (kind === "heading") {
@@ -80,7 +131,7 @@ function renderTextBlock(block, isLead) {
 }
 
 function renderImageBlock(block) {
-  const layout = block.layout === "landscape" || block.layout === "portrait"
+  const layout = block.layout === "landscape" || block.layout === "portrait" || block.layout === "inline" || block.layout === "inline-each" || block.layout === "inline-landscape"
     ? block.layout
     : "default";
   const figureClass = layout === "default"
@@ -97,16 +148,33 @@ function renderImageBlock(block) {
   `;
 }
 
+function renderInlineGallery(blocks, useSharedCaption) {
+  if (useSharedCaption) {
+    const galleryCaptionBlock = blocks.find((item) => String(item.caption || "").trim());
+    const galleryCaption = galleryCaptionBlock
+      ? `<p class="flow-inline-gallery-caption">${escapeHtml(String(galleryCaptionBlock.caption).trim())}</p>`
+      : "";
+    const imagesHtml = blocks
+      .map((item) => renderImageBlock({ ...item, caption: "" }))
+      .join("");
+
+    return `<div class="flow-inline-gallery flow-inline-gallery--shared">${imagesHtml}</div>${galleryCaption}`;
+  }
+
+  const imagesHtml = blocks.map((item) => renderImageBlock(item)).join("");
+  return `<div class="flow-inline-gallery flow-inline-gallery--each">${imagesHtml}</div>`;
+}
+
 function parseImageMeta(altText, captionText) {
   const rawAlt = String(altText || "").trim();
   const rawCaption = String(captionText || "").trim();
   let layout = "default";
   let caption = rawCaption;
 
-  const layoutMatch = rawCaption.match(/\|\s*(landscape|portrait|default)\s*$/i);
+  const layoutMatch = rawCaption.match(/\|\s*(landscape|portrait|inline-landscape|inline-each|inline|default)\s*$/i);
   if (layoutMatch) {
     layout = layoutMatch[1].toLowerCase();
-    caption = rawCaption.replace(/\|\s*(landscape|portrait|default)\s*$/i, "").trim();
+    caption = rawCaption.replace(/\|\s*(landscape|portrait|inline-landscape|inline-each|inline|default)\s*$/i, "").trim();
   }
 
   return {
@@ -348,7 +416,7 @@ function renderListItems(items) {
       const startAttr = group.ordered && startValue > 1 ? ` start="${startValue}"` : "";
       const innerHtml = group.items
         .map((item) => {
-          const value = escapeHtml(item.value || "");
+          const value = renderInlineText(item.value || "");
           const childHtml = item.children && item.children.length
             ? renderListItems(item.children)
             : "";
@@ -373,30 +441,56 @@ function renderPostFlow(blocks) {
   }
 
   let hasLeadParagraph = false;
-  flowNode.innerHTML = blocks
-    .map((block) => {
-      if (block.type === "image" && block.src) {
-        return renderImageBlock(block);
-      }
-      if (block.type === "heading" && block.value) {
-        return `<h3 class="flow-heading">${escapeHtml(String(block.value).trim())}</h3>`;
-      }
-      if (block.type === "quote" && block.value) {
-        return `<blockquote class="flow-quote"><p>${escapeHtml(String(block.value).trim())}</p></blockquote>`;
-      }
-      if (block.type === "list" && Array.isArray(block.items) && block.items.length) {
-        return renderListItems(block.items);
-      }
-      if (block.type === "text" && block.value) {
-        const rendered = renderTextBlock(block, !hasLeadParagraph);
-        if (rendered.isParagraph) {
-          hasLeadParagraph = true;
+  const htmlChunks = [];
+
+  for (let index = 0; index < blocks.length; index += 1) {
+    const block = blocks[index];
+
+    if (block.type === "image" && block.src) {
+      if (block.layout === "inline" || block.layout === "inline-each" || block.layout === "inline-landscape") {
+        const isSharedInline = block.layout === "inline";
+        const inlineBlocks = [{ ...block }];
+        while (index + 1 < blocks.length) {
+          const nextBlock = blocks[index + 1];
+          if (!nextBlock || nextBlock.type !== "image" || !nextBlock.src || nextBlock.layout !== block.layout) {
+            break;
+          }
+          inlineBlocks.push({ ...nextBlock });
+          index += 1;
         }
-        return rendered.html;
+        htmlChunks.push(renderInlineGallery(inlineBlocks, isSharedInline));
+        continue;
       }
-      return "";
-    })
-    .join("");
+
+      htmlChunks.push(renderImageBlock(block));
+      continue;
+    }
+
+    if (block.type === "heading" && block.value) {
+      htmlChunks.push(`<h3 class="flow-heading">${escapeHtml(String(block.value).trim())}</h3>`);
+      continue;
+    }
+
+    if (block.type === "quote" && block.value) {
+      htmlChunks.push(`<blockquote class="flow-quote"><p>${escapeHtml(String(block.value).trim())}</p></blockquote>`);
+      continue;
+    }
+
+    if (block.type === "list" && Array.isArray(block.items) && block.items.length) {
+      htmlChunks.push(renderListItems(block.items));
+      continue;
+    }
+
+    if (block.type === "text" && block.value) {
+      const rendered = renderTextBlock(block, !hasLeadParagraph);
+      if (rendered.isParagraph) {
+        hasLeadParagraph = true;
+      }
+      htmlChunks.push(rendered.html);
+    }
+  }
+
+  flowNode.innerHTML = htmlChunks.join("");
 }
 
 function renderPostError(message) {

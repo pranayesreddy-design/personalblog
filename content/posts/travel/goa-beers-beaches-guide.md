@@ -1,4 +1,5 @@
-![Goa sunset over the sea](assets/images/posts/travel/goa-sunset-landscape.png "Bogmalo Beach. Do not miss a sunset. No two sunsets are the same.")
+![Goa sunset over the sea](assets/images/posts/travel/goa-sunset-landscape.png "Bogmalo Beach. Do not miss a sunset. No two sunsets are the same. | inline-landscape")
+![Butterfly Beach shoreline, South Goa](assets/images/posts/travel/goa-butterfly-beach-sunset-new.png "Butterfly Beach | inline-landscape")
 
 Beer, beaches, and bad decisions.
 
@@ -21,6 +22,11 @@ If you are flying to Goa, you can land either at Dabolim (GOI), which is almost 
   - Miramar Beach.
   - Maruti Temple. 
   
+![Rainy Panjim street scene](assets/images/posts/travel/goa-rainy-panjim-bus.png "Rainy Panjim mood")
+
+![Rocky Goa coastline at Anjuna Beach, North Goa](assets/images/posts/travel/goa-rocky-coastline-skyline.png "Rocky Goa coastline at Anjuna Beach, North Goa | inline-each")
+![Maruti Temple in Panjim, Goa](assets/images/posts/travel/goa-shantadurga-temple-red.png "Maruti Temple in Panjim | inline-each")
+
 2. Beaches and Beers
 
   - Calangute - go for water activities; otherwise, it feels like any other beach.
@@ -29,7 +35,12 @@ If you are flying to Goa, you can land either at Dabolim (GOI), which is almost 
   - Anjuna Beach - beach plus rocks, so it feels different. Do not miss dining at Claudi's, preferably at night with a beer on the beach.
   - Baga Beach for nightlife.
     - Tito's Lane - a small walking street with pubs, shops, and restaurants.
+  - For a different kind of nightlife in North Goa, try the floating casinos on the Mandovi River near Panjim (Deltin and Casino Pride are popular picks).
   - A bit farther north, with fewer crowds and cleaner beaches: Morjim, Ashwem, Mandrem, Arambol, and Querim.
+
+![Deltin and Casino Pride floating casinos at night, North Goa](assets/images/posts/travel/goa-deltin-casino-night.png "Floating casinos in North Goa | inline-landscape")
+
+![Baga Beach during night, Goa](assets/images/posts/travel/goa-baga-beach-night-new.png "Baga Beach during night | inline-landscape")
 
 3. Food
   - Bomras - for excellent Burmese cuisine (their tuna dish is my favorite).
@@ -51,6 +62,10 @@ If you are flying to Goa, you can land either at Dabolim (GOI), which is almost 
     - St. Cajetan Church (my personal favorite)
   - Make sure you check opening and closing times; they vary.
 
+![St. Cajetan Church courtyard, Old Goa](assets/images/posts/travel/goa-st-cajetan-courtyard.png "Inside the Archaeological Museum; Church of St Francis of Assisi, Se Cathedral; St Cajetan | inline")
+![St. Cajetan Church facade, Old Goa](assets/images/posts/travel/goa-st-cajetan-church-facade.png "| inline")
+![Se Cathedral garden view, Old Goa](assets/images/posts/travel/goa-se-cathedral-garden-view.png "| inline")
+
 ## III. South Goa
 
 1. Places to Cover
@@ -63,6 +78,8 @@ If you are flying to Goa, you can land either at Dabolim (GOI), which is almost 
   - Chapoli Falls.
   - Shri Shantadurga Temple
 
+![The back waters of Cola Beach, South Goa](assets/images/posts/travel/goa-cola-beach-waterline.png "The back waters of Cola Beach | inline-each")
+![Shree Shantadurga Temple, Goa](assets/images/posts/travel/goa-rainy-temple-reflection.png "Shree Shantadurga Temple | inline-each")
 2. Food
   - Martin's Corner
   - Pentagon
@@ -80,6 +97,7 @@ If you are flying to Goa, you can land either at Dabolim (GOI), which is almost 
   - Ros Omelette
   - Serradura and Bebinca - really good Goan desserts. I would die for serradura. I would rather die eating serradura or tiramisu than anything else.
   - Cashew Feni - a local alcoholic drink.
+  - Port wine - a Goa classic worth trying.
   - People's beer - my favourtie bottled beer!
 
 ## V. My Two Cents
@@ -90,4 +108,4 @@ If you are flying to Goa, you can land either at Dabolim (GOI), which is almost 
   - There are plenty of places in Goa. Even a year is not enough to cover everything. In the rush to cover all spots, do not miss living in the moment. It is okay to miss a few places. There is always a next time.
   - Be careful while riding bikes. Wear helmets.
 
-If you are wondering why Bogmalo Beach (the one in the picture) is not mentioned, it is because, although beautiful, it is in central Goa, and going there just for that may not be worth it. It is right next to Dabolim Airport, so if you have time before your flight, definitely check it out. Also, Claudi's Corner here is a nice restaurant. This beach is the closest one to our campus, so we used to come here almost every weekend. That is why this beach holds a special place in my heart...
+If you are wondering why Bogmalo Beach (the one in the first picture) is not mentioned, it is because, although beautiful, it is in central Goa, and going there just for that may not be worth it. It is right next to Dabolim Airport, so if you have time before your flight, definitely check it out. Also, Claudi's Corner here is a nice restaurant. This beach is the closest one to our campus, so we used to come here almost every weekend. That is why this beach holds a special place in my heart...
