@@ -6,20 +6,6 @@
       "postsTitle": "Rest of Asia",
       "posts": [
         {
-          "slug": "thailand-placeholder",
-          "title": "Thailand (Placeholder)",
-          "date": "2026-04-26",
-          "summary": "Future Thailand travel notes, itinerary ideas, and food spots.",
-          "ctaLabel": "Thai Me Up"
-        },
-        {
-          "slug": "vietnam-placeholder",
-          "title": "Vietnam (Placeholder)",
-          "date": "2026-04-26",
-          "summary": "Future Vietnam notes for cities, rides, and local food trails.",
-          "ctaLabel": "Pho-get the Map"
-        },
-        {
           "slug": "tokyo-placeholder",
           "title": "Toooookyoooooo: Neon, Temples, Tiny Bars, and Too Much to Do",
           "date": "2026-04-28",
@@ -27,6 +13,38 @@
           "image": "assets/images/posts/travel/tokyo-tile-skyline.png",
           "imageAlt": "Tokyo skyline view with Mount Fuji in the distance",
           "ctaLabel": "Get Lost in Tokyo Neon"
+        },
+        {
+          "slug": "thailand-placeholder",
+          "title": "Bangkok and Pattaya: Temples, 7-Elevens, and Questionable Decisions",
+          "date": "2026-04-28",
+          "summary": "A practical central Thailand guide covering Bangkok essentials, food, and Pattaya highlights.",
+          "image": "assets/images/posts/travel/thailand-bangkok-tile-wat-arun.png",
+          "imageAlt": "Wat Arun temple in Bangkok under dramatic clouds",
+          "ctaLabel": "Thai Me Up"
+        },
+        {
+          "slug": "thailand-north-placeholder",
+          "title": "Northern Thailand: Chiang Mai, Chiang Rai, and Pai (Placeholder)",
+          "date": "2026-04-28",
+          "summary": "Upcoming Northern Thailand route notes for Chiang Mai, Chiang Rai, and Pai.",
+          "image": "assets/images/posts/travel/thailand-north-tile-temple-dusk.png",
+          "imageAlt": "Northern Thailand temple at dusk with dramatic clouds",
+          "ctaLabel": "North Thailand Next"
+        },
+        {
+          "slug": "thailand-south-placeholder",
+          "title": "Southern Thailand: Phuket and Phi Phi (Placeholder)",
+          "date": "2026-04-28",
+          "summary": "Upcoming Southern Thailand notes for Phuket and Phi Phi islands.",
+          "ctaLabel": "South Thailand Soon"
+        },
+        {
+          "slug": "vietnam-placeholder",
+          "title": "Vietnam (Placeholder)",
+          "date": "2026-04-26",
+          "summary": "Future Vietnam notes for cities, rides, and local food trails.",
+          "ctaLabel": "Pho-get the Map"
         },
         {
           "slug": "uae-placeholder",
@@ -95,6 +113,8 @@
           "title": "London (Placeholder)",
           "date": "2026-04-26",
           "summary": "Future London planning notes, neighborhoods, and trip hacks.",
+          "image": "assets/images/posts/travel/london-tile-big-ben-thames.png",
+          "imageAlt": "Big Ben and the Palace of Westminster from the Thames",
           "ctaLabel": "Mind the London"
         },
         {
@@ -102,6 +122,8 @@
           "title": "Paris (Placeholder)",
           "date": "2026-04-26",
           "summary": "Future Paris notes for museums, cafes, and walks.",
+          "image": "assets/images/posts/travel/paris-tile-louvre-night.png",
+          "imageAlt": "Louvre pyramid illuminated at night in Paris",
           "ctaLabel": "Paris and Ponder"
         }
       ]
@@ -115,6 +137,8 @@
           "title": "New York (Placeholder)",
           "date": "2026-04-26",
           "summary": "Future New York itinerary ideas, neighborhoods, and eats.",
+          "image": "assets/images/posts/travel/new-york-tile-lower-manhattan.png",
+          "imageAlt": "Lower Manhattan skyline view from the waterfront",
           "ctaLabel": "Concrete Jungle Me"
         },
         {
@@ -122,6 +146,8 @@
           "title": "Philadelphia (Placeholder)",
           "date": "2026-04-26",
           "summary": "Future Philadelphia notes for city trails and food spots.",
+          "image": "assets/images/posts/travel/philadelphia-tile-benjamin-franklin-parkway.png",
+          "imageAlt": "Benjamin Franklin Parkway view toward Philadelphia City Hall",
           "ctaLabel": "Cheesesteak and Stroll"
         },
         {
@@ -129,6 +155,8 @@
           "title": "Las Vegas (Placeholder)",
           "date": "2026-04-26",
           "summary": "Future Las Vegas notes for shows, routes, and budget planning.",
+          "image": "assets/images/posts/travel/las-vegas-tile-bellagio-view.png",
+          "imageAlt": "Bellagio view and fountains with Las Vegas skyline backdrop",
           "ctaLabel": "Roll the Vegas Dice"
         },
         {

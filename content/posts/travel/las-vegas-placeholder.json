@@ -2,6 +2,8 @@
   "title": "Las Vegas (Placeholder)",
   "date": "2026-04-26",
   "summary": "Future Las Vegas notes for shows, routes, and budget planning.",
+  "image": "assets/images/posts/travel/las-vegas-tile-bellagio-view.png",
+  "imageAlt": "Bellagio view and fountains with Las Vegas skyline backdrop",
   "blocks": [
     {
       "type": "text",

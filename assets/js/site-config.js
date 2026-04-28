@@ -3,7 +3,7 @@ window.BLOG_CONFIG = {
   siteUrl: "https://krishnapranay.com",
   analyticsId: "G-F179WCY1P5",
   siteTagline: "Travel, thoughts, and money insights.",
-  contentVersion: "2026-04-28-40",
+  contentVersion: "2026-04-28-55",
   siteSubline: "Sampling a hundred things along the way. I love poker, table tennis, new experiences, and whatever else keeps life interesting.",
   footerText: "Scroll down for star gazing and make a wish if you see a shooting star.",
   experiments: [

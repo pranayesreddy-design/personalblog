@@ -2,6 +2,8 @@
   "title": "New York (Placeholder)",
   "date": "2026-04-26",
   "summary": "Future New York itinerary ideas, neighborhoods, and eats.",
+  "image": "assets/images/posts/travel/new-york-tile-lower-manhattan.png",
+  "imageAlt": "Lower Manhattan skyline view from the waterfront",
   "blocks": [
     {
       "type": "text",

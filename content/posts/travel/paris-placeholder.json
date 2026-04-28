@@ -2,6 +2,8 @@
   "title": "Paris (Placeholder)",
   "date": "2026-04-26",
   "summary": "Future Paris notes for museums, cafes, and walks.",
+  "image": "assets/images/posts/travel/paris-tile-louvre-night.png",
+  "imageAlt": "Louvre pyramid illuminated at night in Paris",
   "blocks": [
     {
       "type": "text",

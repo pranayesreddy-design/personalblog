@@ -1,11 +1,8 @@
 {
-  "title": "Thailand (Placeholder)",
-  "date": "2026-04-26",
-  "summary": "Future Thailand travel notes, itinerary ideas, and food spots.",
-  "blocks": [
-    {
-      "type": "text",
-      "value": "Thailand travel notes coming soon."
-    }
-  ]
+  "title": "Bangkok and Pattaya: Temples, 7-Elevens, and Questionable Decisions",
+  "date": "2026-04-28",
+  "summary": "A practical central Thailand guide covering Bangkok essentials, food, and Pattaya highlights.",
+  "markdownFile": "content/posts/travel/thailand-bangkok-pattaya-temples-7eleven.md",
+  "image": "assets/images/posts/travel/thailand-bangkok-tile-wat-arun.png",
+  "imageAlt": "Wat Arun temple in Bangkok under dramatic clouds"
 }

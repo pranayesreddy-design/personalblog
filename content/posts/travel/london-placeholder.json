@@ -2,6 +2,8 @@
   "title": "London (Placeholder)",
   "date": "2026-04-26",
   "summary": "Future London planning notes, neighborhoods, and trip hacks.",
+  "image": "assets/images/posts/travel/london-tile-big-ben-thames.png",
+  "imageAlt": "Big Ben and the Palace of Westminster from the Thames",
   "blocks": [
     {
       "type": "text",

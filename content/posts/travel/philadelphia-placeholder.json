@@ -2,6 +2,8 @@
   "title": "Philadelphia (Placeholder)",
   "date": "2026-04-26",
   "summary": "Future Philadelphia notes for city trails and food spots.",
+  "image": "assets/images/posts/travel/philadelphia-tile-benjamin-franklin-parkway.png",
+  "imageAlt": "Benjamin Franklin Parkway view toward Philadelphia City Hall",
   "blocks": [
     {
       "type": "text",
