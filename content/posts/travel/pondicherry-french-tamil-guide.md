@@ -2,7 +2,7 @@
 
 ![I love Pondy sign in Pondicherry](assets/images/posts/travel/pondicherry-i-love-pondy.png "I love Pondy | portrait")
 
-If Goa was the Portuguese postcard, Pondicherry was the French one.
+If Goa is the Portuguese postcard, Pondicherry is the French one.
 
 Both carry visible European influence, but Pondicherry feels different - smaller, quieter, and more intimate. Less "party coast," more slow coastal charm with mustard walls, churches, cafes, and Tamil soul.
 
