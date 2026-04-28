@@ -844,6 +844,7 @@ h3 {
 .flow-inline-gallery .flow-image--inline-each figcaption,
 .flow-inline-gallery .flow-image--inline-landscape figcaption {
   font-size: 0.82rem;
+  text-align: center;
 }
 
 .flow-inline-gallery--shared .flow-image--inline + .flow-image--inline figcaption {

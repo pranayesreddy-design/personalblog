@@ -455,12 +455,19 @@ function renderPostFlow(blocks) {
 
     if (block.type === "image" && block.src) {
       if (block.layout === "inline" || block.layout === "inline-each" || block.layout === "inline-landscape") {
-        const isSharedInline = block.layout === "inline";
+        const isSharedInline = block.layout === "inline" || block.layout === "inline-landscape";
         const inlineBlocks = [{ ...block }];
         while (index + 1 < blocks.length) {
           const nextBlock = blocks[index + 1];
           if (!nextBlock || nextBlock.type !== "image" || !nextBlock.src || nextBlock.layout !== block.layout) {
             break;
+          }
+          if (isSharedInline) {
+            const currentHasCaption = inlineBlocks.some((item) => String(item.caption || "").trim());
+            const nextHasCaption = String(nextBlock.caption || "").trim();
+            if (inlineBlocks.length > 1 && currentHasCaption && nextHasCaption) {
+              break;
+            }
           }
           inlineBlocks.push({ ...nextBlock });
           index += 1;

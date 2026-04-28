@@ -1,11 +1,8 @@
 {
-  "title": "Tokyo (Placeholder)",
-  "date": "2026-04-26",
-  "summary": "Future Tokyo notes for neighborhoods, transit hacks, and food trails.",
-  "blocks": [
-    {
-      "type": "text",
-      "value": "Tokyo travel notes coming soon."
-    }
-  ]
+  "title": "Toooookyoooooo: Neon, Temples, Tiny Bars, and Too Much to Do",
+  "date": "2026-04-28",
+  "summary": "A practical Tokyo neighborhood-by-neighborhood route across temples, shopping lanes, and tiny bars.",
+  "markdownFile": "content/posts/travel/tokyo-neon-temples-tiny-bars.md",
+  "image": "assets/images/posts/travel/tokyo-tile-skyline.png",
+  "imageAlt": "Tokyo skyline view with Mount Fuji in the distance"
 }
