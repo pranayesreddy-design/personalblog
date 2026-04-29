@@ -2,6 +2,8 @@
   "title": "San Francisco (Placeholder)",
   "date": "2026-04-26",
   "summary": "Future San Francisco notes for neighborhoods, cafes, and routes.",
+  "image": "assets/images/posts/travel/san-francisco-tile-golden-gate-bw.png",
+  "imageAlt": "Golden Gate Bridge in monochrome from a high viewpoint",
   "blocks": [
     {
       "type": "text",

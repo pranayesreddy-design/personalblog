@@ -2,6 +2,8 @@
   "title": "Grand Canyon (Placeholder)",
   "date": "2026-04-26",
   "summary": "Future Grand Canyon notes for trails, views, and planning.",
+  "image": "assets/images/posts/travel/grand-canyon-tile-panorama.png",
+  "imageAlt": "Panoramic view across layered cliffs of the Grand Canyon",
   "blocks": [
     {
       "type": "text",

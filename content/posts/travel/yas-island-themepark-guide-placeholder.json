@@ -2,6 +2,8 @@
   "title": "Yas Island Themepark Guide (Placeholder)",
   "date": "2026-04-26",
   "summary": "Future Yas Island guide for Ferrari World, Warner Bros., SeaWorld, and practical tips.",
+  "image": "assets/images/posts/travel/yas-island-tile-themepark-dome.png",
+  "imageAlt": "Immersive themed dome interior at Yas Island",
   "blocks": [
     {
       "type": "text",

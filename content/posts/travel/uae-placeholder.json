@@ -2,6 +2,8 @@
   "title": "UAE (Placeholder)",
   "date": "2026-04-26",
   "summary": "Future UAE notes covering Dubai, Abu Dhabi, and Khor Fakkan in one itinerary.",
+  "image": "assets/images/posts/travel/uae-tile-sheikh-zayed-mosque.png",
+  "imageAlt": "Sheikh Zayed Grand Mosque courtyard under a vivid blue sky",
   "blocks": [
     {
       "type": "text",

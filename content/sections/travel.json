@@ -37,6 +37,8 @@
           "title": "Southern Thailand: Phuket and Phi Phi (Placeholder)",
           "date": "2026-04-28",
           "summary": "Upcoming Southern Thailand notes for Phuket and Phi Phi islands.",
+          "image": "assets/images/posts/travel/thailand-south-tile-phi-phi-lagoon.png",
+          "imageAlt": "Turquoise lagoon framed by limestone cliffs in Southern Thailand",
           "ctaLabel": "South Thailand Soon"
         },
         {
@@ -44,6 +46,8 @@
           "title": "Vietnam (Placeholder)",
           "date": "2026-04-26",
           "summary": "Future Vietnam notes for cities, rides, and local food trails.",
+          "image": "assets/images/posts/travel/vietnam-tile-golden-bridge-da-nang.png",
+          "imageAlt": "Golden Bridge in Da Nang held by giant stone hands",
           "ctaLabel": "Pho-get the Map"
         },
         {
@@ -51,6 +55,8 @@
           "title": "UAE (Placeholder)",
           "date": "2026-04-26",
           "summary": "Future UAE notes covering Dubai, Abu Dhabi, and Khor Fakkan in one itinerary.",
+          "image": "assets/images/posts/travel/uae-tile-sheikh-zayed-mosque.png",
+          "imageAlt": "Sheikh Zayed Grand Mosque courtyard under a vivid blue sky",
           "ctaLabel": "Desert to Skyline",
           "indexChildren": [
             {
@@ -64,6 +70,8 @@
           "title": "Yas Island Themepark Guide (Placeholder)",
           "date": "2026-04-26",
           "summary": "Future Yas Island guide for Ferrari World, Warner Bros., SeaWorld, and practical tips.",
+          "image": "assets/images/posts/travel/yas-island-tile-themepark-dome.png",
+          "imageAlt": "Immersive themed dome interior at Yas Island",
           "ctaLabel": "Yas Speedrun",
           "indexHidden": true
         }
@@ -164,6 +172,8 @@
           "title": "Grand Canyon (Placeholder)",
           "date": "2026-04-26",
           "summary": "Future Grand Canyon notes for trails, views, and planning.",
+          "image": "assets/images/posts/travel/grand-canyon-tile-panorama.png",
+          "imageAlt": "Panoramic view across layered cliffs of the Grand Canyon",
           "ctaLabel": "Stare into the Canyon"
         },
         {
@@ -171,6 +181,8 @@
           "title": "San Francisco (Placeholder)",
           "date": "2026-04-26",
           "summary": "Future San Francisco notes for neighborhoods, cafes, and routes.",
+          "image": "assets/images/posts/travel/san-francisco-tile-golden-gate-bw.png",
+          "imageAlt": "Golden Gate Bridge in monochrome from a high viewpoint",
           "ctaLabel": "Fog Walk SF"
         }
       ]

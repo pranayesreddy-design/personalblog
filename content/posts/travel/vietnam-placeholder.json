@@ -2,6 +2,8 @@
   "title": "Vietnam (Placeholder)",
   "date": "2026-04-26",
   "summary": "Future Vietnam notes for cities, rides, and local food trails.",
+  "image": "assets/images/posts/travel/vietnam-tile-golden-bridge-da-nang.png",
+  "imageAlt": "Golden Bridge in Da Nang held by giant stone hands",
   "blocks": [
     {
       "type": "text",
