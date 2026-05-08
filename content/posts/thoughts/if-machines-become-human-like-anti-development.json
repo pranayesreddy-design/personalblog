@@ -1,0 +1,355 @@
+{
+  "title": "If Machines Become Human-Like, Does Development Become Anti-Development?",
+  "date": "2026-05-08",
+  "summary": "A reflection on automation, ownership, inequality, and why productivity gains alone do not guarantee broad human progress.",
+  "blocks": [
+    {
+      "type": "text",
+      "value": "For most of history, development has meant one simple thing: humans becoming more productive."
+    },
+    {
+      "type": "text",
+      "value": "We built tools, machines, factories, computers, software, and networks so that one person could do more than before. A farmer with a tractor could do the work of many farmers. A programmer with cloud infrastructure could build something that once needed a full IT department. A small business with the internet could sell to the world."
+    },
+    {
+      "type": "text",
+      "value": "This is the story we usually tell ourselves:"
+    },
+    {
+      "type": "text",
+      "value": "Technology increases productivity."
+    },
+    {
+      "type": "text",
+      "value": "Productivity creates wealth."
+    },
+    {
+      "type": "text",
+      "value": "Wealth improves lives."
+    },
+    {
+      "type": "text",
+      "value": "But what happens when machines do not just help humans work better, but start replacing human work itself?"
+    },
+    {
+      "type": "text",
+      "value": "What happens when machines become human-like enough to do the thinking, writing, designing, coding, selling, driving, teaching, analyzing, managing, and even creating?"
+    },
+    {
+      "type": "text",
+      "value": "At that point, development may stop looking like development for many people. It may start feeling like anti-development."
+    },
+    {
+      "type": "text",
+      "value": "Not because the technology is bad. But because the economic system around it may not be ready."
+    },
+    {
+      "type": "text",
+      "value": "I. Labour Becomes Cheap, But Humans Still Need Income"
+    },
+    {
+      "type": "text",
+      "value": "The first major consequence of human-like machines is that labour becomes extremely cheap."
+    },
+    {
+      "type": "text",
+      "value": "If an AI worker can code, write, design, summarize, operate machines, answer customers, generate reports, and run processes at a tiny fraction of human cost, then companies will naturally use it."
+    },
+    {
+      "type": "text",
+      "value": "From a companys point of view, this is rational."
+    },
+    {
+      "type": "text",
+      "value": "Why hire ten analysts when one person with AI tools can do the work? Why hire hundreds of support agents when AI can handle most tickets? Why pay for junior employees when automated systems can do the first draft, first review, first design, first test, and first recommendation?"
+    },
+    {
+      "type": "text",
+      "value": "This reduces cost. It increases efficiency. It improves margins."
+    },
+    {
+      "type": "text",
+      "value": "But from societys point of view, there is a dangerous question: if human labour becomes less valuable, how do humans earn money?"
+    },
+    {
+      "type": "text",
+      "value": "Because humans are not just workers. They are also consumers."
+    },
+    {
+      "type": "text",
+      "value": "A company may love cheaper labour, but it still needs people who can afford to buy its products. If millions of people lose bargaining power, income, or stable employment, then demand in the economy weakens."
+    },
+    {
+      "type": "text",
+      "value": "So we may reach a strange contradiction: companies become more productive, but society becomes financially stressed."
+    },
+    {
+      "type": "text",
+      "value": "That is the paradox."
+    },
+    {
+      "type": "text",
+      "value": "II. The Wealth May Flow Upward"
+    },
+    {
+      "type": "text",
+      "value": "The benefits of machine labour may not be distributed evenly."
+    },
+    {
+      "type": "text",
+      "value": "If AI systems, robots, chips, cloud infrastructure, and data are owned by a small number of companies or individuals, then the wealth created by automation will flow mainly to the owners of those systems."
+    },
+    {
+      "type": "text",
+      "value": "The people who own the machines gain leverage. The people who only sell their labour lose leverage."
+    },
+    {
+      "type": "text",
+      "value": "This can create a world where productivity explodes, but inequality explodes with it."
+    },
+    {
+      "type": "text",
+      "value": "Imagine an economy where a company can generate billions in revenue with very few employees. That sounds efficient. But it also means fewer salaries, fewer career ladders, fewer entry-level roles, and fewer people sharing in the value created."
+    },
+    {
+      "type": "text",
+      "value": "Earlier, companies needed large workforces to scale. In the future, a company may need capital, compute, data, and a small elite team."
+    },
+    {
+      "type": "text",
+      "value": "That is great for shareholders. It is not obviously great for everyone else."
+    },
+    {
+      "type": "text",
+      "value": "III. The Middle Class Could Be Hit Hard"
+    },
+    {
+      "type": "text",
+      "value": "For a long time, automation mostly threatened repetitive physical work. Factory jobs, clerical tasks, basic operations, and routine services were the obvious targets."
+    },
+    {
+      "type": "text",
+      "value": "But human-like machines are different."
+    },
+    {
+      "type": "text",
+      "value": "They do not only attack manual labour. They attack cognitive labour."
+    },
+    {
+      "type": "text",
+      "value": "That means the affected class is not just factory workers. It could include software engineers, designers, analysts, accountants, customer support teams, legal assistants, marketers, teachers, consultants, project managers, writers, researchers, and operations teams."
+    },
+    {
+      "type": "text",
+      "value": "In other words, a lot of the modern middle class."
+    },
+    {
+      "type": "text",
+      "value": "This is why the AI transition feels different from previous technological revolutions. Earlier, education was the escape route. If machines replaced physical work, people were told to upskill into knowledge work."
+    },
+    {
+      "type": "text",
+      "value": "But what happens when knowledge work itself is automated?"
+    },
+    {
+      "type": "text",
+      "value": "Then the advice to just learn more becomes less comforting."
+    },
+    {
+      "type": "text",
+      "value": "IV. Development Without Distribution Is Fragile"
+    },
+    {
+      "type": "text",
+      "value": "A country can become technologically advanced and still socially unstable."
+    },
+    {
+      "type": "text",
+      "value": "Development is not just about GDP, automation, or productivity. Real development means better lives for a large number of people."
+    },
+    {
+      "type": "text",
+      "value": "If technology makes food, medicine, education, housing, transport, and services cheaper for everyone, then it can be a huge force for good."
+    },
+    {
+      "type": "text",
+      "value": "But if technology mainly increases profits while weakening wages, then it creates stress."
+    },
+    {
+      "type": "text",
+      "value": "People do not experience development as an abstract productivity number. They experience it as: can I get a job, can I afford rent, can I support my family, can I build savings, can I move upward, and can my children have a better life?"
+    },
+    {
+      "type": "text",
+      "value": "If the answer to these questions becomes no for a large section of society, then technological progress will feel like decline."
+    },
+    {
+      "type": "text",
+      "value": "That is why machine intelligence could become anti-development if it is not paired with new systems of distribution."
+    },
+    {
+      "type": "text",
+      "value": "V. The Problem Is Not AI. The Problem Is Ownership."
+    },
+    {
+      "type": "text",
+      "value": "It is easy to blame machines. But machines are not the moral actor here."
+    },
+    {
+      "type": "text",
+      "value": "The real issue is ownership."
+    },
+    {
+      "type": "text",
+      "value": "Who owns the AI systems? Who owns the robots? Who owns the data? Who owns the infrastructure? Who captures the profit? Who gets displaced? Who gets compensated?"
+    },
+    {
+      "type": "text",
+      "value": "If machines become productive members of the economy, then the ownership of machines becomes one of the most important political and economic questions of the century."
+    },
+    {
+      "type": "text",
+      "value": "Because if a small group owns most of the productive machines, then a small group captures most of the economic upside."
+    },
+    {
+      "type": "text",
+      "value": "This is not very different from land ownership in older economies. If all productive land belonged to a few people, everyone else had to work under their terms."
+    },
+    {
+      "type": "text",
+      "value": "In the future, compute, models, chips, robots, and data may become the new land."
+    },
+    {
+      "type": "text",
+      "value": "VI. Cheap Labour Can Also Reduce Human Dignity"
+    },
+    {
+      "type": "text",
+      "value": "There is another danger: when labour becomes cheap, humans may be treated as economically unnecessary."
+    },
+    {
+      "type": "text",
+      "value": "Work is not only about money. It is also about identity, purpose, dignity, and social participation."
+    },
+    {
+      "type": "text",
+      "value": "A person who works is not just earning income. They are contributing. They are learning. They are building competence. They are part of a network."
+    },
+    {
+      "type": "text",
+      "value": "If machines take over too much work too quickly, many people may feel useless in the system."
+    },
+    {
+      "type": "text",
+      "value": "That creates psychological and social damage."
+    },
+    {
+      "type": "text",
+      "value": "Even if governments introduce welfare or universal basic income, there is still a deeper question: what role do humans play in a world where machines can do most things better and cheaper?"
+    },
+    {
+      "type": "text",
+      "value": "A healthy society cannot be built only on consumption. People need meaningful participation."
+    },
+    {
+      "type": "text",
+      "value": "VII. The Optimistic Case"
+    },
+    {
+      "type": "text",
+      "value": "There is, of course, a positive version of the future."
+    },
+    {
+      "type": "text",
+      "value": "If machines become human-like, they could remove boring, dangerous, repetitive, and exhausting work. They could make healthcare cheaper, education more personalized, legal help more accessible, and scientific research faster."
+    },
+    {
+      "type": "text",
+      "value": "Small businesses could become more powerful. Individuals could build things that once required large teams. A person in a small town could access world-class tools."
+    },
+    {
+      "type": "text",
+      "value": "In that world, AI is not anti-development. It is the biggest development engine ever created."
+    },
+    {
+      "type": "text",
+      "value": "But that future requires intentional design."
+    },
+    {
+      "type": "text",
+      "value": "It requires policies, institutions, and business models that spread the gains."
+    },
+    {
+      "type": "text",
+      "value": "Otherwise, we may not get a broad prosperity boom. We may get a productivity boom captured by a narrow class."
+    },
+    {
+      "type": "text",
+      "value": "VIII. What Needs to Change?"
+    },
+    {
+      "type": "text",
+      "value": "If machine labour becomes a major part of the economy, society may need new ideas."
+    },
+    {
+      "type": "text",
+      "value": "1. Broader ownership of productive technology: people should not only earn through wages. They may need access to ownership through shares, cooperatives, public funds, or national AI dividends."
+    },
+    {
+      "type": "text",
+      "value": "2. Tax systems that adapt to automation: if companies reduce human labour but increase profits through machines, tax systems may need to capture some of that value and redistribute it."
+    },
+    {
+      "type": "text",
+      "value": "3. Stronger public services: healthcare, education, housing, and transport becoming less dependent on individual income would reduce the stress of labour disruption."
+    },
+    {
+      "type": "text",
+      "value": "4. Human-centered education: education should not only train people to compete with machines. It should train people to work with machines, build judgment, understand systems, and create meaning."
+    },
+    {
+      "type": "text",
+      "value": "5. New definitions of work: caregiving, community building, teaching, art, mentoring, and local problem-solving may need more recognition and support."
+    },
+    {
+      "type": "text",
+      "value": "IX. Conclusion: The Future Is Not Automatically Better"
+    },
+    {
+      "type": "text",
+      "value": "The mistake is assuming that technological progress automatically equals human progress."
+    },
+    {
+      "type": "text",
+      "value": "It does not."
+    },
+    {
+      "type": "text",
+      "value": "A machine can increase output without increasing fairness. A company can become more efficient while society becomes more unequal. A country can become more advanced while its people feel more insecure."
+    },
+    {
+      "type": "text",
+      "value": "If machines become human-like, the central question will not be whether they can work."
+    },
+    {
+      "type": "text",
+      "value": "They will."
+    },
+    {
+      "type": "text",
+      "value": "The central question will be: who benefits from their work?"
+    },
+    {
+      "type": "text",
+      "value": "If the answer is everyone, then this could be the greatest development in human history."
+    },
+    {
+      "type": "text",
+      "value": "But if the answer is only those who own the machines, then it may become anti-development: a world of incredible productivity, cheap labour, weak wages, extreme inequality, and financial stress."
+    },
+    {
+      "type": "text",
+      "value": "The technology may be futuristic. But the question is ancient: who owns the means of production?"
+    }
+  ]
+}

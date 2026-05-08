@@ -94,7 +94,7 @@ function renderInlineText(value) {
 
 function classifyTextBlock(value) {
   const trimmed = value.trim();
-  const headingPattern = /^[IVXLC]+\.\s+[A-Za-z0-9 ,:&'()/-]+$/;
+  const headingPattern = /^[IVXLC]+\.\s+[A-Za-z0-9 ,:&'()\/\-?!]+$/;
   const quotePattern = /^(["“]).+\1(\s*[-–—]\s*.+)?$/;
 
   if (headingPattern.test(trimmed)) {
