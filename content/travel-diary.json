@@ -1,0 +1,236 @@
+{
+  "entries": [
+    {
+      "date": "2026-04-28",
+      "location": "Toyosu, Tokyo",
+      "title": "An afternoon inside the light",
+      "text": [
+        "Filler entry. Started with sushi at the fish market at an hour that felt illegal, then spent the afternoon walking barefoot through teamLab Planets.",
+        "Pick one of the teamLab venues and do it properly rather than rushing both. The water rooms are the part I keep thinking about."
+      ],
+      "orientation": "portrait",
+      "ratio": "4:3",
+      "photos": [
+        {
+          "src": "assets/images/posts/travel/tokyo-teamlabs-planet-1.png",
+          "alt": "Immersive light installation at teamLab Planets, Tokyo",
+          "caption": "teamLab Planets"
+        },
+        {
+          "src": "assets/images/posts/travel/tokyo-teamlabs-planet-2.png",
+          "alt": "Mirrored installation room at teamLab Planets, Tokyo",
+          "caption": "Mirror room"
+        },
+        {
+          "src": "assets/images/posts/travel/tokyo-teamlabs-planet-3.png",
+          "alt": "Light reflections on water at teamLab Planets, Tokyo",
+          "caption": "Water and light"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-27",
+      "location": "Asakusa, Tokyo",
+      "title": "Sensoji before the crowds",
+      "text": [
+        "Filler entry. Got to the temple early enough that the shutters on Nakamise Street were still down. Completely different place at 6 AM than at noon.",
+        "Walked to Skytree afterwards along the river, which took about twenty minutes and turned out to be the nicest part of the morning."
+      ],
+      "orientation": "landscape",
+      "ratio": "4:3",
+      "photos": [
+        {
+          "src": "assets/images/posts/travel/tokyo-sensoji-temple-1.png",
+          "alt": "Sensoji Temple main gate in Asakusa, Tokyo",
+          "caption": "The main gate, still quiet"
+        },
+        {
+          "src": "assets/images/posts/travel/tokyo-sensoji-temple-2.png",
+          "alt": "Sensoji Temple with the morning crowd building, Tokyo",
+          "caption": "An hour later"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-26",
+      "location": "Sumida, Tokyo",
+      "title": "Fuji from the Skytree",
+      "text": [
+        "Filler entry. Clear enough to see Fuji sitting on the horizon like it had been placed there for the photo. Apparently this is rare and we got lucky.",
+        "Stayed up there much longer than planned."
+      ],
+      "orientation": "portrait",
+      "ratio": "4:3",
+      "photos": [
+        {
+          "src": "assets/images/posts/travel/tokyo-skytree-view-fuji-1.png",
+          "alt": "Tokyo skyline from Tokyo Skytree with Mount Fuji in the distance",
+          "caption": "Fuji in the backdrop"
+        },
+        {
+          "src": "assets/images/posts/travel/tokyo-skytree-view-fuji-2.png",
+          "alt": "Monochrome Tokyo skyline view from Tokyo Skytree",
+          "caption": "City going on forever"
+        },
+        {
+          "src": "assets/images/posts/travel/tokyo-skytree-view-fuji-3.png",
+          "alt": "Wide Tokyo skyline view from Tokyo Skytree with Mount Fuji",
+          "caption": "Last look before heading down"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-20",
+      "location": "White Town, Pondicherry",
+      "title": "Sunrise, then a slow day",
+      "text": [
+        "Filler entry. Rock Beach at sunrise is worth the alarm. Sat on the promenade until the heat made it unreasonable, then spent the rest of the day doing almost nothing.",
+        "Ended up on MG Road in the evening, mostly browsing."
+      ],
+      "orientation": "landscape",
+      "ratio": "4:3",
+      "photos": [
+        {
+          "src": "assets/images/posts/travel/pondicherry-rock-beach-sunrise-1.png",
+          "alt": "Sunrise over Rock Beach in Pondicherry",
+          "caption": "Rock Beach at sunrise"
+        },
+        {
+          "src": "assets/images/posts/travel/pondicherry-mg-road-sunset.png",
+          "alt": "MG Road in Pondicherry during sunset",
+          "caption": "MG Road at the other end of the day"
+        }
+      ]
+    },
+    {
+      "date": "2026-04-18",
+      "location": "Pichavaram",
+      "title": "Into the mangroves",
+      "text": [
+        "Filler entry. Two hours south of Pondicherry and suddenly you are in a maze of water channels with trees growing straight out of them.",
+        "The boatman knew exactly which turns to take. I would still be in there otherwise."
+      ],
+      "orientation": "portrait",
+      "ratio": "4:3",
+      "photos": [
+        {
+          "src": "assets/images/posts/travel/pichavaram-mangroves-1.png",
+          "alt": "Pichavaram mangrove forest seen from a boat",
+          "caption": "Heading in"
+        },
+        {
+          "src": "assets/images/posts/travel/pichavaram-mangroves-2.png",
+          "alt": "Narrow mangrove water channels at Pichavaram",
+          "caption": "One of four hundred routes"
+        },
+        {
+          "src": "assets/images/posts/travel/pichavaram-mangroves-3.png",
+          "alt": "Boating through the Pichavaram mangroves",
+          "caption": "Coming back out"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-15",
+      "location": "Satpada, Chilika",
+      "title": "A lagoon the size of a district",
+      "text": [
+        "Filler entry. Booked the boat from the official counter after being waved down four separate times on the road by people who very much did not work there.",
+        "Worth it. The lagoon just keeps opening up."
+      ],
+      "orientation": "landscape",
+      "ratio": "4:3",
+      "photos": [
+        {
+          "src": "assets/images/posts/travel/odisha-chilika-dolphin-boat.png",
+          "alt": "Boat ride on Chilika Lake at Satpada, Odisha",
+          "caption": "Out on Chilika"
+        },
+        {
+          "src": "assets/images/posts/travel/odisha-chilika-sunset-water.png",
+          "alt": "Sunset over the waters of Chilika Lake, Odisha",
+          "caption": "Sunset on the way back"
+        }
+      ]
+    },
+    {
+      "date": "2026-03-14",
+      "location": "Konark",
+      "title": "The language of stone",
+      "text": [
+        "Filler entry. Tagore said the language of stone surpasses the language of human here, and standing in front of it that stops sounding like a line.",
+        "Spent most of the time on the carvings rather than the wheels everyone photographs."
+      ],
+      "orientation": "portrait",
+      "ratio": "4:3",
+      "photos": [
+        {
+          "src": "assets/images/posts/travel/odisha-konark-erotica-1.png",
+          "alt": "Carved sculptures on the Konark Sun Temple",
+          "caption": "Detail on the outer wall"
+        },
+        {
+          "src": "assets/images/posts/travel/odisha-konark-erotica-3.png",
+          "alt": "Stone carvings at the Konark Sun Temple",
+          "caption": "Every surface is worked"
+        },
+        {
+          "src": "assets/images/posts/travel/odisha-konark-erotica-4.png",
+          "alt": "Sculptural detail at the Konark Sun Temple",
+          "caption": "Closer in"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-10",
+      "location": "Panjim, Goa",
+      "title": "Sunset, then the river",
+      "text": [
+        "Filler entry. No two sunsets here are the same, which sounds like something you put on a postcard until you watch a few in a row.",
+        "The floating casinos light up on the Mandovi right after. Completely different energy, ten minutes apart."
+      ],
+      "orientation": "landscape",
+      "ratio": "3:2",
+      "photos": [
+        {
+          "src": "assets/images/posts/travel/goa-sunset-landscape.png",
+          "alt": "Sunset over the sea in Goa",
+          "caption": "Bogmalo Beach"
+        },
+        {
+          "src": "assets/images/posts/travel/goa-deltin-casino-night.png",
+          "alt": "Floating casinos lit up at night on the Mandovi River, Goa",
+          "caption": "Mandovi after dark"
+        }
+      ]
+    },
+    {
+      "date": "2026-02-08",
+      "location": "Old Goa",
+      "title": "Churches, in the right order",
+      "text": [
+        "Filler entry. Did the Old Goa circuit on the way south. St. Cajetan was the surprise, and it is the one I would go back to.",
+        "Check the timings before you go. They are not the same for any two of them."
+      ],
+      "orientation": "portrait",
+      "ratio": "4:3",
+      "photos": [
+        {
+          "src": "assets/images/posts/travel/goa-st-cajetan-courtyard.png",
+          "alt": "Courtyard of St. Cajetan Church in Old Goa",
+          "caption": "St. Cajetan courtyard"
+        },
+        {
+          "src": "assets/images/posts/travel/goa-shantadurga-temple-red.png",
+          "alt": "Maruti Temple in Panjim, Goa",
+          "caption": "Maruti Temple, Panjim"
+        },
+        {
+          "src": "assets/images/posts/travel/goa-rocky-coastline-skyline.png",
+          "alt": "Rocky coastline at Anjuna Beach in North Goa",
+          "caption": "Anjuna coastline"
+        }
+      ]
+    }
+  ]
+}

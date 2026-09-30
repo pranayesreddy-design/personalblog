@@ -21,6 +21,9 @@ This file defines the semantics and structure for every new page/section.
 - `assets/js/section.js` = reusable section page logic.
 - `assets/js/post.js` = reusable single-post rendering logic.
 - `assets/css/styles.css` = shared styles.
+- `sections/travel-diary.html` = running travel diary page.
+- `content/travel-diary.json` = diary entries.
+- `assets/js/travel-diary.js` = diary rendering logic.
 
 ## 3) Naming conventions
 
@@ -41,9 +44,11 @@ Every section HTML page must:
    - `[data-section-title]`
    - `[data-section-description]`
    - `[data-post-list]`
+   - `[data-post-sentinel]` (see section 10)
 3. Load scripts in this order:
    1. `../assets/js/site-config.js`
-   2. `../assets/js/section.js`
+   2. `../assets/js/lazy-feed.js`
+   3. `../assets/js/section.js`
 
 ## 4b) Section layouts
 
@@ -139,6 +144,43 @@ Rules:
 - merge over-fragmented one-line blocks into coherent paragraphs when readability improves.
 - keep clear section labels as headings with concise wording.
 
+## 6b) Travel diary contract
+
+The diary is a single continuous feed in `content/travel-diary.json`. Entries load
+in batches of three as you scroll and stop when the list runs out.
+
+```json
+{
+  "entries": [
+    {
+      "date": "YYYY-MM-DD",
+      "location": "Neighbourhood, City",
+      "title": "Short entry title",
+      "text": ["Paragraph one.", "Paragraph two."],
+      "orientation": "portrait",
+      "ratio": "4:3",
+      "photos": [
+        { "src": "assets/images/posts/travel/<file>", "alt": "...", "caption": "..." }
+      ]
+    }
+  ]
+}
+```
+
+Photo rules, enforced by the renderer:
+
+- `orientation` sets photos per row: `portrait` = 3 per row, `landscape` = 2 per row.
+- `ratio` is `4:3` or `3:2`, always written landscape-style. Portrait entries flip it
+  automatically, so `portrait` + `4:3` renders each photo as 3:4.
+- Every photo inside one entry shares that orientation and ratio. Never mix
+  orientations or ratios within an entry.
+- To show both shapes on the same day, write two entries with the same `date`.
+- Give each entry a photo count that is a multiple of its row size (3 or 2), otherwise
+  the last row is left partially filled.
+- Photos are cropped with `object-fit: cover`, so pick source images that already match
+  the declared shape to avoid losing edges.
+- Add newest entries first.
+
 ## 7) How to add a new section
 
 1. Add a section object in `assets/js/site-config.js`.
@@ -169,3 +211,37 @@ When adding any new post, always do all of the following:
 8. Keep `robots.txt` sitemap pointer intact: `Sitemap: https://krishnapranay.com/sitemap.xml`.
 9. After deployment, submit/inspect the URL in Google Search Console.
 10. Check analytics after publish to confirm pageviews are being captured for the new URL.
+
+## 10) Lazy loading contract
+
+`assets/js/lazy-feed.js` owns all progressive rendering. Never hand-roll another
+IntersectionObserver; use `window.LAZY_FEED`:
+
+- `mountLazyFeed({ items, batchSize, sentinelNode, renderItem, onBatch })` renders the
+  first batch immediately and appends the rest as `sentinelNode` nears the viewport.
+- `whenNearViewport(node, onReach)` runs a one-shot callback, for work that should not
+  happen until the reader gets there.
+
+Rules:
+
+- A sentinel must be a `<div class="lazy-sentinel" data-*-sentinel aria-hidden="true">`
+  placed after the content it guards. It needs a non-zero box and must not be `hidden`,
+  or it can never intersect and nothing will load.
+- Anything deferred must still be reachable. With no sentinel and no
+  `IntersectionObserver`, both helpers fall back to rendering everything at once.
+- Only defer weight. Card grids and photo feeds are batched; plain link lists
+  (`layout: "index"`) and article body text are not, because deferring text saves
+  nothing and hides it from find-in-page.
+
+Image attributes, which `loading="lazy"` alone does not handle:
+
+- Every content `<img>` needs `decoding="async"`.
+- The first image in a post body is rendered `loading="eager" fetchpriority="high"`
+  because it is the LCP element; every later image is `loading="lazy"`.
+- Every image needs a CSS `aspect-ratio` so its box is reserved before it loads.
+  Without one the page collapses, every image counts as on-screen, and lazy loading
+  silently stops working.
+
+To check a page really defers, count requests rather than trusting the attribute: serve
+the site with a logging static server, load the page in headless Chrome at a normal
+window size, and compare image requests against a deliberately tall window.

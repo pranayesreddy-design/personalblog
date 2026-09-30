@@ -155,7 +155,7 @@ function renderTextBlock(block, isLead) {
   };
 }
 
-function renderImageBlock(block) {
+function renderImageBlock(block, isPriority) {
   const layout = block.layout === "landscape" || block.layout === "portrait" || block.layout === "inline" || block.layout === "inline-each" || block.layout === "inline-landscape"
     ? block.layout
     : "default";
@@ -165,28 +165,35 @@ function renderImageBlock(block) {
   const caption = block.caption ? `<figcaption>${escapeHtml(block.caption)}</figcaption>` : "";
   const alt = escapeHtml(block.alt || "Post image");
   const src = escapeHtml(block.src);
+  // The opening image is what a reader waits on, so it is fetched ahead of
+  // everything else while the rest of the post stays deferred.
+  const loadingAttrs = isPriority
+    ? 'loading="eager" fetchpriority="high" decoding="async"'
+    : 'loading="lazy" decoding="async"';
   return `
     <figure class="${figureClass}">
-      <img class="post-image" src="./${src}" alt="${alt}" loading="lazy" />
+      <img class="post-image" src="./${src}" alt="${alt}" ${loadingAttrs} />
       ${caption}
     </figure>
   `;
 }
 
-function renderInlineGallery(blocks, useSharedCaption) {
+function renderInlineGallery(blocks, useSharedCaption, isPriority) {
   if (useSharedCaption) {
     const galleryCaptionBlock = blocks.find((item) => String(item.caption || "").trim());
     const galleryCaption = galleryCaptionBlock
       ? `<p class="flow-inline-gallery-caption">${escapeHtml(String(galleryCaptionBlock.caption).trim())}</p>`
       : "";
     const imagesHtml = blocks
-      .map((item) => renderImageBlock({ ...item, caption: "" }))
+      .map((item, itemIndex) => renderImageBlock({ ...item, caption: "" }, isPriority && itemIndex === 0))
       .join("");
 
     return `<div class="flow-inline-gallery flow-inline-gallery--shared">${imagesHtml}</div>${galleryCaption}`;
   }
 
-  const imagesHtml = blocks.map((item) => renderImageBlock(item)).join("");
+  const imagesHtml = blocks
+    .map((item, itemIndex) => renderImageBlock(item, isPriority && itemIndex === 0))
+    .join("");
   return `<div class="flow-inline-gallery flow-inline-gallery--each">${imagesHtml}</div>`;
 }
 
@@ -470,6 +477,7 @@ function renderPostFlow(blocks) {
   }
 
   let hasLeadParagraph = false;
+  let hasPriorityImage = false;
   const htmlChunks = [];
 
   for (let index = 0; index < blocks.length; index += 1) {
@@ -494,11 +502,13 @@ function renderPostFlow(blocks) {
           inlineBlocks.push({ ...nextBlock });
           index += 1;
         }
-        htmlChunks.push(renderInlineGallery(inlineBlocks, isSharedInline));
+        htmlChunks.push(renderInlineGallery(inlineBlocks, isSharedInline, !hasPriorityImage));
+        hasPriorityImage = true;
         continue;
       }
 
-      htmlChunks.push(renderImageBlock(block));
+      htmlChunks.push(renderImageBlock(block, !hasPriorityImage));
+      hasPriorityImage = true;
       continue;
     }
 
@@ -658,7 +668,7 @@ async function renderRelatedReads(sectionKey, currentSlug, sectionMeta, version)
             const ctaLabel = escapeHtml(post.ctaLabel || "Read next");
             const overlayLabel = escapeHtml(`Open ${post.title || "post"}`);
             const imageNode = post.image
-              ? `<img class="post-image" src="./${escapeHtml(post.image)}" alt="${escapeHtml(post.imageAlt || post.title || "Related post image")}" loading="lazy" />`
+              ? `<img class="post-image" src="./${escapeHtml(post.image)}" alt="${escapeHtml(post.imageAlt || post.title || "Related post image")}" loading="lazy" decoding="async" />`
               : "";
             return `
               <article class="card related-card post-card--clickable">
@@ -764,7 +774,19 @@ async function renderPost() {
       });
     }
     renderPostFlow(blocks);
-    await renderRelatedReads(params.section, params.slug, sectionMeta, version);
+
+    // Related Reads sits below the whole article and costs a fetch per card, so
+    // it waits until the reader is near the end instead of competing with the
+    // post itself.
+    const relatedSentinel = document.querySelector("[data-related-sentinel]");
+    const lazyFeed = window.LAZY_FEED;
+    if (lazyFeed && relatedSentinel) {
+      lazyFeed.whenNearViewport(relatedSentinel, () => {
+        renderRelatedReads(params.section, params.slug, sectionMeta, version);
+      });
+    } else {
+      await renderRelatedReads(params.section, params.slug, sectionMeta, version);
+    }
   } catch (error) {
     renderPostError("Unable to load post.");
   }

@@ -74,7 +74,10 @@
 
     document.title = title;
     upsertMeta("description", description, "name");
-    upsertMeta("robots", "index,follow,max-image-preview:large", "name");
+    // Overridable so an unpublished page can hold its noindex. This runs after
+    // parse, so a static tag alone would be overwritten before a crawler that
+    // executes JS ever sees it.
+    upsertMeta("robots", next.robots || "index,follow,max-image-preview:large", "name");
     upsertMeta("og:title", title, "property");
     upsertMeta("og:description", description, "property");
     upsertMeta("og:type", type, "property");

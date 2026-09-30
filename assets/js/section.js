@@ -9,6 +9,27 @@ const {
   buildSectionCtaStyle
 } = window.SECTION_UTILS || {};
 
+// Card images are the heavy part of a section page, so only enough cards to
+// cover a first screen are rendered up front.
+const CARDS_PER_BATCH = 6;
+
+// Collects the cards every grid wants and hands back a placeholder to render in
+// their place. Cards are queued in document order, so revealing them in queue
+// order fills the page from the top down.
+function createCardQueue() {
+  const placements = [];
+  let gridCount = 0;
+
+  function reserveGrid(cardHtmlList) {
+    gridCount += 1;
+    const gridKey = `grid-${gridCount}`;
+    cardHtmlList.forEach((html) => placements.push({ gridKey, html }));
+    return gridKey;
+  }
+
+  return { placements, reserveGrid };
+}
+
 function createPostCard(sectionMeta, post, cardId) {
   const postUrl = getPostUrl(post.slug, sectionMeta.key, "../");
   const cardClass = sectionMeta.key === "travel"
@@ -17,7 +38,7 @@ function createPostCard(sectionMeta, post, cardId) {
   const ctaLabel = escapeHtml(post.ctaLabel || "Read post");
   const overlayLabel = escapeHtml(`Open ${post.title || "post"}`);
   const imageNode = post.image
-    ? `<img class="post-image" src="../${post.image}" alt="${post.imageAlt || post.title}" loading="lazy" />`
+    ? `<img class="post-image" src="../${post.image}" alt="${post.imageAlt || post.title}" loading="lazy" decoding="async" />`
     : "";
   const ctaStyle = buildSectionCtaStyle(sectionMeta, "../");
   const articleId = cardId ? ` id="${cardId}"` : "";
@@ -49,21 +70,18 @@ function renderPostIndex(sectionMeta, posts) {
   return `<nav class="card section-index"><ol class="section-index-list">${itemsHtml}</ol></nav>`;
 }
 
-function renderPostGrid(sectionMeta, posts, scopeId) {
+function renderPostGrid(sectionMeta, posts, scopeId, cardQueue) {
   const validPosts = toValidPosts(posts);
   if (!validPosts.length) {
     return '<p class="empty-state">No posts yet in this section.</p>';
   }
-  return `
-    <div class="section-grid">
-      ${validPosts
-        .map((post, postIndex) => createPostCard(sectionMeta, post, scopeId ? getPostAnchorId(scopeId, post, postIndex) : ""))
-        .join("")}
-    </div>
-  `;
+  const cardHtmlList = validPosts.map((post, postIndex) =>
+    createPostCard(sectionMeta, post, scopeId ? getPostAnchorId(scopeId, post, postIndex) : ""));
+  const gridKey = cardQueue.reserveGrid(cardHtmlList);
+  return `<div class="section-grid" data-card-grid="${gridKey}"></div>`;
 }
 
-function renderGroupedPosts(sectionMeta, groups) {
+function renderGroupedPosts(sectionMeta, groups, cardQueue) {
   const validGroups = Array.isArray(groups) ? groups : [];
   if (!validGroups.length) {
     return "";
@@ -76,11 +94,8 @@ function renderGroupedPosts(sectionMeta, groups) {
       const groupDescription = group.description
         ? `<p class="tagline group-description">${escapeHtml(group.description)}</p>`
         : "";
-      const groupPostsId = getGroupPostsAnchorId(group, groupIndex);
-      const groupPostsHtml = renderPostGrid(sectionMeta, group.posts, groupPostsId);
-      const hasGroupPosts = toValidPosts(group.posts).length > 0;
-      const groupPostsSectionTitle = escapeHtml(group.postsTitle || `More in ${groupTitle}`);
-
+      // Subgroups are emitted above the group's own posts, so they have to be
+      // built first to keep the card queue in document order.
       const subgroupHtml = Array.isArray(group.subgroups) && group.subgroups.length
         ? group.subgroups
           .map((subgroup, subgroupIndex) => {
@@ -89,7 +104,7 @@ function renderGroupedPosts(sectionMeta, groups) {
             const subgroupDescription = subgroup.description
               ? `<p class="tagline subgroup-description">${escapeHtml(subgroup.description)}</p>`
               : "";
-            const subgroupPostsHtml = renderPostGrid(sectionMeta, subgroup.posts, subgroupId);
+            const subgroupPostsHtml = renderPostGrid(sectionMeta, subgroup.posts, subgroupId, cardQueue);
             return `
               <section class="post-subgroup" id="${subgroupId}">
                 <h4>${subgroupTitle}</h4>
@@ -100,6 +115,11 @@ function renderGroupedPosts(sectionMeta, groups) {
           })
           .join("")
         : "";
+
+      const groupPostsId = getGroupPostsAnchorId(group, groupIndex);
+      const hasGroupPosts = toValidPosts(group.posts).length > 0;
+      const groupPostsSectionTitle = escapeHtml(group.postsTitle || `More in ${groupTitle}`);
+      const groupPostsHtml = renderPostGrid(sectionMeta, group.posts, groupPostsId, cardQueue);
 
       return `
         <section class="post-group" id="${groupId}">
@@ -120,6 +140,38 @@ function renderGroupedPosts(sectionMeta, groups) {
     .join("");
 
   return `<div class="grouped-posts">${groupsHtml}</div>`;
+}
+
+// Pairs each queued card with the placeholder grid it belongs to, then lets the
+// shared feed append them a batch at a time.
+function mountCardFeed(rootNode, placements, sentinelNode) {
+  const lazyFeed = window.LAZY_FEED;
+  const gridNodes = new Map();
+  const candidates = Array.from(rootNode.querySelectorAll("[data-card-grid]"));
+  if (rootNode.dataset && rootNode.dataset.cardGrid) {
+    candidates.push(rootNode);
+  }
+  candidates.forEach((gridNode) => {
+    gridNodes.set(gridNode.dataset.cardGrid, gridNode);
+  });
+
+  const items = placements
+    .map((placement) => ({ gridNode: gridNodes.get(placement.gridKey), html: placement.html }))
+    .filter((item) => item.gridNode);
+
+  if (!lazyFeed) {
+    items.forEach((item) => {
+      item.gridNode.insertAdjacentHTML("beforeend", item.html);
+    });
+    return;
+  }
+
+  lazyFeed.mountLazyFeed({
+    items,
+    batchSize: CARDS_PER_BATCH,
+    sentinelNode,
+    renderItem: (item) => lazyFeed.appendHtml(item.gridNode, item.html)
+  });
 }
 
 function getStructuredPostCount(data) {
@@ -152,6 +204,7 @@ async function renderSection() {
   const descriptionNode = document.querySelector("[data-section-description]");
   const sublineNode = document.querySelector("[data-section-subline]");
   const listNode = document.querySelector("[data-post-list]");
+  const sentinelNode = document.querySelector("[data-post-sentinel]");
 
   if (!sectionMeta || !titleNode || !descriptionNode || !listNode) {
     return;
@@ -200,20 +253,34 @@ async function renderSection() {
 
     const posts = toValidPosts(data.posts);
 
+    // Index layouts are plain text links, so there is nothing worth deferring
+    // and holding them back would only hide them from find-in-page.
     if (sectionMeta.layout === "index" && posts.length) {
       listNode.innerHTML = renderPostIndex(sectionMeta, posts);
       return;
     }
 
-    const groupedHtml = renderGroupedPosts(sectionMeta, data.groups);
+    const cardQueue = createCardQueue();
+    const groupedHtml = renderGroupedPosts(sectionMeta, data.groups, cardQueue);
+
     if (groupedHtml) {
       listNode.innerHTML = groupedHtml;
+      mountCardFeed(listNode, cardQueue.placements, sentinelNode);
       return;
     }
 
-    listNode.innerHTML = posts.length
-      ? posts.map((post) => createPostCard(sectionMeta, post)).join("")
-      : '<p class="empty-state">No posts yet. Add one in content/sections.</p>';
+    if (!posts.length) {
+      listNode.innerHTML = '<p class="empty-state">No posts yet. Add one in content/sections.</p>';
+      return;
+    }
+
+    // Ungrouped sections already style the list node as the grid, so cards are
+    // queued straight into it rather than into a nested placeholder.
+    listNode.innerHTML = "";
+    listNode.dataset.cardGrid = cardQueue.reserveGrid(
+      posts.map((post) => createPostCard(sectionMeta, post))
+    );
+    mountCardFeed(listNode, cardQueue.placements, sentinelNode);
   } catch (error) {
     listNode.innerHTML = '<p class="empty-state">Unable to load posts.</p>';
   }

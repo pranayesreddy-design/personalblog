@@ -33,9 +33,13 @@
       <section class="container">
         <div class="section-heading-row">
           <h2>Posts</h2>
-          <a class="index-chip" href="./travel-index.html">Index</a>
+          <nav class="section-heading-links" aria-label="Travel sub-pages">
+            <!-- Unpublished: restore the travel-diary.html chip when the diary goes live. -->
+            <a class="index-chip" href="./travel-index.html">Index</a>
+          </nav>
         </div>
         <div class="section-grid" data-post-list></div>
+        <div class="lazy-sentinel" data-post-sentinel aria-hidden="true"></div>
       </section>
     </main>
 
@@ -45,6 +49,7 @@
     <script src="../assets/js/site-config.js"></script>
     <script src="../assets/js/shared-ui.js"></script>
     <script src="../assets/js/section-utils.js"></script>
+    <script src="../assets/js/lazy-feed.js"></script>
     <script src="../assets/js/section.js"></script>
   </body>
 </html>

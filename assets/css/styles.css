@@ -412,6 +412,12 @@ h3 {
   gap: 0.8rem;
 }
 
+.section-heading-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
 .index-chip {
   border: 1px solid #3a3a3a;
   background: rgba(16, 16, 16, 0.9);
@@ -895,6 +901,142 @@ h3 {
   font-size: 0.9rem;
   color: var(--muted);
   font-style: italic;
+}
+
+.diary {
+  padding-bottom: 1.5rem;
+}
+
+.diary-feed {
+  display: grid;
+  gap: 2.6rem;
+}
+
+.diary-entry {
+  --diary-rail-width: 1px;
+  --diary-dot-size: 7px;
+  --diary-head-line: 1.15rem;
+  position: relative;
+  border-left: var(--diary-rail-width) solid #262626;
+  padding-left: 1.25rem;
+}
+
+/* Centred on the rail: absolute offsets resolve against the padding box, so the
+   rail spans -1px to 0 and its midpoint is half a pixel left of that edge. */
+.diary-entry::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--diary-dot-size) / -2 - var(--diary-rail-width) / 2);
+  top: calc((var(--diary-head-line) - var(--diary-dot-size)) / 2);
+  width: var(--diary-dot-size);
+  height: var(--diary-dot-size);
+  border-radius: 50%;
+  background: #4f4f4f;
+}
+
+.diary-entry-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.55rem;
+  line-height: var(--diary-head-line);
+  margin-bottom: 0.35rem;
+}
+
+.diary-date {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+
+.diary-location {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.diary-location::before {
+  content: "· ";
+}
+
+.diary-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.diary-text {
+  margin: 0 0 0.6rem;
+  max-width: 68ch;
+  color: #dfdfdf;
+  line-height: 1.62;
+}
+
+.diary-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--diary-columns, 2), minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-top: 0.95rem;
+}
+
+.diary-photo {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.diary-photo img {
+  width: 100%;
+  aspect-ratio: var(--diary-aspect, 4 / 3);
+  object-fit: cover;
+  object-position: center;
+  border-radius: 10px;
+  border: var(--panel-border-line);
+  display: block;
+}
+
+.diary-photo figcaption {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Scroll tripwire for progressive rendering. It has to stay in flow and keep a
+   non-zero box, otherwise it can never intersect the viewport. */
+.lazy-sentinel {
+  height: 1px;
+}
+
+.diary-status {
+  margin: 2rem 0 0;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.diary-status--done {
+  font-style: italic;
+}
+
+/* Fixed column counts need to relax on small screens, but the aspect ratio
+   stays locked so a row never mixes shapes. */
+@media (max-width: 760px) {
+  .diary-grid--portrait {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .diary-grid--landscape {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .diary-grid--portrait {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .site-footer {
