@@ -1,5 +1,3 @@
-# Toooookyoooooo: Neon, Temples, Tiny Bars, and Too Much to Do
-
 "There are cities, there are metropolises, and then there is Tokyo."
 
 ![Tokyo skyline view with Mount Fuji in the distance](assets/images/posts/travel/tokyo-tile-skyline.png "Tokyo skyline with Mount Fuji in the backdrop | landscape")

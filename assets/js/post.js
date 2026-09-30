@@ -92,12 +92,30 @@ function renderInlineText(value) {
   return html;
 }
 
+const MAX_INLINE_HEADING_LENGTH = 100;
+
+function getHeadingTag(level) {
+  const numericLevel = Number(level);
+  if (numericLevel >= 4) {
+    return "h4";
+  }
+  if (numericLevel === 3) {
+    return "h3";
+  }
+  return "h2";
+}
+
+function renderHeading(value, level) {
+  const tag = getHeadingTag(level);
+  return `<${tag} class="flow-heading flow-heading--${tag}">${escapeHtml(String(value).trim())}</${tag}>`;
+}
+
 function classifyTextBlock(value) {
   const trimmed = value.trim();
-  const headingPattern = /^[IVXLC]+\.\s+[A-Za-z0-9 ,:&'()\/\-?!]+$/;
+  const headingPattern = /^[IVXLC]+\.\s+[A-Za-z0-9 ,.:&'()\/\-?!]+$/;
   const quotePattern = /^(["“]).+\1(\s*[-–—]\s*.+)?$/;
 
-  if (headingPattern.test(trimmed)) {
+  if (trimmed.length <= MAX_INLINE_HEADING_LENGTH && headingPattern.test(trimmed)) {
     return "heading";
   }
 
@@ -119,7 +137,7 @@ function renderTextBlock(block, isLead) {
 
   if (kind === "heading") {
     return {
-      html: `<h3 class="flow-heading">${safeValue}</h3>`,
+      html: renderHeading(value, 2),
       isParagraph: false
     };
   }
@@ -305,10 +323,14 @@ function parseMarkdownToBlocks(markdownText) {
       continue;
     }
 
-    const headingMatch = trimmed.match(/^#{1,6}\s+(.+)$/);
+    const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
     if (headingMatch) {
       flushParagraph();
-      blocks.push({ type: "heading", value: headingMatch[1].trim() });
+      blocks.push({
+        type: "heading",
+        value: headingMatch[2].trim(),
+        level: headingMatch[1].length
+      });
       index += 1;
       continue;
     }
@@ -481,7 +503,7 @@ function renderPostFlow(blocks) {
     }
 
     if (block.type === "heading" && block.value) {
-      htmlChunks.push(`<h3 class="flow-heading">${escapeHtml(String(block.value).trim())}</h3>`);
+      htmlChunks.push(renderHeading(block.value, block.level));
       continue;
     }
 
@@ -577,6 +599,26 @@ async function renderRelatedReads(sectionKey, currentSlug, sectionMeta, version)
     if (!relatedPosts.length) {
       relatedNode.hidden = true;
       relatedNode.innerHTML = "";
+      return;
+    }
+
+    if (sectionMeta && sectionMeta.layout === "index") {
+      relatedNode.innerHTML = `
+        <h2>Related Reads</h2>
+        <nav class="card section-index related-index">
+          <ol class="section-index-list">
+            ${relatedPosts
+              .map((post) => {
+                const postUrl = `./post.html?section=${encodeURIComponent(sectionKey)}&slug=${encodeURIComponent(post.slug)}`;
+                const title = escapeHtml(post.title || post.slug);
+                const date = escapeHtml(post.date || "");
+                return `<li><a href="${postUrl}">${title}</a>${date ? `<span class="index-date">${date}</span>` : ""}</li>`;
+              })
+              .join("")}
+          </ol>
+        </nav>
+      `;
+      relatedNode.hidden = false;
       return;
     }
 

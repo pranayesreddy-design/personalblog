@@ -1,5 +1,3 @@
-# Odisha Temple Run: Stone, Devotion, and the Sea
-
 Odisha feels like one of those places that does not try too hard to impress you - and still does.
 
 You go there thinking it is a temple trip. And yes, it is that. But it is also caves, war memory, Buddhist calm, a sacred coastal town, a monumental Sun Temple, and a vast lagoon full of birds and boat rides.

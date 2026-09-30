@@ -292,24 +292,39 @@
       "value": "If machine labour becomes a major part of the economy, society may need new ideas."
     },
     {
-      "type": "text",
-      "value": "1. Broader ownership of productive technology: people should not only earn through wages. They may need access to ownership through shares, cooperatives, public funds, or national AI dividends."
-    },
-    {
-      "type": "text",
-      "value": "2. Tax systems that adapt to automation: if companies reduce human labour but increase profits through machines, tax systems may need to capture some of that value and redistribute it."
-    },
-    {
-      "type": "text",
-      "value": "3. Stronger public services: healthcare, education, housing, and transport becoming less dependent on individual income would reduce the stress of labour disruption."
-    },
-    {
-      "type": "text",
-      "value": "4. Human-centered education: education should not only train people to compete with machines. It should train people to work with machines, build judgment, understand systems, and create meaning."
-    },
-    {
-      "type": "text",
-      "value": "5. New definitions of work: caregiving, community building, teaching, art, mentoring, and local problem-solving may need more recognition and support."
+      "type": "list",
+      "items": [
+        {
+          "ordered": true,
+          "marker": 1,
+          "value": "**Broader ownership of productive technology:** people should not only earn through wages. They may need access to ownership through shares, cooperatives, public funds, or national AI dividends.",
+          "children": []
+        },
+        {
+          "ordered": true,
+          "marker": 2,
+          "value": "**Tax systems that adapt to automation:** if companies reduce human labour but increase profits through machines, tax systems may need to capture some of that value and redistribute it.",
+          "children": []
+        },
+        {
+          "ordered": true,
+          "marker": 3,
+          "value": "**Stronger public services:** healthcare, education, housing, and transport becoming less dependent on individual income would reduce the stress of labour disruption.",
+          "children": []
+        },
+        {
+          "ordered": true,
+          "marker": 4,
+          "value": "**Human-centered education:** education should not only train people to compete with machines. It should train people to work with machines, build judgment, understand systems, and create meaning.",
+          "children": []
+        },
+        {
+          "ordered": true,
+          "marker": 5,
+          "value": "**New definitions of work:** caregiving, community building, teaching, art, mentoring, and local problem-solving may need more recognition and support.",
+          "children": []
+        }
+      ]
     },
     {
       "type": "text",

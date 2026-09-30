@@ -1,5 +1,3 @@
-# Bangkok and Pattaya: Temples, 7-Elevens, and Questionable Decisions
-
 If I had to choose one country to keep going back to, **Thailand would definitely be it**.
 
 The convenience of **7-Elevens every five steps**, the food, the beaches, the massage places, the relative ease of travel, and yes - the fact that you can go from a Michelin-recognized meal to something grilled on the street that may or may not change your life.
@@ -11,10 +9,10 @@ Thailand just works.
 I broadly think of Thailand in **three parts**:
 
 - **Central Thailand** - **Bangkok** and **Pattaya**
-- **Southern Thailand** - **Phuket, Krabi, and the Phi Phi Islands**  
-  *[Read this post for the south.](./post.html?section=travel&slug=thailand-south-placeholder)*
-- **Northern Thailand** - **Chiang Mai, Chiang Rai, and Pai**  
-  *[Read this post for the north.](./post.html?section=travel&slug=thailand-north-placeholder)*
+- **Southern Thailand** - **Phuket, Krabi, and the Phi Phi Islands**
+  - [Read this post for the south.](./post.html?section=travel&slug=thailand-south-placeholder)
+- **Northern Thailand** - **Chiang Mai, Chiang Rai, and Pai**
+  - [Read this post for the north.](./post.html?section=travel&slug=thailand-north-placeholder)
 
 This post is about the **central belt**: **Bangkok and Pattaya**.
 
@@ -133,9 +131,9 @@ Thailand often gives you these choices:
 - pay more, plan less
 - pay less, stand around a bit
 
-### 2. Things to do in Pattaya
+## V. Things to do in Pattaya
 
-#### Sanctuary of Truth
+### 1. Sanctuary of Truth
 
 This is the main thing.
 
@@ -143,7 +141,7 @@ The **Sanctuary of Truth** is the one place in Pattaya that genuinely stands out
 
 This is not optional. Go.
 
-#### Walking Street
+### 2. Walking Street
 
 Of course.
 
@@ -151,15 +149,15 @@ You cannot come to Pattaya and then pretend **Walking Street** does not exist. W
 
 But yes, go once.
 
-#### Alcazar Cabaret
+### 3. Alcazar Cabaret
 
 Catch a show at **Alcazar Cabaret**. Easy, fun, polished, and deeply Thailand in a way that is hard to explain but easy to enjoy.
 
-#### Nong Nooch Garden
+### 4. Nong Nooch Garden
 
 If you want something more landscaped and less neon, **Nong Nooch Garden** exists to provide that contrast.
 
-## V. Final thought
+## VI. Final thought
 
 Bangkok and Pattaya are probably not the parts of Thailand that will own your heart forever.
 

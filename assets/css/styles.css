@@ -479,6 +479,12 @@ h3 {
   font-weight: 600;
 }
 
+.index-date {
+  margin-left: 0.5rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .grouped-posts {
   display: grid;
   gap: 1.4rem;
@@ -701,6 +707,10 @@ h3 {
   margin-bottom: 0;
 }
 
+.related-index {
+  margin-bottom: 0;
+}
+
 .related-card {
   min-height: 200px;
 }
@@ -748,6 +758,27 @@ h3 {
   text-transform: none;
   color: #ffffff;
   font-weight: 700;
+}
+
+.flow-heading--h2 {
+  margin-top: 1.9rem;
+  font-size: 1.2rem;
+}
+
+.flow-heading--h2:first-child {
+  margin-top: 0.4rem;
+}
+
+.flow-heading--h3 {
+  margin-top: 1.35rem;
+  font-size: 1.02rem;
+}
+
+.flow-heading--h4 {
+  margin-top: 1rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.92rem;
+  color: #c6c6c6;
 }
 
 .flow-quote {

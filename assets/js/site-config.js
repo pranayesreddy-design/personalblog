@@ -3,7 +3,7 @@ window.BLOG_CONFIG = {
   siteUrl: "https://krishnapranay.com",
   analyticsId: "G-F179WCY1P5",
   siteTagline: "Travel, thoughts, and money insights.",
-  contentVersion: "2026-05-08-58",
+  contentVersion: "2026-05-08-60",
   siteSubline: "Sampling a hundred things along the way. I love poker, table tennis, new experiences, and whatever else keeps life interesting.",
   footerText: "Scroll down for star gazing and make a wish if you see a shooting star.",
   experiments: [
@@ -49,7 +49,8 @@ window.BLOG_CONFIG = {
       subline: "Change is constant. Ideals evolve, perspectives shift, and people grow. If you find conflicting opinions here, it likely means I’ve changed as a person, for better or worse, not that I’m a hypocrite.",
       ctaLabel: "Enter Rabbit Hole",
       ctaBackground: "assets/images/cta/thoughts-rabbit-pixel.svg",
-      page: "./sections/thoughts.html"
+      page: "./sections/thoughts.html",
+      layout: "index"
     }
   ]
 };

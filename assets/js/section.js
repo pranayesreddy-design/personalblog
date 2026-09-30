@@ -33,6 +33,22 @@ function createPostCard(sectionMeta, post, cardId) {
   `;
 }
 
+function renderPostIndex(sectionMeta, posts) {
+  const validPosts = toValidPosts(posts).filter((post) => !post.indexHidden);
+  if (!validPosts.length) {
+    return '<p class="empty-state">No posts yet in this section.</p>';
+  }
+  const itemsHtml = validPosts
+    .map((post) => {
+      const postTitle = escapeHtml(post.title || post.slug || "Untitled post");
+      const postHref = getPostUrl(post.slug, sectionMeta.key, "../");
+      const postDate = post.date ? `<span class="index-date">${escapeHtml(post.date)}</span>` : "";
+      return `<li><a href="${postHref}">${postTitle}</a>${postDate}</li>`;
+    })
+    .join("");
+  return `<nav class="card section-index"><ol class="section-index-list">${itemsHtml}</ol></nav>`;
+}
+
 function renderPostGrid(sectionMeta, posts, scopeId) {
   const validPosts = toValidPosts(posts);
   if (!validPosts.length) {
@@ -182,13 +198,19 @@ async function renderSection() {
       });
     }
 
+    const posts = toValidPosts(data.posts);
+
+    if (sectionMeta.layout === "index" && posts.length) {
+      listNode.innerHTML = renderPostIndex(sectionMeta, posts);
+      return;
+    }
+
     const groupedHtml = renderGroupedPosts(sectionMeta, data.groups);
     if (groupedHtml) {
       listNode.innerHTML = groupedHtml;
       return;
     }
 
-    const posts = toValidPosts(data.posts);
     listNode.innerHTML = posts.length
       ? posts.map((post) => createPostCard(sectionMeta, post)).join("")
       : '<p class="empty-state">No posts yet. Add one in content/sections.</p>';

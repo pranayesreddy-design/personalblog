@@ -45,6 +45,17 @@ Every section HTML page must:
    1. `../assets/js/site-config.js`
    2. `../assets/js/section.js`
 
+## 4b) Section layouts
+
+A section object in `site-config.js` may set `layout`:
+
+- omitted (default): posts render as image cards in a grid.
+- `"index"`: posts render as a plain numbered list of links (title + date), no images or CTAs.
+
+This applies to both the section page and the Related Reads block on that section's posts.
+
+Use `"index"` for text-first sections where thumbnails add nothing.
+
 ## 5) Content contract
 
 Each section data file must follow this JSON shape:
@@ -96,8 +107,32 @@ Rules:
   - paragraphs separated by blank lines
   - images via `![alt](path "optional caption")`
   - quotes via `> quote text`
-  - major section headings should use Roman numerals (`I.`, `II.`, `III.`...).
-  - sub-section/activity headings under a major section should use Arabic numerals (`1.`, `2.`, `3.`...).
+  - bold via `**text**` and links via `[label](url)`
+  - lists via `-` or `1.`, nested by indenting exactly 2 spaces per level
+
+### Heading rules
+
+- Never repeat the post title as a heading in the body. The page template already
+  renders `title` as the `<h1>`, so a `# Title` line duplicates it.
+- `##` = major section, prefixed with a Roman numeral (`I.`, `II.`, `III.`...),
+  numbered sequentially from `I.` with no gaps.
+- `###` = sub-section, prefixed with an Arabic numeral (`1.`, `2.`, `3.`...),
+  restarting at `1.` inside each major section.
+- `####` = leaf item under a sub-section, also prefixed with an Arabic numeral
+  restarting at `1.`.
+- A labelled sequence (`Day 1:`, `Day 2:`) is an accepted substitute for `1.`/`2.`
+  at the `###` level when the label carries meaning, as in itinerary routes.
+- Do not add a sub-heading that only restates its parent. Put the content directly
+  under the major section instead.
+- Heading level drives size on the page, so use the level that matches the real
+  depth rather than picking one for appearance.
+
+### Unsupported markdown
+
+- Italics (`*text*`) are not parsed. Single asterisks render literally, so use
+  `**bold**` or plain text.
+- A list item's continuation line must be a nested list item (`  - ...`). A bare
+  indented line ends the list and splits it into separate lists.
 - Keep markdown files at `content/posts/<section-key>/<post-slug>.md`.
 - Legacy `blocks` and `content` arrays are still supported for backward compatibility.
 - when user provides new raw content, normalize grammar and punctuation while preserving tone/meaning.

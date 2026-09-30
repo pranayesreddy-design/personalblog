@@ -1,5 +1,3 @@
-# Pondicherry: A Little Bit French, A Lot South Indian
-
 ![I love Pondy sign in Pondicherry](assets/images/posts/travel/pondicherry-i-love-pondy.png "I love Pondy | portrait")
 
 If Goa is the Portuguese postcard, Pondicherry is the French one.
@@ -38,7 +36,7 @@ Pondicherry is at its best when you leave some room for wandering.
 
 Pondicherry's beaches are not Goa, and that is fine. They are less about excess and more about fitting into the rhythm of the town.
 
-#### Rock Beach
+#### 1. Rock Beach
 
 Rock Beach is the one closest to White Town, and it is an easy addition to your itinerary. Come here early for a pleasant sunrise, or return at night for a breezy stroll along the promenade. It is the kind of place where you can walk aimlessly, watch the sea, and finish the evening with a gelato or ice cream from GMT.
 
@@ -46,7 +44,7 @@ Rock Beach is the one closest to White Town, and it is an easy addition to your 
 
 ![Rock Beach promenade at sunrise, Pondicherry](assets/images/posts/travel/pondicherry-rock-beach-sunrise-2.png "Sunrise at Rock Beach promenade | inline-landscape")
 
-#### Eden Beach
+#### 2. Eden Beach
 
 This is a Blue Flag beach, cleaner and more organized than many Indian beaches, with a pleasant shoreline and a few fun activities around. The coconut trees lining the shores give Eden Beach that classic coastal postcard feel, especially in the softer morning and evening light.
 
@@ -57,7 +55,7 @@ If you want to add boating to the plan, head to Will's Boat House nearby:
 
 Important note: negotiate hard.
 
-#### Serenity Beach
+#### 3. Serenity Beach
 
 If you want something more active, try surfing at Serenity Beach. It is one of the better places around Pondicherry if you want a little movement instead of just sitting by the water pretending to be deep.
 
