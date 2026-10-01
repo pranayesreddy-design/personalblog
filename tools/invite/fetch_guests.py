@@ -354,7 +354,20 @@ def main(argv=None):
         action="store_true",
         help="show what would be written without touching the CSV",
     )
+    parser.add_argument(
+        "--whoami",
+        action="store_true",
+        help="print the address to share the sheet with, then exit",
+    )
     args = parser.parse_args(argv)
+
+    # Needs no sheet and no network: this is the address the sheet has to be
+    # shared with, and not sharing it is the usual cause of a 403.
+    if args.whoami:
+        creds = load_credentials(args.credentials)
+        print(creds["client_email"])
+        print("\nShare the sheet with that address (Viewer is enough).")
+        return 0
 
     if not args.sheet:
         parser.error("--sheet is required (or set INVITE_SHEET_ID)")
