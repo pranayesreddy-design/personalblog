@@ -1,6 +1,11 @@
 (() => {
-  // Point this at the serverless function once it exists. While it is empty the
-  // form says plainly that nothing was sent, rather than faking a success.
+  // The /exec URL of the Apps Script in tools/invite/rsvp.gs. While it is empty
+  // the form says plainly that nothing was sent, rather than faking a success.
+  //
+  // This URL is public the moment it ships in this file, so the script must
+  // treat an unknown token as the only gate on writing to the sheet. Replace an
+  // existing deployment rather than creating a new one; a new deployment gets a
+  // new URL and silently breaks every invite already sent.
   const RSVP_ENDPOINT = "";
 
   // Reveal on scroll ------------------------------------------------------
@@ -161,12 +166,34 @@
     try {
       const response = await fetch(RSVP_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        // Apps Script has no doOptions and cannot send CORS headers, so this
+        // has to stay a "simple" request. text/plain carrying a JSON string
+        // skips the preflight; application/json would fail with a 405 on the
+        // OPTIONS it never answers.
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        // Apps Script answers /exec with a redirect to googleusercontent.
+        redirect: "follow",
         body: JSON.stringify(payload)
       });
+
       if (!response.ok) {
         throw new Error(`RSVP failed with ${response.status}`);
       }
+
+      const result = await response.json();
+      if (!result.ok) {
+        // The server reached a decision and refused, so retrying will not
+        // help. An unrecognised code is the likely one and needs a human.
+        setStatus(
+          result.error === "unknown token"
+            ? "We could not match this invite to our list. Please send us the link you used."
+            : "Something was wrong with that submission. Please text us and we will sort it out.",
+          true
+        );
+        submitNode.disabled = false;
+        return;
+      }
+
       setStatus(
         payload.attending === "yes"
           ? "Thank you, we cannot wait to see you."
@@ -177,7 +204,14 @@
       });
     } catch (error) {
       submitNode.disabled = false;
-      setStatus("That did not go through. Please try again in a moment.", true);
+      // The request may well have been stored before the failure: a blocked
+      // cross-origin read looks identical to a dropped connection from here.
+      // Claiming it failed outright would invite a duplicate submission, so
+      // say what is actually known.
+      setStatus(
+        "We could not confirm that was saved. Please text us rather than sending it twice.",
+        true
+      );
     }
   });
 

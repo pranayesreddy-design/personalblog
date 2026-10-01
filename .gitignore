@@ -5,4 +5,11 @@
 # Real guest data. Only guests.sample.csv belongs in the repo.
 /tools/invite/guests.csv
 
+# Google service account private key. Committing this to a public repo would
+# hand anyone read access to the guest sheet, and the key stays valid until it
+# is explicitly revoked in the Cloud console.
+/tools/invite/service-account.json
+*-service-account.json
+*.pem
+
 .DS_Store

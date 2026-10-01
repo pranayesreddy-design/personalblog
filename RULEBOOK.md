@@ -255,9 +255,11 @@ Lives apart from the blog on purpose. It does not use `styles.css`, `site-config
   on purpose: GitHub Pages serves every file in this repo, so a template under `i/preview/`
   would be a guessable live URL showing the whole invite.
 - `assets/css/invite.css` - standalone theme, mobile-first.
-- `assets/js/invite.js` - RSVP behaviour. `RSVP_ENDPOINT` is empty until the function
+- `assets/js/invite.js` - RSVP behaviour. `RSVP_ENDPOINT` is empty until the endpoint
   exists; the form says nothing was sent rather than faking success.
 - `assets/images/invite/<token>.jpg` - per-guest photo, long edge 1000px.
+- `tools/invite/fetch_guests.py` - pulls the guest list from the Google Sheet.
+- `tools/invite/rsvp.gs` - the Apps Script that receives RSVPs into that same sheet.
 
 Generated pages go to `i/<token>/index.html`. The template sits at the same depth
 (`tools/invite/`) so its `../../assets/...` paths work unchanged once a page is rendered.
@@ -312,10 +314,66 @@ Template contract:
 - Guest pages must stay `noindex,nofollow`, out of `sitemap.xml`, and unlinked from
   anywhere on the site.
 
-**Before generating real pages:** this repo is public, so committing `i/<token>/` here
-would publish every token, name, and photo on GitHub and defeat the unguessable-link
-model entirely. The invite needs a private repo deployed to Netlify/Vercel, which is
-also the only way to host the RSVP function, since GitHub Pages cannot run one.
+### Google Sheet, in and out
 
-Remaining steps: real dates, venues, story and bio copy; wire the RSVP endpoint; deploy
-`dist/` from a private repo; batch-generate, spot-check, send.
+The sheet is the source of truth for guests. Two separate pieces connect to it, and
+neither needs any third-party Python package.
+
+**Reading it** - `tools/invite/fetch_guests.py` authenticates as a service account and
+writes `tools/invite/guests.csv`. The RS256 JWT is signed by shelling out to `openssl`,
+which is why there is no venv or `requirements.txt`. Scope is
+`spreadsheets.readonly`, so the script cannot damage the sheet.
+
+One-time setup:
+
+1. In the Google Cloud console, make a project and enable the **Google Sheets API**.
+2. Create a **service account**, then under its Keys tab add a JSON key.
+3. Save that file as `tools/invite/service-account.json` and `chmod 600` it. It is
+   gitignored, along with `*.pem` and `*-service-account.json`.
+4. Open the key file, copy the `client_email` (it ends in
+   `.iam.gserviceaccount.com`), and **share the sheet with that address** as Viewer.
+   This is the step people miss; without it the API returns 403 or 404 even though the
+   credentials are valid.
+
+```
+python3 tools/invite/fetch_guests.py --sheet <spreadsheet-id> --dry-run
+python3 tools/invite/fetch_guests.py --sheet <spreadsheet-id> --range 'Guests!A:Z'
+```
+
+Sheet headers are matched loosely, so `Guest Name`, `guest_name` and `guestname` all
+work; see `ALIASES` in the script for accepted spellings. Only a name column is
+required. Rows with no name are skipped.
+
+A token is a live URL as soon as it is sent to someone, so a blank token cell in the
+sheet never wipes one that already exists locally: `fetch_guests.py` carries over any
+token already in `guests.csv`, matching on name, and says which ones it kept. Two
+guests sharing a token is a hard error, because they would share an invite page. Paste
+tokens back into the sheet once links go out, so the sheet stays authoritative.
+
+**Writing to it** - `tools/invite/rsvp.gs` goes in the sheet's own Apps Script project
+(Extensions > Apps Script), deployed as a web app with *Execute as: Me* and *Who has
+access: Anyone*. "Anyone" is unavoidable since guests are not signed into Google; it
+exposes only this script, which never reads anything back to the caller. Put the `/exec`
+URL in `RSVP_ENDPOINT` in `assets/js/invite.js`.
+
+Three constraints worth knowing before touching either side:
+
+- Apps Script has no `doOptions` and cannot set CORS headers, so only "simple" requests
+  work. The client posts a JSON string as `text/plain` and the script parses
+  `e.postData.contents`. Posting `application/json` triggers a preflight and fails with
+  405. `doOptions` and `setHeaders` suggestions found online do not work.
+- **Edit the existing deployment when redeploying.** A new deployment gets a new `/exec`
+  URL, which silently breaks every invite already sent.
+- `RSVP_ENDPOINT` ships in public JavaScript, so anyone can find it and POST. An unknown
+  token is the only gate: the script rejects any token not in the sheet before writing,
+  caps the note length, and ignores malformed event keys. It takes a script lock so two
+  simultaneous RSVPs cannot overwrite each other.
+
+A failed cross-origin read is indistinguishable from a dropped connection, and in both
+cases the row may already be stored. So the form says it could not confirm the save and
+asks the guest to text rather than resubmit, instead of claiming a failure that would
+invite a duplicate.
+
+Remaining steps: confirm the three Hyderabad venues; set up the service account and
+share the sheet; deploy the Apps Script and fill in `RSVP_ENDPOINT`; batch-generate,
+spot-check, send.
