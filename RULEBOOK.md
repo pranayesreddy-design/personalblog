@@ -245,3 +245,77 @@ Image attributes, which `loading="lazy"` alone does not handle:
 To check a page really defers, count requests rather than trusting the attribute: serve
 the site with a logging static server, load the page in headless Chrome at a normal
 window size, and compare image requests against a deliberately tall window.
+
+## 11) Wedding invite (work in progress)
+
+Lives apart from the blog on purpose. It does not use `styles.css`, `site-config.js`, or
+`seo.js`, so nothing here is affected by blog-wide changes and vice versa.
+
+- `tools/invite/template.html` - the template, holding placeholder data. Kept out of `i/`
+  on purpose: GitHub Pages serves every file in this repo, so a template under `i/preview/`
+  would be a guessable live URL showing the whole invite.
+- `assets/css/invite.css` - standalone theme, mobile-first.
+- `assets/js/invite.js` - RSVP behaviour. `RSVP_ENDPOINT` is empty until the function
+  exists; the form says nothing was sent rather than faking success.
+- `assets/images/invite/<token>.jpg` - per-guest photo, long edge 1000px.
+
+Generated pages go to `i/<token>/index.html`. The template sits at the same depth
+(`tools/invite/`) so its `../../assets/...` paths work unchanged once a page is rendered.
+
+Generator: `tools/invite/generate.py`, pure stdlib Python, no node needed.
+
+```
+python3 tools/invite/generate.py --tokens tools/invite/guests.csv   # fill blank tokens
+python3 tools/invite/generate.py --guests tools/invite/guests.csv --out dist --limit 5
+```
+
+Preview on a phone with `python3 tools/invite/serve.py`, which prints the LAN address and
+detaches from the shell. Stop it with `--stop`. The address changes with the network.
+
+Tokens are unlisted, not private. This repo is public, so anyone reading it can walk to
+any `i/<token>/` path, and git history keeps them even after a delete. Fine for the
+wedding details themselves; think before committing pages that carry guest photos.
+
+`dist/` is standalone: it carries its own copy of the CSS, JS, and photos, so it can
+be deployed on its own. It is gitignored, and so is a real `guests.csv`.
+
+Guest row schema (one row per person):
+
+```
+token | name | photo_url | events_invited | rsvp_status | responded_at
+```
+
+`household_id` is accepted and ignored. The page no longer names the other people in a
+household, so it only matters if you later want to group RSVPs.
+
+Template contract:
+
+- Every personalised value is marked `data-invite-field="..."`. The generator replaces
+  text content by that attribute, so no `{{ }}` syntax is needed and the template stays
+  a valid, viewable page. Per-guest fields: `name`, `token`, `guestPhoto`, `caption`.
+  `couple` and `date` are shared and left exactly as authored.
+- Optional regions are marked `data-invite-block="..."` and are removed whole.
+- Nothing is matched by CSS class or by position, and every edit asserts how many nodes
+  it changed. A restyle that renames a class must not be able to turn a replacement into
+  a silent no-op; that has already happened once.
+- The generator strips HTML comments from generated pages, and scans a comment-stripped
+  copy of the template. Documentation examples like `data-event-key="..."` inside a
+  comment otherwise read as real markup.
+- Per-guest photos crop to a square via `object-fit: cover`, so any aspect ratio is safe.
+- Each event is `<li data-event-key="...">`; drop the ones not in `events_invited`. The
+  address and dress code sit inside a `<details>` so the page stays scannable and the
+  disclosure still works with JS off.
+- The hero photo, story, and the two bios carry no fields. That copy is identical on
+  every invite and is edited in the template once. Only the second photo is per guest.
+- The RSVP form posts `{ token, attending, events[], note }`. The token comes from the
+  hidden field, never from a typed name.
+- Guest pages must stay `noindex,nofollow`, out of `sitemap.xml`, and unlinked from
+  anywhere on the site.
+
+**Before generating real pages:** this repo is public, so committing `i/<token>/` here
+would publish every token, name, and photo on GitHub and defeat the unguessable-link
+model entirely. The invite needs a private repo deployed to Netlify/Vercel, which is
+also the only way to host the RSVP function, since GitHub Pages cannot run one.
+
+Remaining steps: real dates, venues, story and bio copy; wire the RSVP endpoint; deploy
+`dist/` from a private repo; batch-generate, spot-check, send.

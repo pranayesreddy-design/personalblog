@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<!--
+  INVITE TEMPLATE - preview instance with placeholder data.
+
+  Personalised values are marked data-invite-field:
+
+    couple     couple's names          shared, left as authored
+    date       headline date line      shared, left as authored
+    name       guest's first name      column: name
+    guestPhoto per-guest photo         sets the img src and alt
+    caption    line under that photo   column: caption, optional
+    token      short random id         column: token
+
+  Optional regions are marked data-invite-block and are removed whole. The
+  personal-photo figure is dropped for any guest with no photo file.
+
+  The story photo is shared, identical on every invite, so it carries no field.
+  The only per-guest photo is the one beside the RSVP, at
+  assets/images/invite/<token>.jpg.
+
+  Schedule entries are marked data-event-key and are kept or dropped per guest
+  from the events_invited column. Each one has a matching RSVP checkbox.
+
+  The story and the bios carry no fields; that copy is the same on every invite
+  and is edited here, once.
+
+  Do not match anything in the generator by CSS class. Classes change when the
+  page is restyled, attributes do not.
+
+  PLACEHOLDER DATA - the guest name is invented, and three of the four venues
+  are still to be confirmed.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pranay &amp; Shruti</title>
+    <!-- Unlisted by design: guest pages must never be indexed or previewed. -->
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="theme-color" content="#f8dfdb" />
+    <link rel="icon" type="image/png" href="../../assets/images/favicon-astronaut.png?v=3" />
+    <link rel="stylesheet" href="../../assets/css/invite.css" />
+    <!-- Set before paint so the reveal styles never flash, and so a page with
+         no JS simply shows everything instead of hiding it forever. -->
+    <script>
+      document.documentElement.classList.add("has-js");
+    </script>
+  </head>
+  <body class="invite-page" data-token="k7m2qp4x" data-wedding-date="2027-02-10">
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <p class="topbar-name" data-invite-field="couple">Pranay &amp; Shruti</p>
+        <ul class="topbar-links caps">
+          <li><a href="#story">Our story</a></li>
+          <li><a href="#weekend">The weekend</a></li>
+          <li class="topbar-cta"><a class="btn" href="#rsvp">RSVP</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <section class="hero">
+      <p class="hero-kicker caps">We're getting<br />married</p>
+      <h1 class="hero-names">
+        Pranay <span class="amp">&amp;</span> Shruti
+      </h1>
+      <p class="hero-when caps" data-invite-field="date">
+        <span>02.10.27</span><span>7 &ndash; 10 February</span>
+      </p>
+      <!-- Counts down to the muhurtham; set data-wedding-date on the body. -->
+      <p class="countdown caps" data-countdown role="status"></p>
+    </section>
+
+    <div class="ribbon" aria-hidden="true">
+      <svg viewBox="0 0 1200 150" role="presentation">
+        <path id="ribbonA" d="M-20,112 Q300,26 600,78 T1220,52" fill="none" />
+        <text>
+          <!-- Repeat count is tuned to the path length. Text longer than the
+               path is silently clipped, so adding a repeat means shrinking the
+               font to match. -->
+          <textPath href="#ribbonA">
+            We're getting married &#9829; We're getting married &#9829; We're
+            getting married &#9829;
+          </textPath>
+        </text>
+      </svg>
+    </div>
+
+    <main>
+      <section class="intro">
+        <div class="wrap">
+          <p class="intro-greeting">
+            Dear <span data-invite-field="name">Ravi</span>,
+          </p>
+          <p class="intro-lede" data-reveal>
+            Join us as we get married this February. Four days, and the full
+            schedule is below. The list is short on purpose, and you are on it.
+          </p>
+        </div>
+      </section>
+
+      <section class="split" id="story">
+        <div class="wrap split-inner">
+          <h2 class="split-title" data-reveal><span>Our</span><span>story</span></h2>
+          <div class="split-body prose" data-reveal style="--reveal-delay: 120ms">
+            <p>
+              We met completely by accident in Tandi, a mountain village in the
+              Himalayas, a long way from anywhere either of us had planned to
+              be.
+            </p>
+            <p>
+              We were friends first, for a good while. The rest of it turned up
+              later, quietly, and neither of us noticed until it already had.
+            </p>
+            <p>
+              <strong class="slot-name">Shruti</strong> is relentlessly
+              happy-go-lucky. She works at Bloomberg on corporate philanthropy,
+              where she is the star of her team and will be the last person to
+              tell you so.
+            </p>
+            <p>
+              <strong class="slot-name">Pranay</strong> designs CPUs at NVIDIA,
+              which he will happily explain to you at a wedding if nobody stops
+              him. He packs badly, plans nothing, and still insists on driving
+              the last stretch.
+            </p>
+          </div>
+          <!-- Last in source order so a phone reads heading, story, photo. On a
+               wide screen the CSS lifts it into the heading column instead, so
+               the section is not all weight on one side.
+               Shared across every invite, so it carries no field. -->
+          <figure class="collage" data-reveal style="--reveal-delay: 200ms">
+            <img
+              src="../../assets/images/invite/couple.jpg"
+              alt="Pranay and Shruti in the mountains"
+              width="1000"
+              height="666"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <figcaption>
+              First photo, zero idea. Best accident of our lives.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="split" id="weekend">
+        <div class="wrap split-inner">
+          <h2 class="split-title" data-reveal><span>The</span><span>weekend</span></h2>
+          <div class="split-body">
+            <ol class="schedule">
+              <li class="slot" data-event-key="pellikoduku" data-reveal>
+                <p class="slot-day">Sunday, 7 February</p>
+                <p class="slot-head">
+                  <strong class="slot-name">Pelli Koduku</strong>
+                  <span class="slot-time">| Morning</span>
+                </p>
+                <p class="slot-venue">At home</p>
+              </li>
+              <li class="slot" data-event-key="cocktail" data-reveal>
+                <p class="slot-day">Monday, 8 February</p>
+                <p class="slot-head">
+                  <strong class="slot-name">Cocktail party</strong>
+                  <span class="slot-time">| Evening</span>
+                </p>
+                <p class="slot-venue">Venue to be confirmed</p>
+              </li>
+              <li class="slot" data-event-key="haldimehendi" data-reveal>
+                <p class="slot-day">Tuesday, 9 February</p>
+                <p class="slot-head">
+                  <strong class="slot-name">Haldi &amp; Mehendi</strong>
+                  <span class="slot-time">| Evening</span>
+                </p>
+                <p class="slot-venue">Venue to be confirmed</p>
+              </li>
+              <li class="slot" data-event-key="wedding" data-reveal>
+                <p class="slot-day">Wednesday, 10 February</p>
+                <p class="slot-head">
+                  <strong class="slot-name">The Marriage</strong>
+                  <span class="slot-time">| 8 AM</span>
+                </p>
+                <p class="slot-venue">Venue to be confirmed</p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section class="split" id="rsvp">
+        <div class="wrap split-inner">
+          <div class="split-aside">
+            <h2 class="split-title" data-reveal><span>Will you</span><span>be there?</span></h2>
+            <!-- One photo of us with this guest. Dropped whole for anyone who
+                 has no photo yet, so the section still reads. -->
+            <figure class="guest-photo" data-invite-block="personal-photo" data-reveal>
+              <img
+                data-invite-field="guestPhoto"
+                src="../../assets/images/invite/k7m2qp4x.jpg"
+                alt="Ravi with Pranay and Shruti"
+                width="800"
+                height="800"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption data-invite-field="caption">
+                Still one of our favourite days.
+              </figcaption>
+            </figure>
+          </div>
+          <div class="split-body">
+            <p class="rsvp-signoff" data-reveal>
+              We hope you'll come, for one day or for all four.
+            </p>
+            <form class="rsvp-form" data-rsvp-form novalidate data-reveal style="--reveal-delay: 120ms">
+              <!-- The token is the only trustworthy identifier; a typed name is not. -->
+              <input type="hidden" name="token" value="k7m2qp4x" data-rsvp-token />
+
+              <fieldset class="rsvp-field rsvp-choices">
+                <legend>Your answer</legend>
+                <label class="rsvp-choice">
+                  <input type="radio" name="attending" value="yes" required />
+                  <span>Count me in</span>
+                </label>
+                <label class="rsvp-choice">
+                  <input type="radio" name="attending" value="no" />
+                  <span>Sadly, no</span>
+                </label>
+              </fieldset>
+
+              <div class="rsvp-field" data-rsvp-events>
+                <span class="rsvp-label">Which ones can you make?</span>
+                <label class="rsvp-check">
+                  <input type="checkbox" name="events" value="pellikoduku" />
+                  <span>Pelli Koduku</span>
+                </label>
+                <label class="rsvp-check">
+                  <input type="checkbox" name="events" value="cocktail" />
+                  <span>Cocktail party</span>
+                </label>
+                <label class="rsvp-check">
+                  <input type="checkbox" name="events" value="haldimehendi" />
+                  <span>Haldi &amp; Mehendi</span>
+                </label>
+                <label class="rsvp-check">
+                  <input type="checkbox" name="events" value="wedding" />
+                  <span>The Marriage</span>
+                </label>
+              </div>
+
+              <div class="rsvp-field">
+                <label class="rsvp-label" for="rsvp-note">Anything we should know?</label>
+                <textarea
+                  class="rsvp-textarea"
+                  id="rsvp-note"
+                  name="note"
+                  placeholder="Food preferences, travel plans, or just say hello."
+                ></textarea>
+              </div>
+
+              <button class="rsvp-submit" type="submit">Send RSVP</button>
+              <p class="rsvp-status" data-rsvp-status role="status"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="wrap">
+        <p class="caps">Pranay &amp; Shruti &middot; 02.10.27</p>
+        <p>This link is just for you. Please don't share it.</p>
+        <p class="foot-token" data-invite-field="token">k7m2qp4x</p>
+      </div>
+    </footer>
+
+    <script src="../../assets/js/invite.js"></script>
+  </body>
+</html>

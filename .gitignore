@@ -1,0 +1,8 @@
+# Generated invite pages. This repo is public: committing these would publish
+# every guest token, name, and photo and defeat the unguessable-link model.
+/dist/
+
+# Real guest data. Only guests.sample.csv belongs in the repo.
+/tools/invite/guests.csv
+
+.DS_Store
