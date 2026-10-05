@@ -109,6 +109,14 @@ class Failure(Exception):
     """Something the user needs to fix, reported without a traceback."""
 
 
+def warn(message):
+    # stdout is block buffered when piped but stderr never is, so a bare print
+    # to stderr jumps ahead of the progress lines and arrives with no context.
+    sys.stdout.flush()
+    print("\nwarning: %s" % message, file=sys.stderr)
+    sys.stderr.flush()
+
+
 def normalise(header):
     return re.sub(r"[^a-z0-9]", "", (header or "").strip().lower())
 
@@ -129,10 +137,7 @@ def load_credentials(path):
     if mode & 0o077:
         # A private key readable by other accounts on the machine. Worth saying
         # out loud rather than silently using it.
-        print(
-            "warning: %s is mode %o; tighten it with chmod 600" % (path, mode),
-            file=sys.stderr,
-        )
+        warn("%s is mode %o; tighten it with chmod 600" % (path, mode))
 
     try:
         creds = json.loads(path.read_text(encoding="utf-8"))
@@ -461,10 +466,9 @@ def build_rows(values, mapping, event_cols, carried):
     if duplicates and mapping.get("sno") is None:
         # Without a serial column there is nothing stable to match a re-import
         # against, so a shared first name could move a live link.
-        print(
-            "warning: duplicate names and no serial column, so token carry-over is\n"
-            "ambiguous for: %s" % ", ".join(duplicates),
-            file=sys.stderr,
+        warn(
+            "duplicate names and no serial column, so token carry-over is\n"
+            "ambiguous for: %s" % ", ".join(duplicates)
         )
 
     snos = [row["sno"] for row in rows if row["sno"]]
@@ -568,20 +572,20 @@ def main(argv=None):
 
     missing = sorted(set(("pellikoduku", "cocktail", "haldimehendi", "wedding")) - set(event_cols))
     if event_cols and missing and "events_invited" not in mapping:
-        print(
-            "\nwarning: no column found for: %s\n"
+        warn(
+            "no column found for: %s\n"
             "Nobody will be invited to those, which is wrong unless they are deliberate."
-            % ", ".join(missing),
-            file=sys.stderr,
+            % ", ".join(missing)
         )
 
     empty = [row["name"] for row in rows if not row["events_invited"]]
     if empty:
-        print(
-            "\nwarning: %d guest(s) are invited to nothing, so their page would have an\n"
-            "empty schedule: %s%s"
-            % (len(empty), ", ".join(empty[:8]), "..." if len(empty) > 8 else ""),
-            file=sys.stderr,
+        # generate.py refuses to build a page with an empty schedule, so this is
+        # a heads-up about rows to fix in the sheet, not a page that shipped.
+        warn(
+            "%d guest(s) are invited to nothing, so they get no page until the\n"
+            "sheet says what they are invited to: %s%s"
+            % (len(empty), ", ".join(empty[:8]), "..." if len(empty) > 8 else "")
         )
 
     counts = {}
