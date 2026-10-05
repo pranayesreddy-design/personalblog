@@ -39,9 +39,13 @@ TOKEN_URI = "https://oauth2.googleapis.com/token"
 SCOPE = "https://www.googleapis.com/auth/spreadsheets.readonly"
 JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 
-# The CSV columns the generator expects, in order. "sno" is carried along so a
-# re-import can match a row to the token it already issued even when two guests
-# share a first name; generate.py passes unknown columns through untouched.
+# The CSV columns the generator expects, in order, followed by ones only this
+# script and a human reader care about; generate.py passes unknown columns
+# through untouched.
+#
+# "side" and "sno" together are the token carry-over key. Serial numbers restart
+# at 1 on each tab, so sno alone is ambiguous across them.
+# "party_size" is how many people the row stands for.
 COLUMNS = [
     "token",
     "name",
@@ -51,7 +55,9 @@ COLUMNS = [
     "caption",
     "rsvp_status",
     "responded_at",
+    "side",
     "sno",
+    "party_size",
 ]
 
 # Accepted sheet header spellings for each column. Matched after lowercasing
@@ -95,10 +101,34 @@ EVENT_COLUMNS = {
     "muhurtham": "wedding",
 }
 
-# What counts as "invited" in a grid cell. A 0 or a blank means not invited:
-# erring the other way would invite someone to an event they were never meant
-# to attend.
-TRUTHY = {"1", "y", "yes", "true", "x", "✓", "✔", "yep", "1.0"}
+# What counts as "invited" in a grid cell, for sheets that tick rather than
+# count. A 0 or a blank means not invited: erring the other way would invite
+# someone to an event they were never meant to attend.
+TRUTHY = {"y", "yes", "true", "x", "✓", "✔", "yep"}
+
+
+def head_count(cell):
+    """How many people a grid cell stands for. 0 means not invited.
+
+    The cells hold a head count, not a flag, which is why the sheet's own SUM
+    row reads 191 for 188 ticked wedding rows: one cell holds a 4. Reading only
+    "1" as invited silently dropped every row with a 2 or a 4 in it.
+    """
+    cell = str(cell or "").strip()
+    if not cell:
+        return 0
+    # Lowercased but not normalise()d: that strips everything non alphanumeric,
+    # which would turn a tick mark into an empty string.
+    if cell.lower() in TRUTHY:
+        return 1
+    try:
+        value = float(cell)
+    except ValueError:
+        # Any other text is deliberately not an invitation. A note like "maybe"
+        # should not put someone on the list.
+        return 0
+    # Rounded, not truncated, so a stray 1.5 counts as 2 seats rather than 1.
+    return int(value + 0.5) if value >= 1 else 0
 
 # Only a name is genuinely required. Tokens are generated locally by
 # generate.py --tokens, and every other column is optional per guest.
@@ -231,15 +261,11 @@ def access_token(creds):
     return payload["access_token"]
 
 
-def read_values(token, sheet_id, cell_range, client_email=""):
-    url = "https://sheets.googleapis.com/v4/spreadsheets/%s/values/%s" % (
-        urllib.parse.quote(sheet_id, safe=""),
-        urllib.parse.quote(cell_range, safe=""),
-    )
+def api_get(url, token, sheet_id, client_email=""):
     request = urllib.request.Request(url, headers={"Authorization": "Bearer " + token})
     try:
         with urllib.request.urlopen(request, timeout=30) as response:
-            return json.loads(response.read()).get("values", [])
+            return json.loads(response.read())
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", "replace")
 
@@ -265,6 +291,14 @@ def read_values(token, sheet_id, cell_range, client_email=""):
         raise Failure("Sheets API error HTTP %s:\n%s" % (exc.code, detail.strip()))
     except urllib.error.URLError as exc:
         raise Failure("could not reach the Sheets API: %s" % exc.reason)
+
+
+def read_values(token, sheet_id, cell_range, client_email=""):
+    url = "https://sheets.googleapis.com/v4/spreadsheets/%s/values/%s" % (
+        urllib.parse.quote(sheet_id, safe=""),
+        urllib.parse.quote(cell_range, safe=""),
+    )
+    return api_get(url, token, sheet_id, client_email).get("values", [])
 
 
 def column_letter(index):
@@ -349,6 +383,33 @@ def map_headers(header_row):
     return mapping
 
 
+def list_tabs(token, sheet_id, client_email=""):
+    """Every tab name in the spreadsheet, in the order they appear."""
+    url = (
+        "https://sheets.googleapis.com/v4/spreadsheets/%s"
+        "?fields=sheets.properties.title" % urllib.parse.quote(sheet_id, safe="")
+    )
+    payload = api_get(url, token, sheet_id, client_email)
+    tabs = [
+        sheet.get("properties", {}).get("title", "")
+        for sheet in payload.get("sheets", [])
+    ]
+    tabs = [tab for tab in tabs if tab]
+    if not tabs:
+        raise Failure("that spreadsheet reports no tabs, which should not happen")
+    return tabs
+
+
+def carry_key(side, sno):
+    """The identity of a row for token carry-over.
+
+    Scoped to the tab because serial numbers restart at 1 on each one: 39 of
+    them are shared between the two tabs, so an unscoped serial would hand one
+    side's live link to the other side's guest.
+    """
+    return "%s\x00%s" % ((side or "").strip().lower(), (sno or "").strip())
+
+
 def existing_tokens(path):
     """Tokens already issued locally, keyed by serial number and by name.
 
@@ -378,7 +439,7 @@ def existing_tokens(path):
         sno = (row.get("sno") or "").strip()
         name = (row.get("name") or "").strip().lower()
         if sno:
-            by_sno.setdefault(sno, token)
+            by_sno.setdefault(carry_key(row.get("side"), sno), token)
         if name:
             if name in by_name:
                 duplicated.add(name)
@@ -391,18 +452,26 @@ def existing_tokens(path):
 
 
 def events_from_grid(raw, event_cols):
-    """Turn one-column-per-event marks into the space separated key list."""
+    """Turn one-column-per-event head counts into keys plus a party size.
+
+    Returns (space separated keys, party size). The party size is the largest
+    count across the events the guest is actually invited to, so a row reading
+    "Cocktail 2, Wedding 1" is treated as two people rather than three.
+    """
     keys = []
+    party = 0
     for key in ("pellikoduku", "cocktail", "haldimehendi", "wedding"):
         index = event_cols.get(key)
         if index is None or index >= len(raw):
             continue
-        if str(raw[index] or "").strip().lower() in TRUTHY:
+        count = head_count(raw[index])
+        if count:
             keys.append(key)
-    return " ".join(keys)
+            party = max(party, count)
+    return " ".join(keys), party
 
 
-def build_rows(values, mapping, event_cols, carried):
+def build_rows(values, mapping, event_cols, carried, side=""):
     rows = []
     blank = 0
     reused = []
@@ -424,17 +493,20 @@ def build_rows(values, mapping, event_cols, carried):
             continue
 
         row = {column: cell(column) for column in COLUMNS}
+        row["side"] = side
 
         # An explicit list column wins if present; otherwise derive from the
         # grid. Doing it in this order means adding an events_invited column
         # later overrides the grid without having to delete it.
         if not row["events_invited"] and event_cols:
-            row["events_invited"] = events_from_grid(raw, event_cols)
+            row["events_invited"], party = events_from_grid(raw, event_cols)
+            if party > 1:
+                row["party_size"] = str(party)
 
         if not row["token"]:
             token = None
             if row["sno"]:
-                token = carried["by_sno"].get(row["sno"])
+                token = carried["by_sno"].get(carry_key(side, row["sno"]))
             if not token:
                 token = carried["by_name"].get(name.lower())
             if token:
@@ -475,11 +547,15 @@ def build_rows(values, mapping, event_cols, carried):
     repeated = sorted({s for s in snos if snos.count(s) > 1})
     if repeated:
         raise Failure(
-            "these serial numbers appear more than once: %s\n"
+            "these serial numbers appear more than once%s: %s\n"
             "They are what a re-import matches tokens on, so they have to be unique."
-            % ", ".join(repeated)
+            % (" on the %s tab" % side if side else "", ", ".join(repeated))
         )
+    return rows
 
+
+def check_combined(rows):
+    """Checks that only make sense once every tab has been read."""
     tokens = [row["token"] for row in rows if row["token"]]
     clashes = sorted({token for token in tokens if tokens.count(token) > 1})
     if clashes:
@@ -488,7 +564,18 @@ def build_rows(values, mapping, event_cols, carried):
             "Two people would share one invite page. Fix the sheet first."
             % ", ".join(clashes)
         )
-    return rows
+
+    # A name on two tabs is usually one person entered by both of you, and
+    # would otherwise get two invite links for the same wedding.
+    seen = {}
+    for row in rows:
+        seen.setdefault(row["name"].strip().lower(), set()).add(row["side"])
+    both = sorted(name for name, sides in seen.items() if len(sides) > 1)
+    if both:
+        warn(
+            "%d name(s) appear on more than one tab, so they would get two\n"
+            "separate links: %s" % (len(both), ", ".join(both))
+        )
 
 
 def write_csv(rows, path):
@@ -510,7 +597,12 @@ def main(argv=None):
         "--range",
         dest="cell_range",
         default="A:Z",
-        help="A1 range including the header row, e.g. 'Guests!A:Z' (default A:Z of the first tab)",
+        help="columns to read from each tab, including the header row (default A:Z)",
+    )
+    parser.add_argument(
+        "--tabs",
+        default="",
+        help="comma separated tab names (default: every tab in the spreadsheet)",
     )
     parser.add_argument("--credentials", type=Path, default=CREDENTIALS)
     parser.add_argument("--out", type=Path, default=OUT)
@@ -538,40 +630,63 @@ def main(argv=None):
         parser.error("--sheet is required (or set INVITE_SHEET_ID)")
 
     creds = load_credentials(args.credentials)
+    token = access_token(creds)
     print("authenticating as %s" % creds["client_email"])
-    values = read_values(
-        access_token(creds), args.sheet, args.cell_range, creds["client_email"]
-    )
 
-    if not values:
-        raise Failure(
-            "that range came back empty. Check the tab name in --range; the "
-            "default A:Z only reads the first tab."
+    # Both of you keep a tab, so reading only the first one silently left 42
+    # guests off the list. Every tab is read unless --tabs narrows it.
+    if args.tabs:
+        tabs = [name.strip() for name in args.tabs.split(",") if name.strip()]
+    else:
+        tabs = list_tabs(token, args.sheet, creds["client_email"])
+    print("tabs: %s" % ", ".join(tabs))
+
+    carried = existing_tokens(args.out)
+    rows = []
+    all_event_cols = {}
+    explicit_list = False
+
+    for tab in tabs:
+        cells = read_values(
+            token, args.sheet, "'%s'!%s" % (tab, args.cell_range), creds["client_email"]
         )
+        if not cells:
+            warn("the %s tab is empty, skipping it" % tab)
+            continue
 
-    mapping = map_headers(values[0])
-    event_cols = map_event_columns(values[0])
-    if args.dry_run:
-        describe_mapping(values[0], mapping, event_cols)
+        mapping = map_headers(cells[0])
+        event_cols = map_event_columns(cells[0])
+        all_event_cols.update(event_cols)
+        explicit_list = explicit_list or "events_invited" in mapping
+        if args.dry_run:
+            print("\n%s tab:" % tab)
+            describe_mapping(cells[0], mapping, event_cols)
 
-    if "events_invited" not in mapping and not event_cols:
-        raise Failure(
-            "found no events in this sheet, so every invite would show an empty\n"
-            "schedule. Either add one column per event named Pelli Koduku, Cocktail,\n"
-            "Haldi and Wedding holding 1 or 0, or a single events_invited column\n"
-            "holding space separated keys from:\n"
-            "  pellikoduku cocktail haldimehendi wedding"
-        )
+        if "events_invited" not in mapping and not event_cols:
+            raise Failure(
+                "found no events on the %s tab, so those invites would show an\n"
+                "empty schedule. Either add one column per event named Pelli Koduku,\n"
+                "Cocktail, Haldi and Wedding holding a head count, or a single\n"
+                "events_invited column holding space separated keys from:\n"
+                "  pellikoduku cocktail haldimehendi wedding" % tab
+            )
 
-    rows = build_rows(values[1:], mapping, event_cols, existing_tokens(args.out))
+        found = build_rows(cells[1:], mapping, event_cols, carried, side=tab)
+        print("%s: %d guest(s)" % (tab, len(found)))
+        rows.extend(found)
+
     if not rows:
-        raise Failure("no guest rows found below the header")
+        raise Failure("no guest rows found below the header on any tab")
+
+    check_combined(rows)
 
     without = sum(1 for row in rows if not row["token"])
-    print("read %d guest(s); %d still need a token" % (len(rows), without))
+    print("read %d guest(s) in total; %d still need a token" % (len(rows), without))
 
-    missing = sorted(set(("pellikoduku", "cocktail", "haldimehendi", "wedding")) - set(event_cols))
-    if event_cols and missing and "events_invited" not in mapping:
+    missing = sorted(
+        set(("pellikoduku", "cocktail", "haldimehendi", "wedding")) - set(all_event_cols)
+    )
+    if all_event_cols and missing and not explicit_list:
         warn(
             "no column found for: %s\n"
             "Nobody will be invited to those, which is wrong unless they are deliberate."
@@ -588,15 +703,20 @@ def main(argv=None):
             % (len(empty), ", ".join(empty[:8]), "..." if len(empty) > 8 else "")
         )
 
-    counts = {}
-    for row in rows:
-        for key in row["events_invited"].split():
-            counts[key] = counts.get(key, 0) + 1
-    print(
-        "invited per event: %s"
-        % ", ".join("%s=%d" % (k, counts.get(k, 0)) for k in
-                    ("pellikoduku", "cocktail", "haldimehendi", "wedding"))
-    )
+    # Rows and people are different numbers once a row can stand for a party,
+    # which is what the caterer actually needs.
+    print("invited per event (rows / people):")
+    for key in ("pellikoduku", "cocktail", "haldimehendi", "wedding"):
+        invited = [row for row in rows if key in row["events_invited"].split()]
+        people = sum(int(row["party_size"] or 1) for row in invited)
+        print("  %-14s %4d / %4d" % (key, len(invited), people))
+
+    parties = [row for row in rows if (row["party_size"] or "") not in ("", "1")]
+    if parties:
+        print(
+            "rows standing for more than one person: %s"
+            % ", ".join("%s (%s)" % (row["name"], row["party_size"]) for row in parties)
+        )
 
     if args.dry_run:
         print("\ndry run, %s not written" % args.out)

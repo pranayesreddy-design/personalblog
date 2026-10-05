@@ -34,10 +34,14 @@ def no_tokens():
     return fg.existing_tokens(work / "does-not-exist.csv")
 
 
-def build(rows, header=None):
+def build(rows, header=None, carried=None, side=""):
     header = header or GRID
     return fg.build_rows(
-        rows, fg.map_headers(header), fg.map_event_columns(header), no_tokens()
+        rows,
+        fg.map_headers(header),
+        fg.map_event_columns(header),
+        carried if carried is not None else no_tokens(),
+        side=side,
     )
 
 
@@ -96,11 +100,37 @@ check("a blank cell means not invited")
 rows = build([["1", "X", "", "1", "", ""]])
 assert rows[0]["events_invited"] == "cocktail", rows[0]
 
-check("a stray non-1 number is not an invitation")
-# Column F held a "4" for one guest. Reading that as truthy would invite
-# someone to a wedding they were not marked for.
+check("a cell holds a head count, so 4 means invited as four")
+# The sheet's SUM row reads 191 for 188 ticked wedding rows because one cell
+# holds a 4. Reading only "1" as invited dropped that row entirely.
 rows = build([["90", "Avan", "0", "0", "0", "4"]])
-assert rows[0]["events_invited"] == "", rows[0]
+assert rows[0]["events_invited"] == "wedding", rows[0]
+assert rows[0]["party_size"] == "4", rows[0]
+
+check("party size is the largest count, not the sum across events")
+rows = build([["1", "Elsie", "0", "2", "0", "1"]])
+assert rows[0]["events_invited"] == "cocktail wedding", rows[0]
+assert rows[0]["party_size"] == "2", rows[0]
+
+check("a single person carries no party size")
+rows = build([["1", "X", "0", "1", "0", "1"]])
+assert rows[0]["party_size"] == "", rows[0]
+
+check("words still work for sheets that tick instead of counting")
+for mark in ("y", "Yes", "TRUE", "x", "✓"):
+    rows = build([["1", "X", mark, "", "", ""]])
+    assert rows[0]["events_invited"] == "pellikoduku", (mark, rows[0])
+
+check("zero, blank and free text are all not invited")
+for mark in ("0", "", "   ", "maybe", "tbc", "-", "0.0"):
+    rows = build([["1", "X", mark, "", "", ""]])
+    assert rows[0]["events_invited"] == "", (mark, rows[0])
+
+check("head_count rounds rather than truncating")
+assert fg.head_count("1") == 1
+assert fg.head_count("2") == 2
+assert fg.head_count("1.5") == 2, fg.head_count("1.5")
+assert fg.head_count("0.3333333333") == 0, fg.head_count("0.3333333333")
 
 check("an explicit events column overrides the grid")
 with_list = GRID + ["events_invited"]
@@ -125,76 +155,84 @@ issued = work / "guests.csv"
 with issued.open("w", newline="", encoding="utf-8") as handle:
     writer = csv.DictWriter(handle, fieldnames=fg.COLUMNS)
     writer.writeheader()
-    writer.writerow({"token": "aaaaaaaaaa", "name": "Ajay", "sno": "20"})
-    writer.writerow({"token": "bbbbbbbbbb", "name": "Ajay", "sno": "55"})
-    writer.writerow({"token": "cccccccccc", "name": "Kishan", "sno": "1"})
+    writer.writerow({"token": "aaaaaaaaaa", "name": "Ajay", "side": "Pranay", "sno": "20"})
+    writer.writerow({"token": "bbbbbbbbbb", "name": "Ajay", "side": "Pranay", "sno": "55"})
+    writer.writerow({"token": "cccccccccc", "name": "Kishan", "side": "Pranay", "sno": "1"})
+    writer.writerow({"token": "dddddddddd", "name": "Elsie", "side": "Shruti", "sno": "1"})
 carried = fg.existing_tokens(issued)
 
-check("serial number is the carry-over key")
-assert carried["by_sno"]["20"] == "aaaaaaaaaa", carried
-assert carried["by_sno"]["55"] == "bbbbbbbbbb", carried
+check("tab and serial together are the carry-over key")
+assert carried["by_sno"][fg.carry_key("Pranay", "20")] == "aaaaaaaaaa", carried
+assert carried["by_sno"][fg.carry_key("Pranay", "1")] == "cccccccccc", carried
+assert carried["by_sno"][fg.carry_key("Shruti", "1")] == "dddddddddd", carried
+
+check("serial 1 on each tab keeps its own link")
+# Both tabs number from 1 and 39 serials are shared between them, so an
+# unscoped serial would hand one side's live link to the other side's guest.
+rows = build([["1", "Elsie", "0", "2", "0", "0"]], carried=carried, side="Shruti")
+assert rows[0]["token"] == "dddddddddd", rows[0]
+rows = build([["1", "Kishan", "1", "1", "1", "1"]], carried=carried, side="Pranay")
+assert rows[0]["token"] == "cccccccccc", rows[0]
 
 check("a name shared by two token holders is refused as a key")
 assert "ajay" not in carried["by_name"], carried["by_name"]
 assert carried["by_name"]["kishan"] == "cccccccccc", carried["by_name"]
 
 check("same-name guests keep their own links across a re-import")
-rows = fg.build_rows(
+rows = build(
     [["55", "Ajay", "0", "0", "0", "1"], ["20", "Ajay", "1", "1", "1", "1"]],
-    fg.map_headers(GRID),
-    fg.map_event_columns(GRID),
-    carried,
+    carried=carried,
+    side="Pranay",
 )
 assert rows[0]["token"] == "bbbbbbbbbb", rows[0]
 assert rows[1]["token"] == "aaaaaaaaaa", rows[1]
 
+NO_SNO = ["X", "Name", "Pelli Koduku", "Cocktail", "Haldi", "Wedding"]
+
 check("an ambiguous name with no serial never guesses a token")
-rows = fg.build_rows(
-    [["", "Ajay", "0", "0", "0", "1"]],
-    fg.map_headers(["X", "Name", "Pelli Koduku", "Cocktail", "Haldi", "Wedding"]),
-    fg.map_event_columns(GRID),
-    carried,
-)
+rows = build([["", "Ajay", "0", "0", "0", "1"]], NO_SNO, carried=carried)
 assert rows[0]["token"] == "", rows[0]
 
 check("a unique name still carries over without a serial")
-rows = fg.build_rows(
-    [["", "Kishan", "0", "0", "0", "1"]],
-    fg.map_headers(["X", "Name", "Pelli Koduku", "Cocktail", "Haldi", "Wedding"]),
-    fg.map_event_columns(GRID),
-    carried,
-)
+rows = build([["", "Kishan", "0", "0", "0", "1"]], NO_SNO, carried=carried)
 assert rows[0]["token"] == "cccccccccc", rows[0]
 
 check("a token in the sheet beats the local copy")
-rows = fg.build_rows(
-    [["20", "Ajay", "0", "0", "0", "1"]],
-    fg.map_headers(["S.No", "Name", "Pelli Koduku", "Cocktail", "Haldi", "Wedding"]),
-    fg.map_event_columns(GRID),
-    carried,
+with_token = ["S.No", "Name", "Pelli Koduku", "Cocktail", "Haldi", "Wedding", "Token"]
+rows = build(
+    [["20", "Ajay", "0", "0", "0", "1", "zzzzzzzzzz"]],
+    with_token,
+    carried=carried,
+    side="Pranay",
 )
-assert rows[0]["token"] == "aaaaaaaaaa", rows[0]
+assert rows[0]["token"] == "zzzzzzzzzz", rows[0]
 
 check("two guests sharing a token is a hard error")
+rows = build(
+    [["1", "A", "0", "0", "0", "1"], ["2", "B", "0", "0", "0", "1"]],
+    carried={"by_sno": {fg.carry_key("", "1"): "same123456",
+                        fg.carry_key("", "2"): "same123456"}, "by_name": {}},
+)
 try:
-    fg.build_rows(
-        [["1", "A", "0", "0", "0", "1"], ["2", "B", "0", "0", "0", "1"]],
-        fg.map_headers(GRID),
-        fg.map_event_columns(GRID),
-        {"by_sno": {"1": "same123456", "2": "same123456"}, "by_name": {}},
-    )
+    fg.check_combined(rows)
 except fg.Failure as exc:
     assert "more than one guest" in str(exc), exc
 else:
     raise AssertionError("allowed two guests to share a token")
 
-check("duplicate serial numbers are a hard error")
+check("duplicate serial numbers on one tab are a hard error")
 try:
     build([["7", "A", "1", "0", "0", "1"], ["7", "B", "1", "0", "0", "1"]])
 except fg.Failure as exc:
     assert "more than once" in str(exc), exc
 else:
     raise AssertionError("duplicate serials accepted")
+
+check("the same serial on two different tabs is fine")
+combined = build([["1", "Kishan", "1", "0", "0", "1"]], side="Pranay")
+combined += build([["1", "Elsie", "0", "2", "0", "0"]], side="Shruti")
+fg.check_combined(combined)
+assert [row["side"] for row in combined] == ["Pranay", "Shruti"], combined
 
 # --- credentials ----------------------------------------------------------
 

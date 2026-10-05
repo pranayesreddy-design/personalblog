@@ -348,21 +348,34 @@ Sheet headers are matched loosely, so `Guest Name`, `guest_name` and `guestname`
 work; see `ALIASES` in the script for accepted spellings. Only a name column is
 required. Rows with no name are skipped, which is also what drops the SUM row.
 
+**Every tab is read**, and the tab name is kept as the guest's `side`. The list is
+split across a `Pranay` tab and a `Shruti` tab, so reading only the first one quietly
+left 42 guests off. `--tabs Shruti` narrows it when needed.
+
 Events can be given either way:
 
-- **One column per event**, headed `Pelli Koduku`, `Cocktail`, `Haldi`, `Wedding`,
-  holding `1` for invited. Anything that is not `1`/`y`/`yes`/`true`/`x` counts as not
-  invited, including a stray number, because inviting someone to an event they were
-  never marked for is the worse error.
+- **One column per event**, headed `Pelli Koduku`, `Cocktail`, `Haldi`, `Wedding`.
+  The cell holds a **head count**, not a tick: `1` is one person, `2` is a couple, `4`
+  is a party of four. Blank, `0` and any other text mean not invited, so a note like
+  "maybe" never puts someone on the list. `y`/`yes`/`x`/`✓` are accepted as 1 for
+  sheets that tick instead of counting.
 - **A single `events_invited` column** of space separated keys. If both exist this one
   wins, so adding it later overrides the grid without deleting anything.
 
+The head count lands in `party_size`, which is why `--dry-run` reports rows *and*
+people: 188 rows are invited to the wedding but they stand for 191 guests. That second
+number is the one a caterer wants, and matching it against the sheet's SUM row is the
+quickest check that nothing was dropped.
+
 A token is a live URL as soon as it is sent to someone, so a re-import must never move
-one. `fetch_guests.py` carries over tokens already in `guests.csv`, matching on the
-`S.No` column. Name is only a fallback, and a name shared by two token holders is
-refused as a key outright rather than guessed at. Duplicate serials and two guests
-sharing a token are both hard errors. Paste tokens back into the sheet once links go
-out, so the sheet stays authoritative.
+one. `fetch_guests.py` carries over tokens already in `guests.csv`, matching on **tab
+plus `S.No`** together. Scoping to the tab is not optional: both tabs number from 1 and
+39 serials are shared between them, so an unscoped serial would hand one side's live
+link to the other side's guest. Name is only a fallback, and a name shared by two token
+holders is refused as a key rather than guessed at. Duplicate serials within a tab and
+two guests sharing a token are both hard errors; a name on both tabs is a warning,
+since that is usually one person entered twice who would otherwise get two links.
+Paste tokens back into the sheet once links go out, so the sheet stays authoritative.
 
 `python3 tools/invite/test_fetch_guests.py` covers the mapping, the grid parsing, the
 token carry-over and the JWT signing. No network or credentials needed. Worth running
