@@ -197,7 +197,7 @@ def access_token(creds):
     return payload["access_token"]
 
 
-def read_values(token, sheet_id, cell_range):
+def read_values(token, sheet_id, cell_range, client_email=""):
     url = "https://sheets.googleapis.com/v4/spreadsheets/%s/values/%s" % (
         urllib.parse.quote(sheet_id, safe=""),
         urllib.parse.quote(cell_range, safe=""),
@@ -208,11 +208,25 @@ def read_values(token, sheet_id, cell_range):
             return json.loads(response.read()).get("values", [])
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", "replace")
+
+        # Two very different problems both come back as 403. The API-disabled
+        # one names the API in its message; the other is simply not shared.
+        if exc.code == 403 and "has not been used in project" in detail:
+            raise Failure(
+                "the Google Sheets API is not enabled on this project yet.\n"
+                "Enable it here, wait a minute, then retry:\n"
+                "  https://console.cloud.google.com/apis/library/sheets.googleapis.com"
+            )
+
         if exc.code in (403, 404):
             raise Failure(
-                "Google returned HTTP %s for that spreadsheet.\n"
-                "Share the sheet with the service account address and try again:\n"
-                "  %s\n\n%s" % (exc.code, "see client_email in the key file", detail.strip())
+                "Google returned HTTP %s for that spreadsheet, which means the\n"
+                "credentials are fine but this account cannot see the sheet.\n\n"
+                "Open the sheet, click Share, and add this address as Viewer:\n"
+                "  %s\n\n"
+                "A 404 here means the same thing as a 403: an unshared sheet is\n"
+                "indistinguishable from one that does not exist."
+                % (exc.code, client_email or "run --whoami to print it")
             )
         raise Failure("Sheets API error HTTP %s:\n%s" % (exc.code, detail.strip()))
     except urllib.error.URLError as exc:
@@ -374,7 +388,9 @@ def main(argv=None):
 
     creds = load_credentials(args.credentials)
     print("authenticating as %s" % creds["client_email"])
-    values = read_values(access_token(creds), args.sheet, args.cell_range)
+    values = read_values(
+        access_token(creds), args.sheet, args.cell_range, creds["client_email"]
+    )
 
     if not values:
         raise Failure(
