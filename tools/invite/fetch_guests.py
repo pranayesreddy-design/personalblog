@@ -39,7 +39,9 @@ TOKEN_URI = "https://oauth2.googleapis.com/token"
 SCOPE = "https://www.googleapis.com/auth/spreadsheets.readonly"
 JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 
-# The CSV columns the generator expects, in order.
+# The CSV columns the generator expects, in order. "sno" is carried along so a
+# re-import can match a row to the token it already issued even when two guests
+# share a first name; generate.py passes unknown columns through untouched.
 COLUMNS = [
     "token",
     "name",
@@ -49,6 +51,7 @@ COLUMNS = [
     "caption",
     "rsvp_status",
     "responded_at",
+    "sno",
 ]
 
 # Accepted sheet header spellings for each column. Matched after lowercasing
@@ -69,7 +72,33 @@ ALIASES = {
     "caption": ["caption", "photocaption", "note"],
     "rsvp_status": ["rsvpstatus", "rsvp", "status", "attending"],
     "responded_at": ["respondedat", "responded", "repliedat", "timestamp"],
+    "sno": ["sno", "srno", "serialno", "serial", "id", "no", "number"],
 }
+
+# A guest list is far easier to keep by hand as a grid with one column per
+# event, so accept that shape too and fold it into events_invited. Keys on the
+# right must match data-event-key in the template.
+EVENT_COLUMNS = {
+    "pellikoduku": "pellikoduku",
+    "pellikuduku": "pellikoduku",
+    "pellikurukku": "pellikoduku",
+    "cocktail": "cocktail",
+    "cocktailparty": "cocktail",
+    "haldi": "haldimehendi",
+    "mehendi": "haldimehendi",
+    "mehndi": "haldimehendi",
+    "haldimehendi": "haldimehendi",
+    "haldimehndi": "haldimehendi",
+    "wedding": "wedding",
+    "marriage": "wedding",
+    "themarriage": "wedding",
+    "muhurtham": "wedding",
+}
+
+# What counts as "invited" in a grid cell. A 0 or a blank means not invited:
+# erring the other way would invite someone to an event they were never meant
+# to attend.
+TRUTHY = {"1", "y", "yes", "true", "x", "✓", "✔", "yep", "1.0"}
 
 # Only a name is genuinely required. Tokens are generated locally by
 # generate.py --tokens, and every other column is optional per guest.
@@ -233,6 +262,58 @@ def read_values(token, sheet_id, cell_range, client_email=""):
         raise Failure("could not reach the Sheets API: %s" % exc.reason)
 
 
+def column_letter(index):
+    letters = ""
+    index += 1
+    while index:
+        index, remainder = divmod(index - 1, 26)
+        letters = chr(ord("A") + remainder) + letters
+    return letters
+
+
+def describe_mapping(header_row, mapping, event_cols):
+    """Print what matched and what did not.
+
+    A column silently failing to map is the dangerous failure here: with no
+    events at all, every invite renders with an empty schedule, and nothing
+    else in the pipeline would notice.
+    """
+    print("column mapping:")
+    used = set()
+    for column in COLUMNS:
+        index = mapping.get(column)
+        if index is None:
+            print("  %-15s -> MISSING" % column)
+        else:
+            used.add(index)
+            header = header_row[index] if index < len(header_row) else "?"
+            print("  %-15s <- column %s %r" % (column, column_letter(index), header))
+
+    for key in sorted(event_cols):
+        index = event_cols[key]
+        used.add(index)
+        header = header_row[index] if index < len(header_row) else "?"
+        print("  event %-9s <- column %s %r" % (key, column_letter(index), header))
+
+    spare = [
+        (column_letter(i), raw)
+        for i, raw in enumerate(header_row)
+        if i not in used and str(raw).strip()
+    ]
+    if spare:
+        print("ignored sheet columns: %s" % ", ".join("%s %r" % s for s in spare))
+
+
+def map_event_columns(header_row):
+    """Sheet column index for each event key, for grid-shaped guest lists."""
+    found = {}
+    for index, raw in enumerate(header_row):
+        key = EVENT_COLUMNS.get(normalise(raw))
+        if key and key not in found:
+            found[key] = index
+    return found
+
+
 def map_headers(header_row):
     """Sheet column index for each of our CSV columns."""
     seen = {}
@@ -264,50 +345,106 @@ def map_headers(header_row):
 
 
 def existing_tokens(path):
-    """Tokens already issued locally, keyed by lowercased name.
+    """Tokens already issued locally, keyed by serial number and by name.
 
     A token is a live URL the moment it is sent to someone. Re-pulling a sheet
     that does not yet carry the tokens must not silently orphan those links, so
     anything already in guests.csv wins over a blank cell in the sheet.
+
+    Serial number is the reliable key; name is kept only as a fallback for
+    lists that have no serial column, and is unusable when it is not unique.
     """
+    empty = {"by_sno": {}, "by_name": {}}
     if not path.exists():
-        return {}
+        return empty
     try:
         with path.open(newline="", encoding="utf-8") as handle:
             rows = list(csv.DictReader(handle))
     except (OSError, csv.Error):
-        return {}
-    found = {}
+        return empty
+
+    by_sno = {}
+    by_name = {}
+    duplicated = set()
     for row in rows:
-        name = (row.get("name") or "").strip().lower()
         token = (row.get("token") or "").strip()
-        if name and token:
-            found.setdefault(name, token)
-    return found
+        if not token:
+            continue
+        sno = (row.get("sno") or "").strip()
+        name = (row.get("name") or "").strip().lower()
+        if sno:
+            by_sno.setdefault(sno, token)
+        if name:
+            if name in by_name:
+                duplicated.add(name)
+            by_name.setdefault(name, token)
+    for name in duplicated:
+        # Two guests with this name already hold tokens. Matching on name could
+        # hand one person the other's invite, so refuse to match on it at all.
+        by_name.pop(name, None)
+    return {"by_sno": by_sno, "by_name": by_name}
 
 
-def build_rows(values, mapping, carried):
+def events_from_grid(raw, event_cols):
+    """Turn one-column-per-event marks into the space separated key list."""
+    keys = []
+    for key in ("pellikoduku", "cocktail", "haldimehendi", "wedding"):
+        index = event_cols.get(key)
+        if index is None or index >= len(raw):
+            continue
+        if str(raw[index] or "").strip().lower() in TRUTHY:
+            keys.append(key)
+    return " ".join(keys)
+
+
+def build_rows(values, mapping, event_cols, carried):
     rows = []
     blank = 0
     reused = []
+    unmatched_marks = set()
+
     for raw in values:
         def cell(column):
             index = mapping.get(column)
             if index is None or index >= len(raw):
                 return ""
-            return (raw[index] or "").strip()
+            return str(raw[index] or "").strip()
 
         name = cell("name")
         if not name:
+            # Blank rows and the totals row at the bottom both land here. The
+            # totals row holds sums under the event columns, so dropping it on
+            # "no name" is what keeps those out of the guest list.
             blank += 1
             continue
 
         row = {column: cell(column) for column in COLUMNS}
+
+        # An explicit list column wins if present; otherwise derive from the
+        # grid. Doing it in this order means adding an events_invited column
+        # later overrides the grid without having to delete it.
+        if not row["events_invited"] and event_cols:
+            row["events_invited"] = events_from_grid(raw, event_cols)
+
         if not row["token"]:
-            carried_token = carried.get(name.lower())
-            if carried_token:
-                row["token"] = carried_token
+            token = None
+            if row["sno"]:
+                token = carried["by_sno"].get(row["sno"])
+            if not token:
+                token = carried["by_name"].get(name.lower())
+            if token:
+                row["token"] = token
                 reused.append(name)
+
+        for index, value in enumerate(raw):
+            text = str(value or "").strip().lower()
+            if (
+                text in TRUTHY
+                and index not in event_cols.values()
+                and index not in mapping.values()
+            ):
+                unmatched_marks.add(index)
+
         rows.append(row)
 
     if blank:
@@ -320,13 +457,23 @@ def build_rows(values, mapping, carried):
 
     names = [row["name"].lower() for row in rows]
     duplicates = sorted({name for name in names if names.count(name) > 1})
-    if duplicates:
-        # Two guests with one name makes the token carry-over ambiguous, so say
-        # so rather than guessing which row owns which link.
+    # "is None", not falsiness: a serial column in column A maps to index 0.
+    if duplicates and mapping.get("sno") is None:
+        # Without a serial column there is nothing stable to match a re-import
+        # against, so a shared first name could move a live link.
         print(
-            "warning: duplicate names, token carry-over is ambiguous for: %s"
-            % ", ".join(duplicates),
+            "warning: duplicate names and no serial column, so token carry-over is\n"
+            "ambiguous for: %s" % ", ".join(duplicates),
             file=sys.stderr,
+        )
+
+    snos = [row["sno"] for row in rows if row["sno"]]
+    repeated = sorted({s for s in snos if snos.count(s) > 1})
+    if repeated:
+        raise Failure(
+            "these serial numbers appear more than once: %s\n"
+            "They are what a re-import matches tokens on, so they have to be unique."
+            % ", ".join(repeated)
         )
 
     tokens = [row["token"] for row in rows if row["token"]]
@@ -398,17 +545,68 @@ def main(argv=None):
             "default A:Z only reads the first tab."
         )
 
-    rows = build_rows(values[1:], map_headers(values[0]), existing_tokens(args.out))
+    mapping = map_headers(values[0])
+    event_cols = map_event_columns(values[0])
+    if args.dry_run:
+        describe_mapping(values[0], mapping, event_cols)
+
+    if "events_invited" not in mapping and not event_cols:
+        raise Failure(
+            "found no events in this sheet, so every invite would show an empty\n"
+            "schedule. Either add one column per event named Pelli Koduku, Cocktail,\n"
+            "Haldi and Wedding holding 1 or 0, or a single events_invited column\n"
+            "holding space separated keys from:\n"
+            "  pellikoduku cocktail haldimehendi wedding"
+        )
+
+    rows = build_rows(values[1:], mapping, event_cols, existing_tokens(args.out))
     if not rows:
         raise Failure("no guest rows found below the header")
 
     without = sum(1 for row in rows if not row["token"])
     print("read %d guest(s); %d still need a token" % (len(rows), without))
 
+    missing = sorted(set(("pellikoduku", "cocktail", "haldimehendi", "wedding")) - set(event_cols))
+    if event_cols and missing and "events_invited" not in mapping:
+        print(
+            "\nwarning: no column found for: %s\n"
+            "Nobody will be invited to those, which is wrong unless they are deliberate."
+            % ", ".join(missing),
+            file=sys.stderr,
+        )
+
+    empty = [row["name"] for row in rows if not row["events_invited"]]
+    if empty:
+        print(
+            "\nwarning: %d guest(s) are invited to nothing, so their page would have an\n"
+            "empty schedule: %s%s"
+            % (len(empty), ", ".join(empty[:8]), "..." if len(empty) > 8 else ""),
+            file=sys.stderr,
+        )
+
+    counts = {}
+    for row in rows:
+        for key in row["events_invited"].split():
+            counts[key] = counts.get(key, 0) + 1
+    print(
+        "invited per event: %s"
+        % ", ".join("%s=%d" % (k, counts.get(k, 0)) for k in
+                    ("pellikoduku", "cocktail", "haldimehendi", "wedding"))
+    )
+
     if args.dry_run:
-        print("dry run, %s not written" % args.out)
-        for row in rows[:5]:
-            print("  %s | %s" % (row["token"] or "(no token)", row["name"]))
+        print("\ndry run, %s not written" % args.out)
+        print("first rows:")
+        for row in rows[:6]:
+            print(
+                "  %-4s %-12s %-20s %s"
+                % (
+                    row["sno"] or "-",
+                    row["token"] or "(no token)",
+                    row["name"],
+                    row["events_invited"] or "(none)",
+                )
+            )
         return 0
 
     write_csv(rows, args.out)

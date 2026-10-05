@@ -340,15 +340,34 @@ python3 tools/invite/fetch_guests.py --sheet <spreadsheet-id> --dry-run
 python3 tools/invite/fetch_guests.py --sheet <spreadsheet-id> --range 'Guests!A:Z'
 ```
 
+`--dry-run` prints the column mapping, which columns it ignored, and the per-event
+invite counts. Cross-check those counts against the sheet's own SUM row; that is the
+cheapest way to catch a column that silently stopped mapping.
+
 Sheet headers are matched loosely, so `Guest Name`, `guest_name` and `guestname` all
 work; see `ALIASES` in the script for accepted spellings. Only a name column is
-required. Rows with no name are skipped.
+required. Rows with no name are skipped, which is also what drops the SUM row.
 
-A token is a live URL as soon as it is sent to someone, so a blank token cell in the
-sheet never wipes one that already exists locally: `fetch_guests.py` carries over any
-token already in `guests.csv`, matching on name, and says which ones it kept. Two
-guests sharing a token is a hard error, because they would share an invite page. Paste
-tokens back into the sheet once links go out, so the sheet stays authoritative.
+Events can be given either way:
+
+- **One column per event**, headed `Pelli Koduku`, `Cocktail`, `Haldi`, `Wedding`,
+  holding `1` for invited. Anything that is not `1`/`y`/`yes`/`true`/`x` counts as not
+  invited, including a stray number, because inviting someone to an event they were
+  never marked for is the worse error.
+- **A single `events_invited` column** of space separated keys. If both exist this one
+  wins, so adding it later overrides the grid without deleting anything.
+
+A token is a live URL as soon as it is sent to someone, so a re-import must never move
+one. `fetch_guests.py` carries over tokens already in `guests.csv`, matching on the
+`S.No` column. Name is only a fallback, and a name shared by two token holders is
+refused as a key outright rather than guessed at. Duplicate serials and two guests
+sharing a token are both hard errors. Paste tokens back into the sheet once links go
+out, so the sheet stays authoritative.
+
+`python3 tools/invite/test_fetch_guests.py` covers the mapping, the grid parsing, the
+token carry-over and the JWT signing. No network or credentials needed. Worth running
+after touching that file: a column that stops mapping gives every guest an empty
+schedule, and a broken carry-over hands someone else's invite to the wrong person.
 
 **Writing to it** - `tools/invite/rsvp.gs` goes in the sheet's own Apps Script project
 (Extensions > Apps Script), deployed as a web app with *Execute as: Me* and *Who has
