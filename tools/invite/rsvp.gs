@@ -22,13 +22,18 @@
  *    URL, which would silently break every invite already sent.
  */
 
-var GUEST_SHEET = "Guests";
+// The guest list is split across one tab per side ("Pranay", "Shruti"), and
+// more may be added, so every tab is searched rather than one named one. Only
+// the output tabs below are skipped; a tab with no token column is ignored
+// anyway, so an unrelated tab costs nothing but a read.
 var RSVP_SHEET = "RSVPs";
+var SKIP_SHEETS = [RSVP_SHEET];
 
 var RSVP_HEADERS = [
   "received_at",
   "token",
   "name",
+  "side",
   "attending",
   "events",
   "note"
@@ -109,15 +114,11 @@ function doPost(e) {
     }
 
     var book = SpreadsheetApp.getActiveSpreadsheet();
-    var guests = book.getSheetByName(GUEST_SHEET);
-    if (!guests) {
-      return reply({ ok: false, error: "no sheet named " + GUEST_SHEET });
-    }
 
     // The endpoint URL is public, so an unknown token is the only thing
     // standing between this sheet and anyone who finds the URL. Reject it
     // before writing anything.
-    var guest = findGuest(guests, token);
+    var guest = findGuest(book, token);
     if (!guest) {
       return reply({ ok: false, error: "unknown token" });
     }
@@ -142,11 +143,12 @@ function doPost(e) {
       now,
       token,
       guest.name,
+      guest.side,
       attending,
       events.join(" "),
       note
     ]);
-    markGuestResponded(guests, guest, attending, now);
+    markGuestResponded(guest, attending, now);
 
     return reply({ ok: true });
   } catch (err) {
@@ -158,7 +160,31 @@ function doPost(e) {
   }
 }
 
-function findGuest(sheet, token) {
+function shouldSkip(name) {
+  for (var i = 0; i < SKIP_SHEETS.length; i++) {
+    if (SKIP_SHEETS[i] === name) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/** Find the token on any guest tab. Returns null if no tab has it. */
+function findGuest(book, token) {
+  var sheets = book.getSheets();
+  for (var s = 0; s < sheets.length; s++) {
+    if (shouldSkip(sheets[s].getName())) {
+      continue;
+    }
+    var found = findGuestOnSheet(sheets[s], token);
+    if (found) {
+      return found;
+    }
+  }
+  return null;
+}
+
+function findGuestOnSheet(sheet, token) {
   var values = sheet.getDataRange().getValues();
   if (!values.length) {
     return null;
@@ -166,6 +192,7 @@ function findGuest(sheet, token) {
   var index = headerIndex(values[0]);
   var tokenCol = firstIndexOf(index, ["token", "code", "invitetoken", "invitecode"]);
   var nameCol = firstIndexOf(index, ["name", "guest", "guestname", "invitee"]);
+  // No token column means this is not a guest tab.
   if (tokenCol < 0) {
     return null;
   }
@@ -173,6 +200,8 @@ function findGuest(sheet, token) {
   for (var row = 1; row < values.length; row++) {
     if (String(values[row][tokenCol] || "").trim() === token) {
       return {
+        sheet: sheet,
+        side: sheet.getName(),
         row: row + 1, // getRange is 1-based and row 1 is the header
         name: nameCol >= 0 ? String(values[row][nameCol] || "").trim() : "",
         index: index
@@ -199,13 +228,13 @@ function appendRsvp(book, row) {
  * the RSVPs tab is the real record, so a missing column must not fail the
  * request after the response has already been stored.
  */
-function markGuestResponded(sheet, guest, attending, when) {
+function markGuestResponded(guest, attending, when) {
   var statusCol = firstIndexOf(guest.index, ["rsvpstatus", "rsvp", "status", "attending"]);
   var whenCol = firstIndexOf(guest.index, ["respondedat", "responded", "repliedat", "timestamp"]);
   if (statusCol >= 0) {
-    sheet.getRange(guest.row, statusCol + 1).setValue(attending);
+    guest.sheet.getRange(guest.row, statusCol + 1).setValue(attending);
   }
   if (whenCol >= 0) {
-    sheet.getRange(guest.row, whenCol + 1).setValue(when);
+    guest.sheet.getRange(guest.row, whenCol + 1).setValue(when);
   }
 }

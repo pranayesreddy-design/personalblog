@@ -36,7 +36,10 @@ CREDENTIALS = REPO / "tools" / "invite" / "service-account.json"
 OUT = REPO / "tools" / "invite" / "guests.csv"
 
 TOKEN_URI = "https://oauth2.googleapis.com/token"
+# Read only by default. Writing is only ever needed to put the tokens back, so
+# --push-tokens asks for the wider scope and nothing else does.
 SCOPE = "https://www.googleapis.com/auth/spreadsheets.readonly"
+SCOPE_WRITE = "https://www.googleapis.com/auth/spreadsheets"
 JWT_BEARER = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 
 # The CSV columns the generator expects, in order, followed by ones only this
@@ -216,12 +219,12 @@ def sign_rs256(message, private_key_pem):
             pass
 
 
-def access_token(creds):
+def access_token(creds, scope=None):
     now = int(time.time())
     header = {"alg": "RS256", "typ": "JWT"}
     claims = {
         "iss": creds["client_email"],
-        "scope": SCOPE,
+        "scope": scope or SCOPE,
         "aud": creds.get("token_uri") or TOKEN_URI,
         "iat": now,
         # Google rejects anything over an hour.
@@ -299,6 +302,42 @@ def read_values(token, sheet_id, cell_range, client_email=""):
         urllib.parse.quote(cell_range, safe=""),
     )
     return api_get(url, token, sheet_id, client_email).get("values", [])
+
+
+def write_column(token, sheet_id, cell_range, column, client_email=""):
+    """Write one column of values, header included, in a single call."""
+    url = (
+        "https://sheets.googleapis.com/v4/spreadsheets/%s/values/%s"
+        "?valueInputOption=RAW"
+        % (urllib.parse.quote(sheet_id, safe=""), urllib.parse.quote(cell_range, safe=""))
+    )
+    body = json.dumps({"values": [[value] for value in column]}).encode()
+    request = urllib.request.Request(
+        url,
+        data=body,
+        method="PUT",
+        headers={
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            return json.loads(response.read())
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", "replace")
+        if exc.code in (403, 404):
+            raise Failure(
+                "Google returned HTTP %s writing to the sheet. Reading works, so\n"
+                "this is almost certainly share level: writing needs Editor, not\n"
+                "Viewer.\n\n"
+                "Open the sheet, click Share, find this address and change it to\n"
+                "Editor:\n"
+                "  %s" % (exc.code, client_email or "run --whoami to print it")
+            )
+        raise Failure("Sheets API error HTTP %s:\n%s" % (exc.code, detail.strip()))
+    except urllib.error.URLError as exc:
+        raise Failure("could not reach the Sheets API: %s" % exc.reason)
 
 
 def column_letter(index):
@@ -578,6 +617,117 @@ def check_combined(rows):
         )
 
 
+def push_tokens(creds, sheet_id, csv_path, cell_range, tabs, dry_run):
+    """Write the tokens from guests.csv back into the sheet.
+
+    The sheet is where you will actually look someone up, and the RSVP script
+    matches on a token column that lives there, so the tokens cannot only exist
+    in a local CSV.
+    """
+    if not csv_path.exists():
+        raise Failure(
+            "no %s yet. Pull the sheet, then fill in tokens:\n"
+            "  python3 tools/invite/fetch_guests.py --sheet ID\n"
+            "  python3 tools/invite/generate.py --tokens %s" % (csv_path, csv_path)
+        )
+
+    with csv_path.open(newline="", encoding="utf-8") as handle:
+        local = list(csv.DictReader(handle))
+
+    have = [row for row in local if (row.get("token") or "").strip()]
+    if not have:
+        raise Failure(
+            "no tokens in %s yet. Fill them in first:\n"
+            "  python3 tools/invite/generate.py --tokens %s" % (csv_path, csv_path)
+        )
+    print("%d of %d local row(s) have a token" % (len(have), len(local)))
+
+    token = access_token(creds, SCOPE_WRITE)
+    email = creds["client_email"]
+    tabs = tabs or list_tabs(token, sheet_id, email)
+
+    for tab in tabs:
+        mine = [
+            row
+            for row in have
+            if (row.get("side") or "").strip().lower() == tab.strip().lower()
+        ]
+        by_sno = {
+            (row.get("sno") or "").strip(): (row.get("token") or "").strip()
+            for row in mine
+            if (row.get("sno") or "").strip()
+        }
+        # Serial number is the only thing tying a CSV row back to a sheet row,
+        # so a blank one means that guest's token has nowhere to go.
+        orphans = [row["name"] for row in mine if not (row.get("sno") or "").strip()]
+        if orphans:
+            warn(
+                "%d guest(s) on the %s tab have no S.No, so their token cannot be\n"
+                "placed. Number those rows in the sheet and re-run: %s"
+                % (len(orphans), tab, ", ".join(orphans))
+            )
+        if not by_sno:
+            print("%s: nothing to write" % tab)
+            continue
+
+        cells = read_values(token, sheet_id, "'%s'!%s" % (tab, cell_range), email)
+        if not cells:
+            warn("the %s tab is empty, skipping it" % tab)
+            continue
+
+        header = cells[0]
+        mapping = map_headers(header)
+        sno_col = mapping.get("sno")
+        if sno_col is None:
+            warn("the %s tab has no serial column, so rows cannot be matched" % tab)
+            continue
+
+        # Reuse the existing token column if there is one, otherwise take the
+        # first column past every cell on the tab. Going past the header row
+        # alone is not enough: Shruti's header stops at F but her rows carry
+        # group labels in G, which this would have overwritten.
+        target = mapping.get("token")
+        if target is None:
+            target = max([len(row) for row in cells] + [len(header)])
+        letter = column_letter(target)
+
+        column = ["Token"]
+        written = 0
+        for raw in cells[1:]:
+            sno = (raw[sno_col] if sno_col < len(raw) else "").strip()
+            existing = (raw[target] if target < len(raw) else "").strip()
+            new = by_sno.get(sno, "")
+            if existing and new and existing != new:
+                # A token already out in the world. Overwriting it would break
+                # a link someone already has.
+                raise Failure(
+                    "%s row with S.No %s already holds token %r but the CSV says\n"
+                    "%r. Refusing to overwrite a link that may already be sent."
+                    % (tab, sno, existing, new)
+                )
+            keep = existing or new
+            column.append(keep)
+            if new and not existing:
+                written += 1
+
+        print(
+            "%s: %d new token(s) into column %s%s"
+            % (tab, written, letter, " (dry run)" if dry_run else "")
+        )
+        if written and not dry_run:
+            write_column(
+                token,
+                sheet_id,
+                "'%s'!%s1:%s%d" % (tab, letter, letter, len(column)),
+                column,
+                email,
+            )
+
+    if dry_run:
+        print("\ndry run, the sheet was not changed")
+    return 0
+
+
 def write_csv(rows, path):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
@@ -616,6 +766,11 @@ def main(argv=None):
         action="store_true",
         help="print the address to share the sheet with, then exit",
     )
+    parser.add_argument(
+        "--push-tokens",
+        action="store_true",
+        help="write tokens from the CSV back into the sheet (needs Editor access)",
+    )
     args = parser.parse_args(argv)
 
     # Needs no sheet and no network: this is the address the sheet has to be
@@ -630,15 +785,19 @@ def main(argv=None):
         parser.error("--sheet is required (or set INVITE_SHEET_ID)")
 
     creds = load_credentials(args.credentials)
-    token = access_token(creds)
     print("authenticating as %s" % creds["client_email"])
+    chosen = [name.strip() for name in args.tabs.split(",") if name.strip()]
+
+    if args.push_tokens:
+        return push_tokens(
+            creds, args.sheet, args.out, args.cell_range, chosen, args.dry_run
+        )
+
+    token = access_token(creds)
 
     # Both of you keep a tab, so reading only the first one silently left 42
     # guests off the list. Every tab is read unless --tabs narrows it.
-    if args.tabs:
-        tabs = [name.strip() for name in args.tabs.split(",") if name.strip()]
-    else:
-        tabs = list_tabs(token, args.sheet, creds["client_email"])
+    tabs = chosen or list_tabs(token, args.sheet, creds["client_email"])
     print("tabs: %s" % ", ".join(tabs))
 
     carried = existing_tokens(args.out)
@@ -747,5 +906,8 @@ if __name__ == "__main__":
     try:
         sys.exit(main())
     except Failure as error:
-        print("error: %s" % error, file=sys.stderr)
+        # Flush first, or this lands above the progress lines that explain
+        # which tab it got to.
+        sys.stdout.flush()
+        print("\nerror: %s" % error, file=sys.stderr)
         sys.exit(1)

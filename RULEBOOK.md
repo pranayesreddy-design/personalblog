@@ -382,11 +382,34 @@ token carry-over and the JWT signing. No network or credentials needed. Worth ru
 after touching that file: a column that stops mapping gives every guest an empty
 schedule, and a broken carry-over hands someone else's invite to the wrong person.
 
+**Putting tokens back** - the sheet is where you look a guest up, and `rsvp.gs` matches
+RSVPs on a token column that has to live there, so tokens cannot only exist in the local
+CSV. `--push-tokens` writes them back:
+
+```bash
+python3 tools/invite/fetch_guests.py --sheet ID              # pull
+python3 tools/invite/generate.py --tokens tools/invite/guests.csv   # mint
+python3 tools/invite/fetch_guests.py --sheet ID --push-tokens --dry-run
+python3 tools/invite/fetch_guests.py --sheet ID --push-tokens
+```
+
+This is the only operation that writes, so it is the only one that asks for the
+read-write scope, and it needs the service account changed from Viewer to **Editor**.
+Rows are matched by `S.No`, so a row without one is reported and skipped rather than
+guessed at. A cell that already holds a different token is a hard error: that link may
+already be in someone's hands. The new column goes after the last cell on the tab, not
+the last header cell, because Shruti's rows carry group labels past the end of her
+header.
+
 **Writing to it** - `tools/invite/rsvp.gs` goes in the sheet's own Apps Script project
 (Extensions > Apps Script), deployed as a web app with *Execute as: Me* and *Who has
 access: Anyone*. "Anyone" is unavoidable since guests are not signed into Google; it
 exposes only this script, which never reads anything back to the caller. Put the `/exec`
 URL in `RSVP_ENDPOINT` in `assets/js/invite.js`.
+
+It searches **every tab** for the token rather than one named `Guests`, since the list
+is split by side and a tab without a token column is simply not a guest tab. The side
+is recorded on each RSVP row.
 
 Three constraints worth knowing before touching either side:
 
@@ -406,6 +429,7 @@ cases the row may already be stored. So the form says it could not confirm the s
 asks the guest to text rather than resubmit, instead of claiming a failure that would
 invite a duplicate.
 
-Remaining steps: confirm the three Hyderabad venues; set up the service account and
-share the sheet; deploy the Apps Script and fill in `RSVP_ENDPOINT`; batch-generate,
-spot-check, send.
+Remaining steps: confirm the three Hyderabad venues; rewrite the two placeholder bios;
+decide the 37 guests currently invited to nothing and the one name on both tabs; grant
+Editor and push tokens into the sheet; deploy the Apps Script and fill in
+`RSVP_ENDPOINT`; batch-generate, spot-check, send.
