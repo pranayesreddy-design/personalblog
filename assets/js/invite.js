@@ -103,6 +103,10 @@
   const submitNode = form.querySelector('button[type="submit"]');
   const submitLabel = submitNode ? submitNode.textContent : "";
   const doneNode = document.querySelector("[data-rsvp-done]");
+  // A guest invited to one event never sees the list: a single box to tick
+  // asks the same question twice. Their yes is a yes to that event.
+  const eventInputs = form.querySelectorAll('input[name="events"]');
+  const onlyEvent = eventInputs.length === 1 ? eventInputs[0].value : "";
   const token = (form.querySelector("[data-rsvp-token]") || {}).value || "";
   // Per token, so two guests sharing a phone each see their own answer.
   const storageKey = `rsvp:${token}`;
@@ -152,8 +156,8 @@
     const note = doneNode.querySelector("[data-rsvp-done-note]");
 
     title.textContent = answer.attending === "yes"
-      ? "You're in. We can't wait to see you."
-      : "Thank you for letting us know. We'll miss you.";
+      ? "Yay! See you there."
+      : "We'll miss you. Thanks for telling us.";
 
     list.textContent = "";
     if (answer.attending === "yes") {
@@ -226,7 +230,7 @@
   function syncEventsVisibility() {
     const answer = currentAnswer();
     if (eventsNode) {
-      eventsNode.hidden = answer !== "yes";
+      eventsNode.hidden = answer !== "yes" || Boolean(onlyEvent);
     }
     if (restNode) {
       restNode.hidden = !answer;
@@ -234,7 +238,7 @@
   }
 
   function collectPayload() {
-    const selectedEvents = Array.from(form.querySelectorAll('input[name="events"]:checked'))
+    const selectedEvents = onlyEvent ? [onlyEvent] : Array.from(form.querySelectorAll('input[name="events"]:checked'))
       .map((input) => input.value);
     const noteNode = form.querySelector('[name="note"]');
     return {
@@ -278,7 +282,7 @@
     // A yes with nothing ticked tells us nothing about which days to plan for.
     const hasEvents = form.querySelector('input[name="events"]');
     if (payload.attending === "yes" && hasEvents && !payload.events.length) {
-      setStatus("Tick the ones you can make.", true);
+      setStatus("Tick at least one, so we know when to expect you.", true);
       return;
     }
 

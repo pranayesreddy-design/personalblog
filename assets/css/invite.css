@@ -296,10 +296,22 @@ a {
 
 /* Pulled left by the left side bearing of a Didot capital O, measured off a
    screenshot, so the heading's ink lines up with the hard left edge of the
-   photo beneath it. Tuned to this word: "The weekend" and "Join us" start on
+   photo beneath it. Tuned to this word: "The celebrations" and "Will you" start on
    letters that are already flush, and shifting those overhangs the gutter. */
 #story .split-title {
   margin-left: -0.056em;
+}
+
+/* "celebrations" is far wider than any other heading word, and at full size it
+   ran into the schedule on a small laptop. Sized against its own column, so it
+   only shrinks when it would not fit: 17.5cqi is the measured width of the word
+   (5.48em) with a little to spare. */
+#weekend .split-title {
+  container-type: inline-size;
+}
+
+#weekend .split-title span {
+  font-size: min(1em, 17.5cqi);
 }
 
 .split-body > :first-child {
