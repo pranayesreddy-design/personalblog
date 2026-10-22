@@ -6,7 +6,8 @@
   // treat an unknown token as the only gate on writing to the sheet. Replace an
   // existing deployment rather than creating a new one; a new deployment gets a
   // new URL and silently breaks every invite already sent.
-  const RSVP_ENDPOINT = "";
+  const RSVP_ENDPOINT =
+    "https://script.google.com/macros/s/AKfycbyi9_FWTguAxE3EM3Ik3f2WWh_pJFJSUbdAJK8ud1La40zIRfeEARk-uMvohGGQ3pBKnA/exec";
 
   // Reveal on scroll ------------------------------------------------------
 

@@ -528,6 +528,13 @@ cases the row may already be stored. So the form says it could not confirm the s
 asks the guest to text rather than resubmit, instead of claiming a failure that would
 invite a duplicate.
 
+**Deployed** on 22 October 2026, *Execute as: Me*, *Who has access: Anyone*. The `/exec`
+URL is in `assets/js/invite.js`. It was first deployed as signed-in only, which sends a
+signed-out guest to a Google login page instead of running the script, so check any
+redeploy from a signed-out browser or with `curl -sL <url>`: it must print
+`{"ok":true,"service":"wedding-rsvp"}`. To ship a change to `rsvp.gs`, use Manage
+deployments, edit the existing one, and pick New version.
+
 Remaining steps: confirm the three Hyderabad venues; rewrite the two placeholder bios;
 decide the 37 guests currently invited to nothing and the one name on both tabs; grant
 Editor and push tokens into the sheet; deploy the Apps Script and fill in
