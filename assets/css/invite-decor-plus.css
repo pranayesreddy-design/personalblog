@@ -329,6 +329,26 @@ html.plus-on .split {
   pointer-events: none;
 }
 
+.plus-done-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem 1.8rem;
+}
+
+.rsvp-done:not([data-attending="yes"]) .plus-more-fireworks {
+  display: none;
+}
+
+@media (min-width: 62rem) {
+  #rsvp .plus-done-actions {
+    margin-top: auto;
+  }
+
+  #rsvp .plus-done-actions .rsvp-change {
+    margin-top: 0;
+  }
+}
+
 @keyframes plus-shower {
   0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 1; }
   85% { opacity: 1; }

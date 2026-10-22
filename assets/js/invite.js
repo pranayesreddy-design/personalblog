@@ -214,6 +214,7 @@
     note.textContent = answer.note ? `Your note: ${answer.note}` : "";
 
     form.hidden = true;
+    doneNode.dataset.attending = answer.attending;
     doneNode.hidden = false;
     // Only straight after sending. On a return visit the page must open at the
     // top as usual, not jump past the invite to a summary.

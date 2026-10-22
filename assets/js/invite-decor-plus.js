@@ -230,34 +230,40 @@
 
     const rockets = [];
     const sparks = [];
-    const shots = width < 700 ? 6 : 9;
-    for (let i = 0; i < shots; i += 1) {
+    const shots = width < 700 ? 14 : 20;
+    const finale = 5;
+    for (let i = 0; i < shots + finale; i += 1) {
       rockets.push({
-        at: i * 260 + Math.random() * 180,
-        x: width * (0.15 + Math.random() * 0.7),
+        at: i < shots ? i * 230 + Math.random() * 200 : shots * 230 + 300 + Math.random() * 120,
+        x: width * (0.1 + Math.random() * 0.8),
         y: height,
-        top: height * (0.12 + Math.random() * 0.3),
+        top: height * (0.08 + Math.random() * 0.4),
         colour: pick(),
         done: false,
       });
     }
 
-    function burst(rocket, born) {
-      const count = 46 + Math.floor(Math.random() * 20);
-      const speed = 2.4 + Math.random() * 1.6;
-      const second = Math.random() < 0.5 ? pick() : rocket.colour;
+    function ring(rocket, born, count, speed, colour) {
       for (let i = 0; i < count; i += 1) {
         const angle = (i / count) * Math.PI * 2;
-        const v = speed * (0.75 + Math.random() * 0.35);
+        const v = speed * (0.8 + Math.random() * 0.3);
         sparks.push({
           x: rocket.x,
           y: rocket.y,
           vx: Math.cos(angle) * v,
           vy: Math.sin(angle) * v,
           born,
-          decay: 0.009 + Math.random() * 0.007,
-          colour: i % 2 ? rocket.colour : second,
+          decay: 0.008 + Math.random() * 0.007,
+          colour,
         });
+      }
+    }
+
+    function burst(rocket, born) {
+      const speed = 2.6 + Math.random() * 1.8;
+      ring(rocket, born, 70 + Math.floor(Math.random() * 30), speed, rocket.colour);
+      if (Math.random() < 0.6) {
+        ring(rocket, born, 36, speed * 0.5, pick());
       }
     }
 
@@ -297,7 +303,7 @@
         ctx.globalAlpha = life;
         ctx.fillStyle = spark.colour;
         ctx.beginPath();
-        ctx.arc(spark.x + spark.vx * travel, spark.y + spark.vy * travel + 0.02 * f * f, 2.2, 0, Math.PI * 2);
+        ctx.arc(spark.x + spark.vx * travel, spark.y + spark.vy * travel + 0.02 * f * f, 2.5, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -316,6 +322,21 @@
       talambralu();
     }
   });
+
+  // Beside "Change my answer"; the CSS shows it only after a yes, including
+  // on a return visit, where the answer is restored without a send.
+  const change = document.querySelector("[data-rsvp-change]");
+  if (change && !reducedMotion) {
+    const actions = document.createElement("div");
+    actions.className = "plus-done-actions";
+    change.before(actions);
+    const more = document.createElement("button");
+    more.type = "button";
+    more.className = "rsvp-change plus-more-fireworks";
+    more.textContent = "More fireworks";
+    more.addEventListener("click", fireworks);
+    actions.append(change, more);
+  }
 
   const hero = document.querySelector(".hero");
   if (hero) {
