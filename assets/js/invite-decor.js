@@ -28,15 +28,20 @@
   // Thoranam: mango leaves alternating with marigold strings, hung from a
   // sagging cord. Each strand sways on its own delay so the line never moves
   // in lockstep.
-  function thoranam(hero) {
-    const width = 1200;
-    const count = 40;
-    const wrap = box("decor-toran");
-    const svg = el("svg", { viewBox: `0 0 ${width} 90`, preserveAspectRatio: "xMidYMin slice" }, wrap);
+  //
+  // Drawn at the strip's real width rather than one fixed drawing scaled to
+  // fit: scaling up to cover a wide screen pushed the leaf tips past the bottom
+  // of the strip and cut them off. Wider screens get more strands instead.
+  function drawThoranam(wrap) {
+    const scale = wrap.clientHeight / 90 || 1;
+    const width = Math.ceil(wrap.clientWidth / scale);
+    const count = Math.max(8, Math.round(width / 30));
+    wrap.textContent = "";
+    const svg = el("svg", { viewBox: `0 0 ${width} 90`, preserveAspectRatio: "xMidYMin meet" }, wrap);
     const sag = (x) => 6 + 16 * (1 - Math.pow((x - width / 2) / (width / 2), 2));
     el("path", { d: `M0 6 Q${width / 2} 38 ${width} 6`, class: "decor-cord" }, svg);
     for (let i = 0; i < count; i += 1) {
-      const x = 15 + i * (width / count);
+      const x = (i + 0.5) * (width / count);
       const y = sag(x);
       const strand = el("g", { class: "decor-strand", style: `--i:${i % 7}` }, svg);
       if (i % 2 === 0) {
@@ -51,7 +56,23 @@
         }
       }
     }
+  }
+
+  function thoranam(hero) {
+    const wrap = box("decor-toran");
     hero.appendChild(wrap);
+    drawThoranam(wrap);
+    let lastWidth = wrap.clientWidth;
+    let pending = 0;
+    window.addEventListener("resize", () => {
+      clearTimeout(pending);
+      pending = setTimeout(() => {
+        if (wrap.clientWidth !== lastWidth) {
+          lastWidth = wrap.clientWidth;
+          drawThoranam(wrap);
+        }
+      }, 150);
+    });
   }
 
   function petals(hero) {
