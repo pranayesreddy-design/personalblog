@@ -211,7 +211,7 @@ function doPost(e) {
       events.join(" "),
       note
     ]);
-    markGuestResponded(guest, attending, now);
+    markGuestResponded(guest, attending, now, events, note);
 
     return reply({ ok: true });
   } catch (err) {
@@ -267,7 +267,8 @@ function findGuestOnSheet(sheet, token) {
         side: sheet.getName(),
         row: row + 1, // getRange is 1-based and row 1 is the header
         name: nameCol >= 0 ? String(values[row][nameCol] || "").trim() : "",
-        index: index
+        index: index,
+        values: values[row]
       };
     }
   }
@@ -286,18 +287,99 @@ function appendRsvp(book, row) {
   sheet.appendRow(row);
 }
 
+// Per event: the headers its invite column may carry, matching EVENT_COLUMNS in
+// fetch_guests.py, and the headers of the column that gets the RSVP count.
+var EVENT_RSVP = [
+  {
+    key: "pellikoduku",
+    invite: ["pellikoduku", "pellikuduku", "pellikurukku"],
+    rsvp: ["rsvppellikoduku", "rsvppellikuduku"]
+  },
+  {
+    key: "cocktail",
+    invite: ["cocktail", "cocktailparty"],
+    rsvp: ["rsvpcocktail", "rsvpcocktailparty"]
+  },
+  {
+    key: "haldimehendi",
+    invite: ["haldi", "haldimehendi", "haldimehndi", "mehendi", "mehndi"],
+    rsvp: ["rsvphaldi", "rsvphaldimehendi", "rsvpmehendi"]
+  },
+  {
+    key: "wedding",
+    invite: ["wedding", "marriage", "themarriage", "muhurtham", "weddingconfidence"],
+    rsvp: ["rsvpwedding", "rsvpmarriage"]
+  }
+];
+
+var TRUTHY = ["y", "yes", "true", "x", "\u2713", "\u2714", "yep"];
+
+/**
+ * How many people an invite cell stands for, the same rule as head_count() in
+ * fetch_guests.py: a number is a head count, a tick is one, anything else none.
+ */
+function headCount(value) {
+  var cell = String(value == null ? "" : value).trim().toLowerCase();
+  if (!cell) {
+    return 0;
+  }
+  if (TRUTHY.indexOf(cell) !== -1) {
+    return 1;
+  }
+  var number = Number(cell);
+  if (isNaN(number) || number < 1) {
+    return 0;
+  }
+  return Math.floor(number + 0.5);
+}
+
 /**
  * Mirror the answer onto the guest row, if those columns exist. Best effort:
  * the RSVPs tab is the real record, so a missing column must not fail the
  * request after the response has already been stored.
+ *
+ * Each "RSVP <event>" column gets a number so it can be summed like the
+ * Confidence columns it is meant to replace: the head count the guest was
+ * invited with for an event they are coming to, 0 for one they are not.
+ * Events they were never invited to stay blank, so a 0 always means "invited,
+ * declined" rather than "not on the list". The form does not ask how many are
+ * coming, so a household invited as 2 that says yes counts as 2.
  */
-function markGuestResponded(guest, attending, when) {
-  var statusCol = firstIndexOf(guest.index, ["rsvpstatus", "rsvp", "status", "attending"]);
-  var whenCol = firstIndexOf(guest.index, ["respondedat", "responded", "repliedat", "timestamp"]);
+function markGuestResponded(guest, attending, when, events, note) {
+  var index = guest.index;
+  var cells = guest.values || [];
+
+  function write(col, value) {
+    guest.sheet.getRange(guest.row, col + 1).setValue(value);
+  }
+
+  var statusCol = firstIndexOf(index, ["rsvpstatus", "rsvp", "status", "attending"]);
+  var whenCol = firstIndexOf(index, ["respondedat", "responded", "repliedat", "timestamp"]);
+  var noteCol = firstIndexOf(index, ["rsvpnote", "rsvpmessage"]);
   if (statusCol >= 0) {
-    guest.sheet.getRange(guest.row, statusCol + 1).setValue(attending);
+    write(statusCol, attending);
   }
   if (whenCol >= 0) {
-    guest.sheet.getRange(guest.row, whenCol + 1).setValue(when);
+    write(whenCol, when);
+  }
+  if (noteCol >= 0) {
+    // Written even when empty, so a later answer with no note clears the
+    // earlier one rather than leaving it beside an answer it no longer fits.
+    write(noteCol, note || "");
+  }
+
+  for (var i = 0; i < EVENT_RSVP.length; i++) {
+    var event = EVENT_RSVP[i];
+    var rsvpCol = firstIndexOf(index, event.rsvp);
+    if (rsvpCol < 0) {
+      continue;
+    }
+    var inviteCol = firstIndexOf(index, event.invite);
+    var invited = inviteCol >= 0 ? headCount(cells[inviteCol]) : 0;
+    if (!invited) {
+      continue;
+    }
+    var coming = attending === "yes" && (events || []).indexOf(event.key) !== -1;
+    write(rsvpCol, coming ? invited : 0);
   }
 }

@@ -152,6 +152,47 @@ expect("a guest with no reply at all gets answer null", get("nvr12345"), { ok: t
 rsvps.rows = rsvps.rows.filter(function (r, i) { return i === 0 || r[1] !== "2mv9u5fa"; });
 expect("deleting a guest's rows by hand leaves them unanswered", get("2mv9u5fa"), { ok: true, answer: null });
 
+// Per-event RSVP columns and the note, on a tab shaped like the real one -----
+
+var gridHeader = [
+  "S.No", "Name", "Pelli Koduku", "Cocktail", "Confidence Cocktail", "Haldi",
+  "Confidence Haldi", "Wedding", "Confidence Wedding", "Token",
+  "RSVP Status", "Responded At",
+  "RSVP Pelli Koduku", "RSVP Cocktail", "RSVP Haldi", "RSVP Wedding", "RSVP Note"
+];
+var G = {};
+gridHeader.forEach(function (h, i) { G[h] = i; });
+// Invited as two to the cocktail, one to the wedding, not to Pelli Koduku, and
+// with the Haldi marked by a tick rather than a number.
+var grid = makeSheet("Grid", [
+  gridHeader,
+  ["1", "Household", "0", 2, 1, "\u2713", "", "1", "", "grid1234", "", "", "", "", "", "", ""]
+]);
+sheets.unshift(grid);
+function cell(name) { return grid.rows[1][G[name]]; }
+
+post({ token: "grid1234", attending: "yes", events: ["cocktail", "wedding"], note: "Both of us!" });
+expect("a yes counts the invited head count, not 1", cell("RSVP Cocktail"), 2);
+expect("an event invited as 1 counts as 1", cell("RSVP Wedding"), 1);
+expect("an invited event they did not tick is 0, not blank", cell("RSVP Haldi"), 0);
+expect("an event they were never invited to stays blank", cell("RSVP Pelli Koduku"), "");
+expect("the note is copied onto the guest row", cell("RSVP Note"), "Both of us!");
+expect("a Confidence column is never written to", [cell("Confidence Cocktail"), cell("Confidence Wedding")], [1, ""]);
+expect("the invite columns themselves are untouched", [cell("Cocktail"), cell("Haldi"), cell("Wedding")], [2, "\u2713", "1"]);
+
+post({ token: "grid1234", attending: "yes", events: ["haldimehendi"] });
+expect("changing their mind moves the counts", [cell("RSVP Cocktail"), cell("RSVP Haldi"), cell("RSVP Wedding")], [0, 1, 0]);
+expect("an answer with no note clears the old note", cell("RSVP Note"), "");
+
+post({ token: "grid1234", attending: "no", events: ["cocktail"], note: "So sorry" });
+expect("a no zeroes every invited event, whatever was ticked", [cell("RSVP Cocktail"), cell("RSVP Haldi"), cell("RSVP Wedding")], [0, 0, 0]);
+expect("a no still keeps its note", cell("RSVP Note"), "So sorry");
+expect("status reads no", cell("RSVP Status"), "no");
+
+expect("head counts follow the importer's rules",
+  [headCount(""), headCount(0), headCount("0"), headCount(1.5), headCount("2"), headCount("Yes"), headCount("maybe")],
+  [0, 0, 0, 2, 2, 1, 0]);
+
 out.push("");
 out.push(failed ? failed + " FAILED" : "all passed");
 print(out.join("\n"));

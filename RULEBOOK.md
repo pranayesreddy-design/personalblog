@@ -515,6 +515,15 @@ before counting. `fetch_guests.py` skips both `Test` and `RSVPs`: the RSVPs tab 
 token and name columns, so without the skip every reply would be imported as a second
 copy of its guest.
 
+**On the guest row** - besides `RSVP Status` and `Responded At`, the script fills
+`RSVP Pelli Koduku`, `RSVP Cocktail`, `RSVP Haldi`, `RSVP Wedding` and `RSVP Note` (columns
+S to W on the Pranay tab), found by header name so they can move. Each event column is a
+number, so the SUM row totals it like a Confidence column: the invited head count for an
+event the guest is coming to, 0 for an invited event they are not, blank for one they were
+never invited to. The form does not ask how many are coming, so a household invited as 2
+that says yes counts as 2. Every new answer overwrites all of these, including clearing
+an old note. A tab without the columns, such as Shruti's for now, is left alone.
+
 **Seeing an answer again** - `GET /exec?token=...` returns the latest answer for that
 invite, so a guest who replied on a laptop sees it on their phone. The page paints
 whatever that browser remembers first, then replaces it with what the sheet says. If
