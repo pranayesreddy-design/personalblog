@@ -51,7 +51,9 @@ PHOTO_DIR = REPO / "assets" / "images" / "invite"
 # as a mistake rather than a motif.
 DEFAULT_PHOTO = "us-together.jpg"
 DEFAULT_PHOTO_ALT = "Pranay and Shruti"
-DEFAULT_CAPTION = "We could not find a photo of us together. Let us fix that in February."
+# Worded so it reads as an invitation rather than an apology. The guest should not
+# be told they are on the list of people we have no photo with.
+DEFAULT_CAPTION = "Us, somewhere cold. We would love one of these with you in February."
 
 # Copied into the output so dist/ can be deployed on its own. The paths the
 # template uses are relative to i/<token>/, so the layout must be preserved.
@@ -312,6 +314,35 @@ def cmd_tokens(path):
     print("filled %d token(s); %d row(s) total" % (added, len(rows)))
 
 
+# Dropped into the output directory so a later run can tell a directory it built
+# from one that happens to share the name.
+STAMP = ".invite-build"
+
+
+def clear_output(out):
+    """Empty the output directory, refusing any directory we did not build.
+
+    The directory is wiped on every run, so --out pointed at something else
+    destroys it. Pointing it at the repo root deleted 62 tracked files and the
+    gitignored guest list in one go, which git could only half undo.
+    """
+    if not out.exists():
+        return
+    if not out.is_dir():
+        raise SystemExit("--out %s is a file, not a directory" % out)
+    if (out / STAMP).exists():
+        shutil.rmtree(out)
+        return
+    if any(out.iterdir()):
+        raise SystemExit(
+            "refusing to empty %s: it has files in it and no %s marker, so it\n"
+            "was not built by this script. Point --out at a new or existing build\n"
+            "directory, or delete it yourself first if you are sure."
+            % (out, STAMP)
+        )
+    shutil.rmtree(out)
+
+
 def cmd_generate(guests_path, out_dir, limit):
     template = strip_comments(TEMPLATE.read_text(encoding="utf-8"))
     template_events = set(re.findall(r'data-event-key="([^"]+)"', template))
@@ -337,8 +368,9 @@ def cmd_generate(guests_path, out_dir, limit):
         rows = rows[:limit]
 
     out = Path(out_dir)
-    if out.exists():
-        shutil.rmtree(out)
+    clear_output(out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / STAMP).write_text("built by tools/invite/generate.py\n", encoding="utf-8")
     for asset in ASSETS:
         target = out / asset
         target.parent.mkdir(parents=True, exist_ok=True)

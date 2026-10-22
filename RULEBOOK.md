@@ -271,6 +271,13 @@ python3 tools/invite/generate.py --tokens tools/invite/guests.csv   # fill blank
 python3 tools/invite/generate.py --guests tools/invite/guests.csv --out dist --limit 5
 ```
 
+`--out` is emptied on every run, so it must point at a build directory and nothing
+else. Pointing it at the repo root deleted 62 tracked files and the gitignored guest
+list in one go. It now refuses any directory that has files in it and no
+`.invite-build` marker, so only a directory it created can be cleared. To refresh a
+page that already lives in the repo, build to a temp directory and copy the one page
+across rather than generating over the top.
+
 Preview on a phone with `python3 tools/invite/serve.py`, which prints the LAN address and
 detaches from the shell. Stop it with `--stop`. The address changes with the network.
 
