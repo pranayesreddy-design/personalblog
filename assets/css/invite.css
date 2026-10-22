@@ -339,9 +339,12 @@ a {
 /* The guest photo, under the RSVP heading. On a phone the form follows it
    directly, so the bottom margin is what keeps the caption from running into
    the sign-off line. Side by side on wide screens, the grid gap does that job. */
+/* Centred on a phone: a portrait photo is narrower than the column, and pushed
+   to the left it read as misaligned against the full-width text around it. */
 .guest-photo {
-  margin: 2rem 0 2.8rem;
+  margin: 2rem auto 2.8rem;
   max-width: 22rem;
+  text-align: center;
 }
 
 /* No forced aspect ratio. Guest photos arrive portrait and landscape in roughly
@@ -355,6 +358,7 @@ a {
   height: auto;
   max-width: 100%;
   max-height: 22rem;
+  margin: 0 auto;
 }
 
 /* Sans, like everything else meant to be read. Didot at caption size has too
@@ -823,12 +827,16 @@ a {
 
   /* Beside the form rather than above it, so the photo can be taller without
      pushing anything down, and the gap under it is the grid's job. */
+  /* Back to the left edge here, where it lines up under the heading. */
   .guest-photo {
+    margin-left: 0;
     margin-bottom: 0;
+    text-align: left;
   }
 
   .guest-photo img {
     max-height: 28rem;
+    margin-left: 0;
   }
 
   /* This heading's ink top sits 4px above the first line of copy beside it.
@@ -888,6 +896,102 @@ a {
      sticky to solve here and it would only drag the heading over the photo. */
   #story .split-title {
     position: static;
+  }
+
+  /* RSVP: a two-by-two grid, so both sides line up whatever the answer. The
+     wrappers dissolve and their children are placed directly: heading beside
+     the sign-off, sharing a bottom edge, then photo beside the form or the
+     summary, sharing a top edge. The summary stretches to the photo's bottom
+     edge, so a no and a yes to all four events leave the same outline; before
+     this the box ended wherever its content did. */
+  #rsvp .split-inner {
+    grid-template-rows: auto auto;
+    row-gap: 0;
+  }
+
+  #rsvp .split-aside,
+  #rsvp .split-body {
+    display: contents;
+  }
+
+  #rsvp .split-title {
+    grid-column: 1;
+    grid-row: 1;
+    position: static;
+  }
+
+  #rsvp .rsvp-signoff {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    margin: 0;
+  }
+
+  /* Same top margin on both, so photo and form start on the same line. */
+  #rsvp .guest-photo,
+  #rsvp .rsvp-form,
+  #rsvp .rsvp-done {
+    grid-row: 2;
+    margin-top: 2.2rem;
+  }
+
+  #rsvp .guest-photo {
+    grid-column: 1;
+    align-self: start;
+    position: relative;
+  }
+
+  /* Out of the flow, so the row ends at the photo's bottom edge rather than
+     the caption's, and that edge is what the summary lines up with. The
+     section's bottom padding has room for two lines. */
+  #rsvp .guest-photo figcaption {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+  }
+
+  #rsvp .rsvp-form {
+    grid-column: 2;
+  }
+
+  #rsvp .rsvp-done {
+    grid-column: 2;
+    align-self: stretch;
+  }
+
+  /* :not([hidden]), because a display rule on the class alone would override
+     the hidden attribute and show an empty box beside the form. */
+  #rsvp .rsvp-done:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Pinned to the bottom of a stretched box, so the spare height reads as
+     space around the answer rather than a gap under the link. */
+  #rsvp .rsvp-change {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+
+  /* Name and date share a line, and the title fits on one, so a yes to all
+     four plus a short note still ends level with the photo. A very long note
+     will still run past it; that's better than cutting the guest's words. */
+  #rsvp .rsvp-done-title {
+    font-size: 1.6rem;
+  }
+
+  #rsvp .rsvp-done-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.6rem 0;
+  }
+
+  #rsvp .rsvp-done-list span {
+    margin-top: 0;
+    text-align: right;
   }
 }
 
