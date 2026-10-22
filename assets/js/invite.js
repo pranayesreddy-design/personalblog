@@ -98,6 +98,7 @@
 
   const statusNode = form.querySelector("[data-rsvp-status]");
   const eventsNode = form.querySelector("[data-rsvp-events]");
+  const restNode = form.querySelector("[data-rsvp-rest]");
   const submitNode = form.querySelector('button[type="submit"]');
   const submitLabel = submitNode ? submitNode.textContent : "";
   const doneNode = document.querySelector("[data-rsvp-done]");
@@ -217,12 +218,18 @@
     return checked ? checked.value : "";
   }
 
-  // Which events you can make is only a question if you are coming at all.
+  // The form opens as just the two answer buttons and unfolds from there:
+  // events only for a yes, then the note and Send for either answer. Asking
+  // everything up front made the section read like a form to fill in rather
+  // than a question to answer.
   function syncEventsVisibility() {
-    if (!eventsNode) {
-      return;
+    const answer = currentAnswer();
+    if (eventsNode) {
+      eventsNode.hidden = answer !== "yes";
     }
-    eventsNode.hidden = currentAnswer() === "no";
+    if (restNode) {
+      restNode.hidden = !answer;
+    }
   }
 
   function collectPayload() {
@@ -237,7 +244,13 @@
     };
   }
 
+  let touched = false;
+  form.addEventListener("input", () => {
+    touched = true;
+  });
+
   form.addEventListener("change", (event) => {
+    touched = true;
     const target = event.target;
     if (!target) {
       return;
@@ -246,14 +259,7 @@
       syncEventsVisibility();
       setStatus("");
     }
-    // Ticking an event is a yes. Making the guest also press "Count me in"
-    // left people with boxes ticked and no answer, and a confusing prompt.
-    if (target.name === "events" && target.checked && currentAnswer() !== "yes") {
-      const yes = form.querySelector('input[name="attending"][value="yes"]');
-      if (yes) {
-        yes.checked = true;
-        syncEventsVisibility();
-      }
+    if (target.name === "events") {
       setStatus("");
     }
   });
@@ -347,6 +353,7 @@
 
   if (doneNode) {
     doneNode.querySelector("[data-rsvp-change]").addEventListener("click", () => {
+      touched = true;
       const answer = recall();
       if (answer) {
         restore(answer);
@@ -358,6 +365,66 @@
     });
   }
 
+  function showForm() {
+    if (doneNode) {
+      doneNode.hidden = true;
+    }
+    form.hidden = false;
+  }
+
+  // The sheet is the record, so ask it. The copy on this phone only exists to
+  // paint the summary instantly and to cover a failed lookup; without the
+  // lookup, an answer sent from a laptop was invisible on the guest's phone.
+  async function fetchSaved() {
+    if (!RSVP_ENDPOINT || !token) {
+      return;
+    }
+    let result;
+    try {
+      const response = await fetch(`${RSVP_ENDPOINT}?token=${encodeURIComponent(token)}`, {
+        redirect: "follow"
+      });
+      if (!response.ok) {
+        return;
+      }
+      result = await response.json();
+    } catch (error) {
+      // Offline or blocked. Whatever this phone remembers is the best we have.
+      return;
+    }
+    if (!result || !result.ok || !("answer" in result)) {
+      return;
+    }
+    // A slow lookup must never yank the guest out of an edit they have
+    // already started, including one begun with "Change my answer".
+    if (touched) {
+      return;
+    }
+    const saved = result.answer;
+    if (saved && (saved.attending === "yes" || saved.attending === "no")) {
+      const answer = {
+        attending: saved.attending,
+        events: Array.isArray(saved.events) ? saved.events : [],
+        note: saved.note || ""
+      };
+      remember(answer);
+      restore(answer);
+      showDone(answer, false);
+    } else if (recall()) {
+      // The sheet has nothing for this invite, so a summary from this phone
+      // would describe an answer we do not have. Most likely the row was
+      // cleared on purpose, as with test replies. Show the form again.
+      try {
+        localStorage.removeItem(storageKey);
+      } catch (error) {
+        // Nothing to clean up if storage is unavailable.
+      }
+      form.reset();
+      syncEventsVisibility();
+      showForm();
+    }
+  }
+
   syncEventsVisibility();
 
   const previous = recall();
@@ -365,4 +432,5 @@
     restore(previous);
     showDone(previous, false);
   }
+  fetchSaved();
 })();

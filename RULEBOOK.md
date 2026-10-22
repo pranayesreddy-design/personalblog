@@ -515,6 +515,14 @@ before counting. `fetch_guests.py` skips both `Test` and `RSVPs`: the RSVPs tab 
 token and name columns, so without the skip every reply would be imported as a second
 copy of its guest.
 
+**Seeing an answer again** - `GET /exec?token=...` returns the latest answer for that
+invite, so a guest who replied on a laptop sees it on their phone. The page paints
+whatever that browser remembers first, then replaces it with what the sheet says. If
+the sheet has nothing for the token, the page shows the form again and forgets its
+local copy, so clearing test rows by hand really does reset the invite. This shows an
+answer to anyone holding the link, which is who can already open that guest's page; an
+unknown token is refused, so it cannot be used to list who has replied.
+
 A failed cross-origin read is indistinguishable from a dropped connection, and in both
 cases the row may already be stored. So the form says it could not confirm the save and
 asks the guest to text rather than resubmit, instead of claiming a failure that would

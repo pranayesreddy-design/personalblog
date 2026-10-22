@@ -214,18 +214,21 @@
                 </label>
               </div>
 
-              <div class="rsvp-field">
-                <label class="rsvp-label" for="rsvp-note">Anything we should know?</label>
-                <textarea
-                  class="rsvp-textarea"
-                  id="rsvp-note"
-                  name="note"
-                  placeholder="Food preferences, travel plans, or just say hello."
-                ></textarea>
-              </div>
+              
+              <div class="rsvp-rest" data-rsvp-rest>
+                <div class="rsvp-field">
+                  <label class="rsvp-label" for="rsvp-note">Anything we should know?</label>
+                  <textarea
+                    class="rsvp-textarea"
+                    id="rsvp-note"
+                    name="note"
+                    placeholder="Food preferences, travel plans, or just say hello."
+                  ></textarea>
+                </div>
 
-              <button class="rsvp-submit" type="submit">Send RSVP</button>
-              <p class="rsvp-status" data-rsvp-status role="status"></p>
+                <button class="rsvp-submit" type="submit">Send RSVP</button>
+                <p class="rsvp-status" data-rsvp-status role="status"></p>
+              </div>
             </form>
             
             <div class="rsvp-done" data-rsvp-done hidden tabindex="-1">

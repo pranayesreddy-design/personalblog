@@ -605,6 +605,31 @@ a {
   cursor: pointer;
 }
 
+/* Each step fades in as the answer reveals it, rather than snapping into
+   place, so the form reads as unfolding instead of jumping. */
+[data-rsvp-events]:not([hidden]),
+.rsvp-rest:not([hidden]) {
+  animation: rsvp-unfold 0.35s ease both;
+}
+
+@keyframes rsvp-unfold {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-rsvp-events]:not([hidden]),
+  .rsvp-rest:not([hidden]) {
+    animation: none;
+  }
+}
+
 /* Mouse only. A phone keeps :hover on whatever was last tapped, so the main
    button sat outlined after every tap and looked as if it had been disabled. */
 @media (hover: hover) {

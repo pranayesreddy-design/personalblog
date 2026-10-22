@@ -120,6 +120,38 @@ expect("an oversized note is truncated, not rejected", rsvps.rows[rsvps.rows.len
 test.rows[1][6] = "";
 expect("a token that only survives in RSVPs is no longer accepted", post({ token: "2mv9u5fa", attending: "yes" }), { ok: false, error: "unknown token" });
 
+// Lookup by token, for showing an answer on a second device -------------------
+
+function get(token) {
+  return JSON.parse(doGet({ parameter: token === undefined ? {} : { token: token } }).text);
+}
+
+test.rows[1][6] = "2mv9u5fa";
+expect("GET with no token is still the health check", get(), { ok: true, service: "wedding-rsvp" });
+expect("GET with a malformed token is refused", get("<x>"), { ok: false, error: "bad token" });
+expect("GET with an unknown token is refused, not answered with null", get("zzzzzzzz"), { ok: false, error: "unknown token" });
+
+var latest = get("2mv9u5fa");
+expect("GET returns the most recent answer, not the first", [latest.ok, latest.answer.attending], [true, "yes"]);
+expect("the latest answer carries its note", latest.answer.note.length, 2000);
+
+post({ token: "2mv9u5fa", attending: "yes", events: ["cocktail", "wedding"], note: "second phone" });
+latest = get("2mv9u5fa").answer;
+expect("events come back as a list of keys", latest.events, ["cocktail", "wedding"]);
+expect("the note comes back as sent", latest.note, "second phone");
+expect("the time is sent as text, not a Date", typeof latest.received_at, "string");
+
+post({ token: "2mv9u5fa", attending: "no" });
+expect("a later no replaces a yes, with no events", [get("2mv9u5fa").answer.attending, get("2mv9u5fa").answer.events], ["no", []]);
+
+expect("each guest gets their own answer, not the test guest's", get("rc66pchc").answer.attending, "no");
+pranay.rows.splice(2, 0, ["2", "Never Replied", "1", "1", "", "", "nvr12345", ""]);
+expect("a guest with no reply at all gets answer null", get("nvr12345"), { ok: true, answer: null });
+
+// Clearing the test replies by hand must make the invite read as unanswered.
+rsvps.rows = rsvps.rows.filter(function (r, i) { return i === 0 || r[1] !== "2mv9u5fa"; });
+expect("deleting a guest's rows by hand leaves them unanswered", get("2mv9u5fa"), { ok: true, answer: null });
+
 out.push("");
 out.push(failed ? failed + " FAILED" : "all passed");
 print(out.join("\n"));

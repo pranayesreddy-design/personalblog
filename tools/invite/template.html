@@ -260,23 +260,30 @@
                 </label>
               </div>
 
-              <div class="rsvp-field">
-                <label class="rsvp-label" for="rsvp-note">Anything we should know?</label>
-                <textarea
-                  class="rsvp-textarea"
-                  id="rsvp-note"
-                  name="note"
-                  placeholder="Food preferences, travel plans, or just say hello."
-                ></textarea>
-              </div>
+              <!-- Hidden by invite.js until the guest picks an answer, so the
+                   form opens as just the two buttons. Left visible in the
+                   markup so the page is not missing half a form if the script
+                   fails to load. -->
+              <div class="rsvp-rest" data-rsvp-rest>
+                <div class="rsvp-field">
+                  <label class="rsvp-label" for="rsvp-note">Anything we should know?</label>
+                  <textarea
+                    class="rsvp-textarea"
+                    id="rsvp-note"
+                    name="note"
+                    placeholder="Food preferences, travel plans, or just say hello."
+                  ></textarea>
+                </div>
 
-              <button class="rsvp-submit" type="submit">Send RSVP</button>
-              <p class="rsvp-status" data-rsvp-status role="status"></p>
+                <button class="rsvp-submit" type="submit">Send RSVP</button>
+                <p class="rsvp-status" data-rsvp-status role="status"></p>
+              </div>
             </form>
             <!-- Replaces the form once an answer is saved, and on any later
-                 visit from the same phone, so the guest can see exactly what we
+                 visit from any device, so the guest can see exactly what we
                  have rather than wondering whether it went through. Filled in by
-                 invite.js; the server keeps every answer, so changing is safe. -->
+                 invite.js from the sheet; the server keeps every answer, so
+                 changing is safe. -->
             <div class="rsvp-done" data-rsvp-done hidden tabindex="-1">
               <p class="rsvp-done-title" data-rsvp-done-title></p>
               <ul class="rsvp-done-list" data-rsvp-done-list></ul>

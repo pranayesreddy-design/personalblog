@@ -74,11 +74,74 @@ function reply(payload) {
 }
 
 /**
- * Visiting the URL in a browser should say something useful rather than throw,
- * which is also the quickest way to confirm a deployment is live.
+ * With ?token=, the latest answer for that invite, so a guest who replied on
+ * one device sees it on another. Without one, a health check: visiting the URL
+ * in a browser is the quickest way to confirm a deployment is live.
+ *
+ * This hands an answer to anyone holding the token, which is exactly who can
+ * already open that guest's invite page. An unknown token gets the same refusal
+ * as a POST, so the endpoint cannot be used to list who has replied.
  */
-function doGet() {
-  return reply({ ok: true, service: "wedding-rsvp" });
+function doGet(e) {
+  var token = String((e && e.parameter && e.parameter.token) || "").trim();
+  if (!token) {
+    return reply({ ok: true, service: "wedding-rsvp" });
+  }
+  if (!/^[a-z0-9]{6,12}$/.test(token)) {
+    return reply({ ok: false, error: "bad token" });
+  }
+
+  try {
+    var book = SpreadsheetApp.getActiveSpreadsheet();
+    if (!findGuest(book, token)) {
+      return reply({ ok: false, error: "unknown token" });
+    }
+    return reply({ ok: true, answer: latestAnswer(book, token) });
+  } catch (err) {
+    console.error(err);
+    return reply({ ok: false, error: "server" });
+  }
+}
+
+/**
+ * The most recent RSVPs row for a token, or null. Rows are appended in order,
+ * so the last match wins; every earlier answer stays in the sheet as history.
+ */
+function latestAnswer(book, token) {
+  var sheet = book.getSheetByName(RSVP_SHEET);
+  if (!sheet || sheet.getLastRow() < 2) {
+    return null;
+  }
+  var values = sheet.getDataRange().getValues();
+  var index = headerIndex(values[0]);
+  var col = {
+    token: firstIndexOf(index, ["token"]),
+    attending: firstIndexOf(index, ["attending"]),
+    events: firstIndexOf(index, ["events"]),
+    note: firstIndexOf(index, ["note"]),
+    when: firstIndexOf(index, ["receivedat"])
+  };
+  if (col.token < 0 || col.attending < 0) {
+    return null;
+  }
+  for (var row = values.length - 1; row >= 1; row--) {
+    if (String(values[row][col.token] || "").trim() !== token) {
+      continue;
+    }
+    var attending = String(values[row][col.attending] || "").trim();
+    if (attending !== "yes" && attending !== "no") {
+      continue;
+    }
+    var events = col.events >= 0 ? String(values[row][col.events] || "").trim() : "";
+    var when = col.when >= 0 ? values[row][col.when] : "";
+    return {
+      attending: attending,
+      events: events ? events.split(/\s+/) : [],
+      note: col.note >= 0 ? String(values[row][col.note] || "") : "",
+      received_at: when instanceof Date ? when.toISOString() : String(when || "")
+    };
+  }
+  return null;
 }
 
 function doPost(e) {
