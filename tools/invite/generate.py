@@ -53,7 +53,7 @@ DEFAULT_PHOTO = "us-together.jpg"
 DEFAULT_PHOTO_ALT = "Pranay and Shruti"
 # Worded so it reads as an invitation rather than an apology. The guest should not
 # be told they are on the list of people we have no photo with.
-DEFAULT_CAPTION = "Us, somewhere cold. We would love one of these with you in February."
+DEFAULT_CAPTION = "Us, somewhere cold. Hoping to see you somewhere warmer in February."
 
 # Copied into the output so dist/ can be deployed on its own. The paths the
 # template uses are relative to i/<token>/, so the layout must be preserved.
