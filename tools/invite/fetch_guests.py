@@ -106,7 +106,18 @@ EVENT_COLUMNS = {
     "marriage": "wedding",
     "themarriage": "wedding",
     "muhurtham": "wedding",
+    # Misnamed in the sheet. This column is the wedding invite list: 188 rows
+    # covering 191 people, matching what the plain "Wedding" column held before
+    # it was renamed. The actual confidence figure lives next to it in
+    # "Confidence Wedding". Accepted here so the rename does not cancel every
+    # wedding invitation, but the sheet is clearer with this called "Wedding".
+    "weddingconfidence": "wedding",
 }
+
+# Separate from the invite columns: how likely the couple think each guest is
+# to turn up, pending real RSVPs. Never an invitation. Listed explicitly so
+# that a column named after an event is not read as one by accident.
+CONFIDENCE_PREFIX = "confidence"
 
 # What counts as "invited" in a grid cell, for sheets that tick rather than
 # count. A 0 or a blank means not invited: erring the other way would invite
@@ -390,7 +401,12 @@ def map_event_columns(header_row):
     """Sheet column index for each event key, for grid-shaped guest lists."""
     found = {}
     for index, raw in enumerate(header_row):
-        key = EVENT_COLUMNS.get(normalise(raw))
+        name = normalise(raw)
+        # "Confidence Wedding" is a guess at who will turn up, not an invite,
+        # and must never be mistaken for one.
+        if name.startswith(CONFIDENCE_PREFIX):
+            continue
+        key = EVENT_COLUMNS.get(name)
         if key and key not in found:
             found[key] = index
     return found

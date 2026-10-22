@@ -69,6 +69,30 @@ assert fg.map_event_columns(GRID) == {
     "wedding": 5,
 }, fg.map_event_columns(GRID)
 
+check("a Confidence column is never read as an invitation")
+# The sheet pairs each event with a confidence figure: how likely that guest is
+# to turn up, pending real RSVPs. Reading one as an invite list would invent
+# guests for an event.
+confidence = [
+    "S.No", "Name", "Pelli Koduku", "Cocktail", "Confidence Cocktail",
+    "Haldi", "Confidence Haldi", "Wedding Confidence", "Confidence Wedding",
+]
+cols = fg.map_event_columns(confidence)
+assert cols == {
+    "pellikoduku": 2,
+    "cocktail": 3,
+    "haldimehendi": 5,
+    "wedding": 7,  # "Wedding Confidence", the misnamed invite column
+}, cols
+
+check("the misnamed Wedding column still carries its head count")
+rows = build(
+    [["1", "Avan", "0", "0", "0", "0", "0", "4", "1"]],
+    confidence,
+)
+assert rows[0]["events_invited"] == "wedding", rows[0]
+assert rows[0]["party_size"] == "4", rows[0]
+
 check("alternative event spellings map too")
 alt = ["S.No", "Name", "Pelli Kuduku", "Cocktail Party", "Mehendi", "Marriage"]
 assert fg.map_event_columns(alt) == {

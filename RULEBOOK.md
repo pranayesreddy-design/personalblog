@@ -362,6 +362,20 @@ Events can be given either way:
 - **A single `events_invited` column** of space separated keys. If both exist this one
   wins, so adding it later overrides the grid without deleting anything.
 
+Columns beginning `Confidence` are never invitations. They hold how likely a guest is
+thought to be to attend, pending real RSVPs, and are skipped before event matching so a
+column named after an event cannot be mistaken for one. `Wedding Confidence` is the one
+exception and is deliberately read as the wedding invite list: it holds the figures the
+plain `Wedding` column used to, and the real confidence number sits beside it in
+`Confidence Wedding`. The sheet would read better with it renamed back to `Wedding`.
+
+An event with **no guests at all** is a hard error, not a warning. That is the only
+visible symptom of a header that stopped matching, and it has already happened once:
+renaming `Wedding` to `Wedding Confidence` cancelled all 191 wedding invitations while
+the import still reported success. Missing columns are reported per tab for the same
+reason, since an intact column on one tab used to hide a renamed one on another. Use
+`--allow-empty-events` only when an event genuinely has nobody yet.
+
 The head count lands in `party_size`, which is why `--dry-run` reports rows *and*
 people: 188 rows are invited to the wedding but they stand for 191 guests. That second
 number is the one a caterer wants, and matching it against the sheet's SUM row is the
