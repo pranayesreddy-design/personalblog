@@ -22,3 +22,9 @@ body::before { height: 86px; background: url("data:image/svg+xml,%3Csvg xmlns='h
 .slot + .slot { margin-top: 1rem; }
 .slot-name { font-family: var(--display); font-weight: 500; font-size: 1.3em; }
 .rsvp-choices .rsvp-choice span, .rsvp-submit, .btn, .rsvp-textarea, .rsvp-done { border-radius: 12px; }
+
+/* Motion layer colours, used only when invite-decor.js is on the page. The
+   swaying garland replaces the still one drawn at the top of the page. */
+:root { --decor-1: #f29f05; --decor-2: #e8590c; --decor-leaf: #3f7d2c; --decor-cord: #7a4a12;
+  --decor-water: #4a9a9a; --decor-boat: #8a4a1a; --decor-lotus: #b0125b; --decor-lotus-2: #f39ac0; }
+.decor-on body::before { display: none; }

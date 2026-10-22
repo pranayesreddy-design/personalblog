@@ -21,3 +21,7 @@ body::before { content: ""; display: block; height: var(--band-h); background: v
 .slot-name { font-family: var(--display); font-weight: 400; font-size: 1.3em; }
 .rsvp-choices .rsvp-choice span, .rsvp-submit, .btn { border-radius: 999px; }
 .rsvp-textarea { background: #fff; border-radius: 12px; }
+
+/* Motion layer colours, used only when invite-decor.js is on the page. */
+:root { --decor-1: #f29f05; --decor-2: #b33a2a; --decor-leaf: #2f6b3a; --decor-cord: #7a4a12;
+  --decor-water: #4a8f9a; --decor-boat: #6b3a1a; --decor-lotus: #e2668a; --decor-lotus-2: #f6b3c6; }

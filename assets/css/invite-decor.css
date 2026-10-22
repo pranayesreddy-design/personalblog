@@ -1,0 +1,247 @@
+/* Motion layer for the traditional themes, built by invite-decor.js. Colours
+   come from the theme; each falls back to something that suits any of them.
+   Only transform and opacity are animated, so none of this triggers layout. */
+
+:root {
+  --decor-1: #f29f05;
+  --decor-2: #e8590c;
+  --decor-leaf: #3f7d2c;
+  --decor-cord: #7a4a12;
+  --decor-water: #4a8f9a;
+  --decor-boat: #6b3a1a;
+  --decor-lotus: #e2668a;
+  --decor-lotus-2: #f6b3c6;
+}
+
+/* Hero: garland and petals are full-bleed even where the hero itself is
+   capped to the content width, and sit behind the text. */
+.decor-on .hero {
+  position: relative;
+}
+
+.decor-on .hero > :not(.decor-toran):not(.decor-petals) {
+  position: relative;
+  z-index: 1;
+}
+
+.decor-toran,
+.decor-petals {
+  position: absolute;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.decor-toran {
+  top: 0;
+  height: 70px;
+}
+
+.decor-toran svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.decor-cord {
+  fill: none;
+  stroke: var(--decor-cord);
+  stroke-width: 2;
+}
+
+.decor-leaf {
+  fill: var(--decor-leaf);
+}
+
+.decor-vein {
+  stroke: rgba(0, 0, 0, 0.22);
+  stroke-width: 1;
+}
+
+.decor-bloom-1 {
+  fill: var(--decor-1);
+}
+
+.decor-bloom-2 {
+  fill: var(--decor-2);
+}
+
+.decor-strand {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: decor-sway 3.4s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.55s);
+}
+
+@keyframes decor-sway {
+  from { transform: rotate(-5deg); }
+  to { transform: rotate(5deg); }
+}
+
+.decor-petals {
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.decor-petal {
+  position: absolute;
+  top: -30px;
+  left: var(--x);
+  width: var(--size);
+  height: calc(var(--size) * 0.72);
+  border-radius: 0 85% 0 85%;
+  background: var(--decor-1);
+  opacity: 0.85;
+  animation: decor-fall var(--fall) linear var(--delay) infinite;
+}
+
+.decor-petal--alt {
+  background: var(--decor-lotus);
+}
+
+@keyframes decor-fall {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(calc(var(--drift) * 0.6), 52svh, 0) rotate(calc(200deg * var(--spin))); }
+  100% { transform: translate3d(var(--drift), 106svh, 0) rotate(calc(380deg * var(--spin))); }
+}
+
+/* River ------------------------------------------------------------------- */
+
+.decor-river {
+  position: relative;
+  height: 110px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.decor-waves {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 200%;
+  height: 100%;
+  animation: decor-flow 26s linear infinite;
+}
+
+.decor-waves path {
+  fill: var(--decor-water);
+}
+
+.decor-waves--back {
+  opacity: 0.35;
+}
+
+.decor-waves--front {
+  opacity: 0.7;
+  animation-duration: 15s;
+}
+
+@keyframes decor-flow {
+  to { transform: translateX(-50%); }
+}
+
+.decor-boat {
+  position: absolute;
+  left: 0;
+  bottom: 22px;
+  width: 120px;
+  animation: decor-sail 38s linear infinite;
+}
+
+.decor-boat svg {
+  display: block;
+  width: 100%;
+  animation: decor-bob 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes decor-sail {
+  from { transform: translateX(-140px); }
+  to { transform: translateX(100vw); }
+}
+
+@keyframes decor-bob {
+  from { transform: translateY(0) rotate(-3deg); }
+  to { transform: translateY(4px) rotate(3deg); }
+}
+
+.decor-hull {
+  fill: var(--decor-boat);
+}
+
+.decor-canopy {
+  fill: var(--decor-2);
+}
+
+.decor-oar {
+  stroke: var(--decor-boat);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.decor-hull-line,
+.decor-canopy-line {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.4);
+  stroke-width: 1.5;
+}
+
+/* Lotus ------------------------------------------------------------------- */
+
+.decor-lotus {
+  width: 120px;
+  margin: 0 auto 1.6rem;
+}
+
+.decor-lotus svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+/* Rotated about the base of the flower, which is the SVG origin. */
+.decor-lotus path:not(.decor-lotus-pad) {
+  transform: rotate(0deg) scale(0.35, 0.25);
+  transition: transform 1.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: calc(var(--i) * 90ms);
+}
+
+.decor-lotus.is-open path:not(.decor-lotus-pad) {
+  transform: rotate(var(--a)) scale(1);
+}
+
+.decor-lotus-outer {
+  fill: var(--decor-lotus);
+}
+
+.decor-lotus-inner {
+  fill: var(--decor-lotus-2);
+}
+
+.decor-lotus-pad {
+  fill: var(--decor-leaf);
+}
+
+@media (min-width: 48rem) {
+  .decor-toran {
+    height: 90px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decor-strand,
+  .decor-waves,
+  .decor-boat,
+  .decor-boat svg {
+    animation: none;
+  }
+
+  .decor-boat {
+    left: calc(50% - 60px);
+  }
+
+  .decor-lotus path:not(.decor-lotus-pad) {
+    transition: none;
+  }
+}
