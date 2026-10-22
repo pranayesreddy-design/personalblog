@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Marcellus&family=Lora:ital,wght@0,400;0,600;1,400&family=Tiro+Telugu&display=swap");
+:root{--paper:#fbf5e9; --red:#b33a2a; --body:#5b1a12; --accent:#b33a2a; --green:#2f6b3a; --line:rgba(179,58,42,.3);
+--display:"Marcellus",Georgia,serif; --sans:"Lora",Georgia,serif; --band-h:10px; --band:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='54' height='10'%3E%3Crect width='18' height='10' fill='%23d99a1f'/%3E%3Crect x='18' width='18' height='10' fill='%23b33a2a'/%3E%3Crect x='36' width='18' height='10' fill='%232f6b3a'/%3E%3C/svg%3E"); --divider:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='40'%3E%3Cg fill='none' stroke='%23b33a2a' stroke-width='1.6'%3E%3Cpath d='M10 20 Q30 0 50 20 T90 20 T130 20 T170 20 T190 20'/%3E%3Cpath d='M10 20 Q30 40 50 20 T90 20 T130 20 T170 20 T190 20'/%3E%3Ccircle cx='100' cy='20' r='8'/%3E%3C/g%3E%3Cg fill='%23d99a1f'%3E%3Ccircle cx='30' cy='20' r='2.6'/%3E%3Ccircle cx='70' cy='20' r='2.6'/%3E%3Ccircle cx='130' cy='20' r='2.6'/%3E%3Ccircle cx='170' cy='20' r='2.6'/%3E%3Ccircle cx='100' cy='20' r='3.2'/%3E%3C/g%3E%3C/svg%3E"); --tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 8.6l4 4L14 3.4' fill='none' stroke='%23fbf5e9' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}
+
+.hero-telugu { margin: 0 0 1.2rem; font-family: "Tiro Telugu", serif; font-size: clamp(1.7rem, 7vw, 2.6rem); line-height: 1.3; color: var(--accent); }
+body::before { content: ""; display: block; height: var(--band-h); background: var(--band) repeat-x left top / auto var(--band-h); }
+.foot::after { content: ""; display: block; height: var(--band-h); margin-top: 2.4rem; background: var(--band) repeat-x left top / auto var(--band-h); }
+.split, .intro + .split { border-top: 0; background: var(--divider) no-repeat center top / auto 24px; }
+.topbar { border-bottom-color: var(--line); }
+.prose p, .intro-lede, .slot-venue, .slot-addr, .rsvp-when, .rsvp-done-list span { color: var(--body); }
+.rsvp-check input:checked + span::before { background-image: var(--tick); }
+.hero-names { text-transform: none; }
+@media (min-width: 48rem) { .hero-telugu { grid-column: 1 / -1; text-align: center; margin: 0; } }
+
+.caps, .slot-day, .rsvp-label, .rsvp-field legend, .hero-when, .hero-kicker { color: var(--green); }
+.split-title { color: var(--green); }
+.hero-names { font-size: clamp(3.2rem, 16vw, 8rem); line-height: 1; }
+.hero-names .amp { color: #d99a1f; }
+.slot { background: #fff; border-left: 4px solid #d99a1f; padding: 1rem 1.1rem; box-shadow: 0 1px 0 #ead9b8; }
+.slot + .slot { margin-top: 1rem; }
+.slot-name { font-family: var(--display); font-weight: 400; font-size: 1.3em; }
+.rsvp-choices .rsvp-choice span, .rsvp-submit, .btn { border-radius: 999px; }
+.rsvp-textarea { background: #fff; border-radius: 12px; }

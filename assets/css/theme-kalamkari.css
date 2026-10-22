@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Rozha+One&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Tiro+Telugu&display=swap");
+:root{--paper:#f1e3c6; --red:#9c2f1f; --body:#2a1a12; --accent:#22345a; --indigo:#22345a; --line:rgba(34,52,90,.35);
+--display:"Rozha One",Georgia,serif; --sans:"EB Garamond",Georgia,serif; --band-h:34px; --band:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='34'%3E%3Crect width='40' height='2' fill='%2322345a'/%3E%3Crect y='32' width='40' height='2' fill='%2322345a'/%3E%3Cpath d='M20 5 C31 5 34 18 26 26 C20 31 9 29 9 22 C9 15 17 14 19 19' fill='%239c2f1f'/%3E%3Ccircle cx='18' cy='20' r='2' fill='%23f1e3c6'/%3E%3Ccircle cx='35' cy='9' r='1.6' fill='%2322345a'/%3E%3Ccircle cx='5' cy='28' r='1.6' fill='%2322345a'/%3E%3C/svg%3E"); --divider:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='24'%3E%3Cpath d='M0 12h56M104 12h56' stroke='%2322345a' stroke-width='1.5'/%3E%3Cpath d='M80 2 C90 2 92 12 86 17 C82 21 73 20 73 14 C73 9 79 9 80 12' fill='%239c2f1f'/%3E%3Ccircle cx='64' cy='12' r='2.4' fill='%23c9932c'/%3E%3Ccircle cx='96' cy='12' r='2.4' fill='%23c9932c'/%3E%3C/svg%3E"); --tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 8.6l4 4L14 3.4' fill='none' stroke='%23f1e3c6' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}
+
+.hero-telugu { margin: 0 0 1.2rem; font-family: "Tiro Telugu", serif; font-size: clamp(1.7rem, 7vw, 2.6rem); line-height: 1.3; color: var(--accent); }
+body::before { content: ""; display: block; height: var(--band-h); background: var(--band) repeat-x left top / auto var(--band-h); }
+.foot::after { content: ""; display: block; height: var(--band-h); margin-top: 2.4rem; background: var(--band) repeat-x left top / auto var(--band-h); }
+.split, .intro + .split { border-top: 0; background: var(--divider) no-repeat center top / auto 24px; }
+.topbar { border-bottom-color: var(--line); }
+.prose p, .intro-lede, .slot-venue, .slot-addr, .rsvp-when, .rsvp-done-list span { color: var(--body); }
+.rsvp-check input:checked + span::before { background-image: var(--tick); }
+.hero-names { text-transform: none; }
+@media (min-width: 48rem) { .hero-telugu { grid-column: 1 / -1; text-align: center; margin: 0; } }
+
+body { background-image: radial-gradient(rgba(120,70,30,.09) 1px, transparent 1px); background-size: 6px 6px; }
+.caps, .slot-day, .rsvp-label, .rsvp-field legend { color: #a87516; font-weight: 600; }
+.split-title { color: var(--indigo); }
+.hero-names { font-size: clamp(3rem, 15vw, 7.5rem); line-height: 1; }
+.hero-names .amp { color: #c9932c; }
+.prose p, .intro-lede { font-size: clamp(1.25rem, 4.2vw, 1.6rem); }
+.slot { position: relative; padding: 1rem 1.1rem; border: 2px solid var(--body); background: #f7ecd6; }
+.slot::before { content: ""; position: absolute; inset: 4px; border: 1px solid var(--red); pointer-events: none; }
+.slot + .slot { margin-top: 1.1rem; }
+.slot-name { font-family: var(--display); font-weight: 400; font-size: 1.3em; }
+.rsvp-choices input:checked + span, .rsvp-submit { background: var(--indigo); border-color: var(--indigo); }
