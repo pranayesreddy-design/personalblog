@@ -28,3 +28,6 @@ body { font-family: "EB Garamond", Georgia, serif; }
 :root { --decor-1: #f29f05; --decor-2: #e2b864; --decor-leaf: #6b9a45; --decor-cord: #e2b864;
   --decor-water: #e2b864; --decor-boat: #e2b864; --decor-lotus: #f08fa0; --decor-lotus-2: #f6d995; }
 .decor-canopy { fill: #a8202f; }
+
+/* Second motion layer colours, used only when invite-decor-plus.js is on the page. */
+:root { --plus-ele: #e2b864; --plus-ele-ear: #c9993f; --plus-cloth: #a8202f; --plus-gold: #f6d995; --plus-gold-dark: #b8862f; --plus-trunk: #6b8a3a; --plus-kolam: #e2b864; }

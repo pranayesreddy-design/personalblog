@@ -372,6 +372,9 @@
       submitNode.textContent = submitLabel;
       setStatus("");
       showDone(answer, true);
+      // For decoration only, such as the talambralu shower. Fired after the
+      // answer is saved, so nothing listening can affect whether it was.
+      document.dispatchEvent(new CustomEvent("invite:rsvp-sent", { detail: answer }));
     } catch (error) {
       submitNode.disabled = false;
       submitNode.textContent = submitLabel;

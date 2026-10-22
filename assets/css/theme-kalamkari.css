@@ -28,3 +28,6 @@ body { background-image: radial-gradient(rgba(120,70,30,.09) 1px, transparent 1p
 :root { --decor-1: #c9932c; --decor-2: #9c2f1f; --decor-leaf: #4d6b3a; --decor-cord: #2a1a12;
   --decor-water: #22345a; --decor-boat: #9c2f1f; --decor-lotus: #c4553f; --decor-lotus-2: #e9a37f; }
 .decor-canopy { fill: #c9932c; }
+
+/* Second motion layer colours, used only when invite-decor-plus.js is on the page. */
+:root { --plus-ele: #22345a; --plus-ele-ear: #1a2848; --plus-cloth: #9c2f1f; --plus-gold: #c9932c; --plus-gold-dark: #9a6e1c; --plus-trunk: #5f7a3a; --plus-kolam: #22345a; }

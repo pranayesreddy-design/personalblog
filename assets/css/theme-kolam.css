@@ -25,3 +25,6 @@ body::before { content: ""; display: block; height: var(--band-h); background: v
 /* Motion layer colours, used only when invite-decor.js is on the page. */
 :root { --decor-1: #f29f05; --decor-2: #b33a2a; --decor-leaf: #2f6b3a; --decor-cord: #7a4a12;
   --decor-water: #4a8f9a; --decor-boat: #6b3a1a; --decor-lotus: #e2668a; --decor-lotus-2: #f6b3c6; }
+
+/* Second motion layer colours, used only when invite-decor-plus.js is on the page. */
+:root { --plus-ele: #8b8d94; --plus-ele-ear: #74767d; --plus-cloth: #b33a2a; --plus-gold: #d99a1f; --plus-gold-dark: #a8740f; --plus-kolam: #b33a2a; }

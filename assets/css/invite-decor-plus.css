@@ -1,0 +1,332 @@
+/* Second motion layer, built by invite-decor-plus.js. Every colour is a theme
+   variable with a fallback in place, rather than a :root default, so this file
+   can load in any order relative to the theme. */
+
+/* Cover ------------------------------------------------------------------- */
+
+/* The cover's own text sits above the trees and bells. */
+.plus-on .hero > :not(.plus-banana):not(.plus-bell):not(.decor-toran) {
+  position: relative;
+  z-index: 1;
+}
+
+.plus-elephants {
+  justify-self: center;
+  width: min(260px, 68vw);
+  margin: 1.6rem auto 0;
+}
+
+.plus-elephants svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.plus-ele,
+.plus-ele-body {
+  fill: var(--plus-ele, #8b8d94);
+  stroke: var(--plus-ele, #8b8d94);
+}
+
+.plus-ele {
+  stroke: none;
+}
+
+.plus-ele-body[fill="none"] {
+  fill: none;
+}
+
+.plus-ele-ear {
+  fill: var(--plus-ele-ear, #74767d);
+}
+
+.plus-cloth {
+  fill: var(--plus-cloth, #b33a2a);
+}
+
+.plus-cloth-dot,
+.plus-crown {
+  fill: var(--plus-gold, #e2b864);
+}
+
+.plus-tusk {
+  stroke: #fffaf0;
+}
+
+.plus-eye {
+  fill: #2a1a12;
+}
+
+.plus-trunk {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+  animation: plus-trunk 2.6s ease-in-out infinite alternate;
+}
+
+@keyframes plus-trunk {
+  from { transform: rotate(-7deg); }
+  to { transform: rotate(4deg); }
+}
+
+.plus-mango {
+  fill: var(--decor-leaf, #3f7d2c);
+}
+
+.plus-coconut {
+  fill: #8a5a2b;
+}
+
+.plus-pot {
+  fill: var(--plus-gold, #e2b864);
+}
+
+.plus-pot-band {
+  stroke: var(--plus-cloth, #b33a2a);
+}
+
+.plus-banana {
+  position: absolute;
+  bottom: 0;
+  z-index: 0;
+  height: 40svh;
+  aspect-ratio: 120 / 400;
+  pointer-events: none;
+}
+
+.plus-banana svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Tucked partly off the edge on a phone, where the names use the full width. */
+.plus-banana--left {
+  left: calc(50% - 50vw - 2.2rem);
+}
+
+.plus-banana--right {
+  right: calc(50% - 50vw - 2.2rem);
+  transform: scaleX(-1);
+}
+
+.plus-trunk-fill {
+  fill: var(--plus-trunk, #7d9a48);
+}
+
+.plus-trunk-line {
+  stroke: rgba(0, 0, 0, 0.15);
+  stroke-width: 2;
+}
+
+.plus-leaf-fill {
+  fill: var(--decor-leaf, #3f7d2c);
+}
+
+.plus-leaf-rib {
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 2;
+}
+
+.plus-banana-flower {
+  fill: var(--plus-flower, #7a2440);
+}
+
+.plus-leaf {
+  transform-box: view-box;
+  transform-origin: 62px 124px;
+  animation: plus-leaf 4.2s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -0.7s);
+}
+
+@keyframes plus-leaf {
+  from { transform: rotate(-4deg); }
+  to { transform: rotate(4deg); }
+}
+
+.plus-bell {
+  position: absolute;
+  top: 0;
+  z-index: 0;
+  width: 30px;
+  pointer-events: none;
+}
+
+.plus-bell svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.plus-bell--left {
+  left: 9%;
+}
+
+.plus-bell--right {
+  right: 9%;
+}
+
+.plus-bell-swing {
+  transform-box: view-box;
+  transform-origin: 20px 0;
+}
+
+.plus-chain {
+  fill: none;
+  stroke: var(--plus-gold, #e2b864);
+  stroke-width: 1.4;
+}
+
+.plus-bell-body,
+.plus-bell-rim,
+.plus-bell-knob {
+  fill: var(--plus-gold, #e2b864);
+}
+
+.plus-bell-rim {
+  fill: var(--plus-gold-dark, #b8862f);
+}
+
+.plus-bell-clapper {
+  fill: var(--plus-gold-dark, #b8862f);
+}
+
+@media (min-width: 48rem) {
+  .plus-elephants {
+    grid-column: 1 / -1;
+    width: 300px;
+    margin-top: 1rem;
+  }
+
+  /* Short enough that the leaves stay below the kicker and the date, which
+     sit at the far left and right of the cover at this width. */
+  .plus-banana {
+    height: 38svh;
+  }
+
+  .plus-banana--left {
+    left: calc(50% - 50vw - 0.5rem);
+  }
+
+  .plus-banana--right {
+    right: calc(50% - 50vw - 0.5rem);
+  }
+
+  .plus-bell {
+    width: 40px;
+  }
+
+  .plus-bell--left {
+    left: 18%;
+  }
+
+  .plus-bell--right {
+    right: 18%;
+  }
+}
+
+/* Kolam dividers ------------------------------------------------------------ */
+
+/* Replaces the theme's still divider, so there is only ever one. */
+.plus-on .split {
+  position: relative;
+  background-image: none;
+}
+
+.plus-kolam {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 200px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.plus-kolam svg {
+  display: block;
+  width: 100%;
+}
+
+.plus-kolam-line {
+  fill: none;
+  stroke: var(--plus-kolam, var(--accent, #b33a2a));
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.6s ease-in-out;
+}
+
+.plus-kolam-line--back {
+  transition-delay: 0.9s;
+}
+
+.plus-kolam-dot {
+  fill: var(--decor-1, #d99a1f);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  transition-delay: calc(var(--i) * 0.15s);
+}
+
+.plus-kolam.is-drawn .plus-kolam-line {
+  stroke-dashoffset: 0;
+}
+
+.plus-kolam.is-drawn .plus-kolam-dot {
+  opacity: 1;
+}
+
+/* Talambralu ---------------------------------------------------------------- */
+
+.plus-shower {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.plus-rice {
+  position: absolute;
+  top: var(--top, -20px);
+  left: var(--x);
+  width: 4px;
+  height: 9px;
+  border-radius: 50%;
+  /* Turmeric-dyed, as talambralu are, which also keeps the grains visible
+     on the pale themes. */
+  background: var(--plus-rice, #e9b949);
+  box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.18);
+  animation: plus-shower var(--fall) cubic-bezier(0.35, 0.1, 0.7, 1) var(--delay) both;
+}
+
+.plus-rice--petal,
+.plus-rice--petal-2 {
+  width: 11px;
+  height: 8px;
+  border-radius: 0 85% 0 85%;
+  box-shadow: none;
+  background: var(--decor-1, #f29f05);
+}
+
+.plus-rice--petal-2 {
+  background: var(--decor-lotus, #e2668a);
+}
+
+@keyframes plus-shower {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translate3d(var(--drift), 155vh, 0) rotate(var(--spin)); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plus-trunk,
+  .plus-leaf {
+    animation: none;
+  }
+
+  .plus-kolam-line,
+  .plus-kolam-dot {
+    transition: none;
+  }
+}
