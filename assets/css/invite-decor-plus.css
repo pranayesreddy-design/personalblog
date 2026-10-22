@@ -320,6 +320,15 @@ html.plus-on .split {
   background: var(--decor-lotus, #e2668a);
 }
 
+.plus-fireworks {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
 @keyframes plus-shower {
   0% { transform: translate3d(0, 0, 0) rotate(0deg); opacity: 1; }
   85% { opacity: 1; }

@@ -201,8 +201,118 @@
     setTimeout(() => layer.remove(), 5000);
   }
 
+  // Fireworks -----------------------------------------------------------------
+
+  function fireworks() {
+    if (reducedMotion) {
+      return;
+    }
+    const canvas = document.createElement("canvas");
+    canvas.className = "plus-fireworks";
+    canvas.setAttribute("aria-hidden", "true");
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
+    ctx.scale(ratio, ratio);
+
+    const styles = getComputedStyle(document.documentElement);
+    const palette = ["--plus-gold", "--decor-1", "--decor-lotus", "--accent", "--red"]
+      .map((name) => styles.getPropertyValue(name).trim())
+      .filter(Boolean);
+    if (!palette.length) {
+      palette.push("#e2b864", "#f29f05", "#e2668a");
+    }
+    const pick = () => palette[Math.floor(Math.random() * palette.length)];
+
+    const rockets = [];
+    const sparks = [];
+    const shots = width < 700 ? 6 : 9;
+    for (let i = 0; i < shots; i += 1) {
+      rockets.push({
+        at: i * 260 + Math.random() * 180,
+        x: width * (0.15 + Math.random() * 0.7),
+        y: height,
+        top: height * (0.12 + Math.random() * 0.3),
+        colour: pick(),
+        done: false,
+      });
+    }
+
+    function burst(rocket, born) {
+      const count = 46 + Math.floor(Math.random() * 20);
+      const speed = 2.4 + Math.random() * 1.6;
+      const second = Math.random() < 0.5 ? pick() : rocket.colour;
+      for (let i = 0; i < count; i += 1) {
+        const angle = (i / count) * Math.PI * 2;
+        const v = speed * (0.75 + Math.random() * 0.35);
+        sparks.push({
+          x: rocket.x,
+          y: rocket.y,
+          vx: Math.cos(angle) * v,
+          vy: Math.sin(angle) * v,
+          born,
+          decay: 0.009 + Math.random() * 0.007,
+          colour: i % 2 ? rocket.colour : second,
+        });
+      }
+    }
+
+    const start = performance.now();
+    function frame() {
+      const now = performance.now();
+      const elapsed = now - start;
+      ctx.clearRect(0, 0, width, height);
+
+      rockets.forEach((rocket) => {
+        if (rocket.done || elapsed < rocket.at) {
+          return;
+        }
+        rocket.y = height - (elapsed - rocket.at) * 0.55;
+        if (rocket.y <= rocket.top) {
+          rocket.done = true;
+          rocket.y = rocket.top;
+          burst(rocket, now);
+          return;
+        }
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = rocket.colour;
+        ctx.fillRect(rocket.x - 1, rocket.y, 2, 10);
+      });
+
+      // Positions are worked out from age rather than stepped per frame, so
+      // a phone that drops frames shows the same show, just less smoothly.
+      for (let i = sparks.length - 1; i >= 0; i -= 1) {
+        const spark = sparks[i];
+        const f = (now - spark.born) / 16.7;
+        const life = 1 - spark.decay * f;
+        if (life <= 0) {
+          sparks.splice(i, 1);
+          continue;
+        }
+        const travel = (1 - Math.pow(0.985, f)) / 0.015;
+        ctx.globalAlpha = life;
+        ctx.fillStyle = spark.colour;
+        ctx.beginPath();
+        ctx.arc(spark.x + spark.vx * travel, spark.y + spark.vy * travel + 0.02 * f * f, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (rockets.every((rocket) => rocket.done) && !sparks.length) {
+        canvas.remove();
+        return;
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
   document.addEventListener("invite:rsvp-sent", (event) => {
     if (event.detail && event.detail.attending === "yes") {
+      fireworks();
       talambralu();
     }
   });
