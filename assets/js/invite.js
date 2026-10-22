@@ -99,6 +99,110 @@
   const statusNode = form.querySelector("[data-rsvp-status]");
   const eventsNode = form.querySelector("[data-rsvp-events]");
   const submitNode = form.querySelector('button[type="submit"]');
+  const submitLabel = submitNode ? submitNode.textContent : "";
+  const doneNode = document.querySelector("[data-rsvp-done]");
+  const token = (form.querySelector("[data-rsvp-token]") || {}).value || "";
+  // Per token, so two guests sharing a phone each see their own answer.
+  const storageKey = `rsvp:${token}`;
+
+  function remember(answer) {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(answer));
+    } catch (error) {
+      // Private browsing can refuse storage. The answer is already saved on
+      // the server, so losing the local copy only costs the summary on return.
+    }
+  }
+
+  function recall() {
+    try {
+      const answer = JSON.parse(localStorage.getItem(storageKey) || "null");
+      return answer && (answer.attending === "yes" || answer.attending === "no") ? answer : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // Name and day straight from the checkbox label, so the summary can never
+  // describe an event differently from the list the guest just ticked.
+  function describeEvent(key) {
+    const input = form.querySelector(`input[name="events"][value="${key}"]`);
+    const label = input && input.closest("label");
+    if (!label) {
+      return null;
+    }
+    const span = label.querySelector("span");
+    const when = span && span.querySelector(".rsvp-when");
+    const name = span ? Array.from(span.childNodes)
+      .filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => node.textContent)
+      .join("")
+      .trim() : key;
+    return { name, when: when ? when.textContent.trim() : "" };
+  }
+
+  function showDone(answer, justSent) {
+    if (!doneNode) {
+      return;
+    }
+    const title = doneNode.querySelector("[data-rsvp-done-title]");
+    const list = doneNode.querySelector("[data-rsvp-done-list]");
+    const note = doneNode.querySelector("[data-rsvp-done-note]");
+
+    title.textContent = answer.attending === "yes"
+      ? "You're in. We can't wait to see you."
+      : "Thank you for letting us know. We'll miss you.";
+
+    list.textContent = "";
+    if (answer.attending === "yes") {
+      answer.events.forEach((key) => {
+        const event = describeEvent(key);
+        if (!event) {
+          return;
+        }
+        const item = document.createElement("li");
+        const name = document.createElement("strong");
+        name.textContent = event.name;
+        item.appendChild(name);
+        if (event.when) {
+          const when = document.createElement("span");
+          when.textContent = event.when;
+          item.appendChild(when);
+        }
+        list.appendChild(item);
+      });
+    }
+    list.hidden = !list.children.length;
+
+    note.hidden = !answer.note;
+    note.textContent = answer.note ? `Your note: ${answer.note}` : "";
+
+    form.hidden = true;
+    doneNode.hidden = false;
+    // Only straight after sending. On a return visit the page must open at the
+    // top as usual, not jump past the invite to a summary.
+    if (justSent) {
+      // Moves screen readers to the result, and on a phone brings it into view
+      // instead of leaving the guest looking at the space the form used to fill.
+      doneNode.focus({ preventScroll: true });
+      doneNode.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+
+  function restore(answer) {
+    const radio = form.querySelector(`input[name="attending"][value="${answer.attending}"]`);
+    if (radio) {
+      radio.checked = true;
+    }
+    form.querySelectorAll('input[name="events"]').forEach((input) => {
+      input.checked = answer.events.indexOf(input.value) !== -1;
+    });
+    const noteNode = form.querySelector('[name="note"]');
+    if (noteNode) {
+      noteNode.value = answer.note || "";
+    }
+    syncEventsVisibility();
+  }
 
   function setStatus(message, isWarning) {
     if (!statusNode) {
@@ -126,7 +230,7 @@
       .map((input) => input.value);
     const noteNode = form.querySelector('[name="note"]');
     return {
-      token: (form.querySelector("[data-rsvp-token]") || {}).value || "",
+      token,
       attending: currentAnswer(),
       events: currentAnswer() === "no" ? [] : selectedEvents,
       note: noteNode ? noteNode.value.trim() : ""
@@ -134,8 +238,22 @@
   }
 
   form.addEventListener("change", (event) => {
-    if (event.target && event.target.name === "attending") {
+    const target = event.target;
+    if (!target) {
+      return;
+    }
+    if (target.name === "attending") {
       syncEventsVisibility();
+      setStatus("");
+    }
+    // Ticking an event is a yes. Making the guest also press "Count me in"
+    // left people with boxes ticked and no answer, and a confusing prompt.
+    if (target.name === "events" && target.checked && currentAnswer() !== "yes") {
+      const yes = form.querySelector('input[name="attending"][value="yes"]');
+      if (yes) {
+        yes.checked = true;
+        syncEventsVisibility();
+      }
       setStatus("");
     }
   });
@@ -150,6 +268,13 @@
       return;
     }
 
+    // A yes with nothing ticked tells us nothing about which days to plan for.
+    const hasEvents = form.querySelector('input[name="events"]');
+    if (payload.attending === "yes" && hasEvents && !payload.events.length) {
+      setStatus("Tick the ones you can make.", true);
+      return;
+    }
+
     if (!payload.token) {
       setStatus("This invite is missing its code. Please send us the link you used.", true);
       return;
@@ -161,7 +286,8 @@
     }
 
     submitNode.disabled = true;
-    setStatus("Sending...");
+    submitNode.textContent = "Sending...";
+    setStatus("");
 
     try {
       const response = await fetch(RSVP_ENDPOINT, {
@@ -191,19 +317,23 @@
           true
         );
         submitNode.disabled = false;
+        submitNode.textContent = submitLabel;
         return;
       }
 
-      setStatus(
-        payload.attending === "yes"
-          ? "Thank you, we cannot wait to see you."
-          : "Thank you for letting us know. We will miss you."
-      );
-      form.querySelectorAll("input, textarea, button").forEach((node) => {
-        node.disabled = true;
-      });
+      const answer = {
+        attending: payload.attending,
+        events: payload.events,
+        note: payload.note
+      };
+      remember(answer);
+      submitNode.disabled = false;
+      submitNode.textContent = submitLabel;
+      setStatus("");
+      showDone(answer, true);
     } catch (error) {
       submitNode.disabled = false;
+      submitNode.textContent = submitLabel;
       // The request may well have been stored before the failure: a blocked
       // cross-origin read looks identical to a dropped connection from here.
       // Claiming it failed outright would invite a duplicate submission, so
@@ -215,5 +345,24 @@
     }
   });
 
+  if (doneNode) {
+    doneNode.querySelector("[data-rsvp-change]").addEventListener("click", () => {
+      const answer = recall();
+      if (answer) {
+        restore(answer);
+      }
+      doneNode.hidden = true;
+      form.hidden = false;
+      setStatus("");
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
   syncEventsVisibility();
+
+  const previous = recall();
+  if (previous) {
+    restore(previous);
+    showDone(previous, false);
+  }
 })();
