@@ -500,6 +500,21 @@ Three constraints worth knowing before touching either side:
   caps the note length, and ignores malformed event keys. It takes a script lock so two
   simultaneous RSVPs cannot overwrite each other.
 
+**Testing it** - the logic runs locally against mock spreadsheet services under the
+JavaScriptCore shell that ships with macOS, so no node is needed:
+
+```bash
+/System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc tools/invite/test_rsvp.js
+```
+
+Against the live endpoint, use the sheet's `Test` tab. It holds one row, `Test Guest`,
+with the token `2mv9u5fa` (the sample page at `/i/2mv9u5fa/`) and its own `RSVP Status`
+and `Responded At` columns, so you can see the write-back without touching a real
+guest. RSVPs from it still land in the `RSVPs` tab with side `Test`; delete those rows
+before counting. `fetch_guests.py` skips both `Test` and `RSVPs`: the RSVPs tab carries
+token and name columns, so without the skip every reply would be imported as a second
+copy of its guest.
+
 A failed cross-origin read is indistinguishable from a dropped connection, and in both
 cases the row may already be stored. So the form says it could not confirm the save and
 asks the guest to text rather than resubmit, instead of claiming a failure that would

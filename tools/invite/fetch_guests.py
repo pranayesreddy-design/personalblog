@@ -96,7 +96,12 @@ EVENT_KEYS = ("pellikoduku", "cocktail", "haldimehendi", "wedding")
 # --tabs. Skipping is announced on every run rather than done quietly, because
 # a tab silently missing from the import is exactly how 42 guests went missing
 # once already.
-SKIP_TABS = ("Shruti",)
+#
+# RSVPs and Test are never guest lists. rsvp.gs creates RSVPs on the first
+# response, and it carries token and name columns, so without this every reply
+# would be imported as a second copy of the guest who sent it. Test holds a
+# throwaway row for exercising the RSVP endpoint and must not get a page.
+SKIP_TABS = ("Shruti", "RSVPs", "Test")
 
 # A guest list is far easier to keep by hand as a grid with one column per
 # event, so accept that shape too and fold it into events_invited. Keys on the
