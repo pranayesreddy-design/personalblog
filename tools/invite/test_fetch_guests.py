@@ -186,9 +186,15 @@ with issued.open("w", newline="", encoding="utf-8") as handle:
 carried = fg.existing_tokens(issued)
 
 check("tab and serial together are the carry-over key")
-assert carried["by_sno"][fg.carry_key("Pranay", "20")] == "aaaaaaaaaa", carried
-assert carried["by_sno"][fg.carry_key("Pranay", "1")] == "cccccccccc", carried
-assert carried["by_sno"][fg.carry_key("Shruti", "1")] == "dddddddddd", carried
+assert carried["by_sno"][fg.carry_key("Pranay", "20")] == ("aaaaaaaaaa", "ajay"), carried
+assert carried["by_sno"][fg.carry_key("Pranay", "1")] == ("cccccccccc", "kishan"), carried
+assert carried["by_sno"][fg.carry_key("Shruti", "1")] == ("dddddddddd", "elsie"), carried
+
+check("a serial that now names someone else does not carry its token")
+# Deleting one row renumbers every row below it. Trusting the serial alone
+# would hand this guest the previous occupant's invite page.
+rows = build([["1", "Someone Else", "1", "0", "0", "1"]], carried=carried, side="Pranay")
+assert rows[0]["token"] == "", rows[0]
 
 check("serial 1 on each tab keeps its own link")
 # Both tabs number from 1 and 39 serials are shared between them, so an
@@ -234,8 +240,8 @@ assert rows[0]["token"] == "zzzzzzzzzz", rows[0]
 check("two guests sharing a token is a hard error")
 rows = build(
     [["1", "A", "0", "0", "0", "1"], ["2", "B", "0", "0", "0", "1"]],
-    carried={"by_sno": {fg.carry_key("", "1"): "same123456",
-                        fg.carry_key("", "2"): "same123456"}, "by_name": {}},
+    carried={"by_sno": {fg.carry_key("", "1"): ("same123456", "a"),
+                        fg.carry_key("", "2"): ("same123456", "b")}, "by_name": {}},
 )
 try:
     fg.check_combined(rows)

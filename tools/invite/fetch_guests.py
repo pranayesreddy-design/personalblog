@@ -508,7 +508,11 @@ def existing_tokens(path):
         sno = (row.get("sno") or "").strip()
         name = (row.get("name") or "").strip().lower()
         if sno:
-            by_sno.setdefault(carry_key(row.get("side"), sno), token)
+            # The name is kept alongside so the carry-over can check the serial
+            # still refers to the same person. Deleting one row renumbers every
+            # row below it, which silently repoints 27 serials at their
+            # neighbour and would hand those guests the wrong invite.
+            by_sno.setdefault(carry_key(row.get("side"), sno), (token, name))
         if name:
             if name in by_name:
                 duplicated.add(name)
@@ -544,6 +548,7 @@ def build_rows(values, mapping, event_cols, carried, side=""):
     rows = []
     blank = 0
     reused = []
+    renumbered = []
     unmatched_marks = set()
 
     for raw in values:
@@ -575,7 +580,15 @@ def build_rows(values, mapping, event_cols, carried, side=""):
         if not row["token"]:
             token = None
             if row["sno"]:
-                token = carried["by_sno"].get(carry_key(side, row["sno"]))
+                match = carried["by_sno"].get(carry_key(side, row["sno"]))
+                if match:
+                    saved_token, saved_name = match
+                    if saved_name == name.lower():
+                        token = saved_token
+                    else:
+                        # The serial now belongs to someone else. Carrying the
+                        # token over would give this guest another guest's page.
+                        renumbered.append((row["sno"], saved_name, name))
             if not token:
                 token = carried["by_name"].get(name.lower())
             if token:
@@ -601,6 +614,20 @@ def build_rows(values, mapping, event_cols, carried, side=""):
         print(
             "kept %d existing token(s) the sheet does not have yet: %s%s"
             % (len(reused), ", ".join(reused[:6]), "..." if len(reused) > 6 else "")
+        )
+    if renumbered:
+        warn(
+            "%d serial number(s) now name a different guest than the saved CSV, so\n"
+            "their tokens were NOT carried over. Deleting a row renumbers every row\n"
+            "below it. Once tokens live in the sheet this cannot happen, because the\n"
+            "token travels with the row:\n%s"
+            % (
+                len(renumbered),
+                "\n".join(
+                    "  S.No %-5s was %r, now %r" % (s, was, now)
+                    for s, was, now in renumbered[:8]
+                ),
+            )
         )
 
     names = [row["name"].lower() for row in rows]
