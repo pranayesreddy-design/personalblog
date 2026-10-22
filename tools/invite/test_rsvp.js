@@ -202,6 +202,12 @@ post({ token: "grid1234", attending: "yes", events: ["wedding", "cocktail"] });
 post({ token: "grid1234", attending: "yes", events: ["cocktail", "wedding"] });
 expect("the same events in a different order are not a change", cell("RSVP Changes"), 3);
 
+grid.rows[1][G["RSVP Changes"]] = "";
+post({ token: "grid1234", attending: "yes", events: ["cocktail", "wedding"] });
+expect("a guest who replied before the column existed is not left blank", cell("RSVP Changes"), 0);
+post({ token: "grid1234", attending: "no" });
+expect("and counts on from there", cell("RSVP Changes"), 1);
+
 expect("head counts follow the importer's rules",
   [headCount(""), headCount(0), headCount("0"), headCount(1.5), headCount("2"), headCount("Yes"), headCount("maybe")],
   [0, 0, 0, 2, 2, 1, 0]);

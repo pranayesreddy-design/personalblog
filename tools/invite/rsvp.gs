@@ -375,9 +375,17 @@ function markGuestResponded(guest, attending, when, events, note, previous) {
   if (changesCol >= 0) {
     if (!previous) {
       write(changesCol, 0);
-    } else if (answerChanged(previous, attending, events)) {
-      var count = Number(cells[changesCol]);
-      write(changesCol, (isNaN(count) ? 0 : count) + 1);
+    } else {
+      var raw = cells[changesCol];
+      var count = Number(raw);
+      count = isNaN(count) ? 0 : count;
+      if (answerChanged(previous, attending, events)) {
+        write(changesCol, count + 1);
+      } else if (String(raw == null ? "" : raw).trim() === "") {
+        // Replied before this column existed. Unchanged, but blank would
+        // claim they never answered at all.
+        write(changesCol, count);
+      }
     }
   }
 
