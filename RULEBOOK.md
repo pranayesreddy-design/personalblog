@@ -396,6 +396,27 @@ token carry-over and the JWT signing. No network or credentials needed. Worth ru
 after touching that file: a column that stops mapping gives every guest an empty
 schedule, and a broken carry-over hands someone else's invite to the wrong person.
 
+**Phone numbers** - `tools/invite/resolve_phones.py` turns the phone-match review
+workbook into one number per guest:
+
+```bash
+python3 tools/invite/resolve_phones.py Phone_Match_Review.xlsx \
+    --contacts Contacts.vcf --out tools/invite/phones.csv
+```
+
+The review sheet's decision column is mostly hints rather than numbers, and the script
+reads each kind: `y` accepts a lone candidate, a bare run of digits names the number
+ending in them, `+1...` picks a country code, and anything else names which contact is
+meant. Hints are matched most-precise-first - exact contact name, then guest name plus
+hint, then contained-in, then one typo away - because "BG" against both "Mohit BG" and
+"Mohit BG1" should settle on the exact one rather than give up. Hints naming a contact
+filed under another name fall back to searching the vCard export.
+
+Nothing is guessed: a hint fitting two contacts or none is reported, not resolved. It
+also flags one number appearing on two rows, which has always meant one person entered
+twice who would otherwise be sent two different invite links. Reads `.xlsx` and `.vcf`
+with the standard library, since openpyxl is not installed.
+
 **Putting tokens back** - the sheet is where you look a guest up, and `rsvp.gs` matches
 RSVPs on a token column that has to live there, so tokens cannot only exist in the local
 CSV. `--push-tokens` writes them back:

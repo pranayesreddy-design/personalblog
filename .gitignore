@@ -5,6 +5,12 @@
 # Real guest data. Only guests.sample.csv belongs in the repo.
 /tools/invite/guests.csv
 
+# Guest phone numbers and the contact exports they are matched against. Same
+# reasoning as above, and a phone list is worse to leak than a name list.
+/tools/invite/phones.csv
+*Phone_Match_Review*
+*.vcf
+
 # Google service account private key. Committing this to a public repo would
 # hand anyone read access to the guest sheet, and the key stays valid until it
 # is explicitly revoked in the Cloud console.

@@ -61,6 +61,7 @@ COLUMNS = [
     "side",
     "sno",
     "party_size",
+    "phone",
 ]
 
 # Accepted sheet header spellings for each column. Matched after lowercasing
@@ -82,11 +83,20 @@ ALIASES = {
     "rsvp_status": ["rsvpstatus", "rsvp", "status", "attending"],
     "responded_at": ["respondedat", "responded", "repliedat", "timestamp"],
     "sno": ["sno", "srno", "serialno", "serial", "id", "no", "number"],
+    "phone": ["phone", "phonenumber", "mobile", "mobilenumber", "contact", "whatsapp"],
 }
 
 # Every event the invite knows about, in the order the schedule shows them.
 # Must match data-event-key in the template.
 EVENT_KEYS = ("pellikoduku", "cocktail", "haldimehendi", "wedding")
+
+# Tabs left out of the import for now. Shruti's side is still being filled in:
+# only 7 of 42 rows have any event marked, so importing it mostly produces
+# guests invited to nothing. Delete the entry to bring it back, or override with
+# --tabs. Skipping is announced on every run rather than done quietly, because
+# a tab silently missing from the import is exactly how 42 guests went missing
+# once already.
+SKIP_TABS = ("Shruti",)
 
 # A guest list is far easier to keep by hand as a grid with one column per
 # event, so accept that shape too and fold it into events_invited. Keys on the
@@ -825,7 +835,14 @@ def main(argv=None):
     # Both of you keep a tab, so reading only the first one silently left 42
     # guests off the list. Every tab is read unless --tabs narrows it.
     tabs = chosen or list_tabs(token, args.sheet, creds["client_email"])
-    print("tabs: %s" % ", ".join(tabs))
+    if not chosen:
+        skipped = [tab for tab in tabs if tab in SKIP_TABS]
+        tabs = [tab for tab in tabs if tab not in SKIP_TABS]
+        if skipped:
+            print("skipping tab(s) on purpose: %s" % ", ".join(skipped))
+    if not tabs:
+        raise Failure("every tab was skipped; pass --tabs to choose one")
+    print("reading tab(s): %s" % ", ".join(tabs))
 
     carried = existing_tokens(args.out)
     rows = []
