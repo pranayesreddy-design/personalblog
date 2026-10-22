@@ -90,6 +90,36 @@
 
   setupCountdown();
 
+  // Curved ribbon ------------------------------------------------------------
+
+  // The repeat count is tuned to the path, but how long the text runs depends
+  // on the font, and themes swap the font: a wider face ran off the end of the
+  // curve and was cut mid-word. Resizing to the measured length makes any face
+  // fill the curve end to end. Re-run once web fonts arrive, because the first
+  // measurement may be of the fallback.
+  function fitRibbon() {
+    const textPath = document.querySelector(".ribbon textPath");
+    const text = textPath && textPath.parentNode;
+    const path = textPath && document.querySelector(textPath.getAttribute("href"));
+    if (!path || !text.getComputedTextLength) {
+      return;
+    }
+    text.style.fontSize = "";
+    const room = path.getTotalLength() * 0.99;
+    const used = textPath.getComputedTextLength();
+    if (!used) {
+      return;
+    }
+    const base = parseFloat(getComputedStyle(text).fontSize);
+    const scale = Math.min(1.3, Math.max(0.7, room / used));
+    text.style.fontSize = `${base * scale}px`;
+  }
+
+  fitRibbon();
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fitRibbon);
+  }
+
   // RSVP ------------------------------------------------------------------
 
   const form = document.querySelector("[data-rsvp-form]");
