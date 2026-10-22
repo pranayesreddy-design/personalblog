@@ -396,6 +396,31 @@ token carry-over and the JWT signing. No network or credentials needed. Worth ru
 after touching that file: a column that stops mapping gives every guest an empty
 schedule, and a broken carry-over hands someone else's invite to the wrong person.
 
+**Guest photos and captions** - the photo beside the RSVP is per guest, read from the
+sheet's `Photo` column or found automatically at
+`assets/images/invite/<token>.jpg`. A guest with no photo of their own gets
+`us-together.jpg` instead, so no page looks emptier than another. That file is
+deliberately **not** `couple.jpg`: the story section already shows that one, and the
+same photo twice on a page reads as a bug. The `Caption` column is the line underneath;
+with no caption the `figcaption` is removed rather than left as empty space.
+
+Curate photos named after guests, then map them through:
+
+```bash
+python3 tools/invite/rename_photos.py ~/Desktop/guest-photos --dry-run
+python3 tools/invite/rename_photos.py ~/Desktop/guest-photos
+```
+
+Tokens are random, so a folder of `rc66pchc.jpg` cannot be curated by hand. Nine first
+names repeat, so those files need the serial number in the name - `20 Ajay.jpg` or
+`Ajay-20.jpg`. An ambiguous name, a serial that does not match the name beside it, and
+two files for one guest are all reported rather than resolved: the wrong photo on a page
+is worse than the stand-in. Originals are copied, never moved.
+
+Guest photos are committed to a public repo, so anyone browsing it can see them and
+match them to names. That is a step further than the unlisted-link model, and it is the
+guests' privacy rather than yours.
+
 **Phone numbers** - `tools/invite/resolve_phones.py` turns the phone-match review
 workbook into one number per guest:
 

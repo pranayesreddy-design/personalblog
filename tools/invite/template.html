@@ -11,12 +11,16 @@
     caption    line under that photo   column: caption, optional
     token      short random id         column: token
 
-  Optional regions are marked data-invite-block and are removed whole. The
-  personal-photo figure is dropped for any guest with no photo file.
+  Optional regions are marked data-invite-block and are removed whole:
+  photo-caption goes when a guest has no caption, and personal-photo goes only
+  if there is no guest photo and no stand-in photo on disk either.
 
   The story photo is shared, identical on every invite, so it carries no field.
   The only per-guest photo is the one beside the RSVP, at
-  assets/images/invite/<token>.jpg.
+  assets/images/invite/<token>.jpg. A guest with no photo of their own gets
+  us-together.jpg instead, so their page is not visibly emptier - that file is
+  deliberately a different picture from the story one, since the same photo
+  twice on one page looks like a bug.
 
   Schedule entries are marked data-event-key and are kept or dropped per guest
   from the events_invited column. Each one has a matching RSVP checkbox.
@@ -203,7 +207,12 @@
                 loading="lazy"
                 decoding="async"
               />
-              <figcaption data-invite-field="caption">
+              <!-- Dropped whole when a guest has no caption, so the photo is
+                   not followed by an empty line of space. -->
+              <figcaption
+                data-invite-field="caption"
+                data-invite-block="photo-caption"
+              >
                 Still one of our favourite days.
               </figcaption>
             </figure>

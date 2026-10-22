@@ -45,6 +45,14 @@ REPO = Path(__file__).resolve().parents[2]
 TEMPLATE = REPO / "tools" / "invite" / "template.html"
 PHOTO_DIR = REPO / "assets" / "images" / "invite"
 
+# Shown beside the RSVP when there is no photo of that guest with us, so the
+# page is never left with an empty column. Deliberately not couple.jpg: that one
+# is already in the story section, and the same picture twice on one page reads
+# as a mistake rather than a motif.
+DEFAULT_PHOTO = "us-together.jpg"
+DEFAULT_PHOTO_ALT = "Pranay and Shruti"
+DEFAULT_CAPTION = "We could not find a photo of us together. Let us fix that in February."
+
 # Copied into the output so dist/ can be deployed on its own. The paths the
 # template uses are relative to i/<token>/, so the layout must be preserved.
 ASSETS = [
@@ -197,6 +205,13 @@ def photo_for(row):
     return None
 
 
+def default_photo():
+    """The stand-in photo of the two of us, or None if it has not been added."""
+    if (PHOTO_DIR / DEFAULT_PHOTO).exists():
+        return "../../assets/images/invite/" + DEFAULT_PHOTO
+    return None
+
+
 def render(template, row, template_fields, template_events):
     token = row["token"]
     name = (row.get("name") or "").strip()
@@ -218,13 +233,26 @@ def render(template, row, template_fields, template_events):
     handled = {"name", "token"}
 
     photo = photo_for(row)
+    caption = (row.get("caption") or "").strip()
+    if not photo:
+        # Fall back to a photo of the two of us rather than dropping the figure,
+        # so a guest we have no photo with still gets a full page instead of a
+        # visibly emptier one.
+        photo = default_photo()
+        alt = DEFAULT_PHOTO_ALT
+        caption = caption or DEFAULT_CAPTION
+    else:
+        alt = "%s with Pranay and Shruti" % name
+
     if photo:
-        page = set_photo(page, "guestPhoto", html.escape(photo),
-                         html.escape("%s with Pranay and Shruti" % name))
-        caption = (row.get("caption") or "").strip()
+        page = set_photo(page, "guestPhoto", html.escape(photo), html.escape(alt))
         if caption:
             page = set_field(page, "caption", html.escape(caption))
+        else:
+            page = drop_block(page, "photo-caption")
     else:
+        # No guest photo and no stand-in on disk yet. Dropping the figure keeps
+        # the page valid; add DEFAULT_PHOTO to stop this happening.
         page = drop_block(page, "personal-photo")
     handled |= {"guestPhoto", "caption"}
 
