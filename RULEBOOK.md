@@ -411,6 +411,15 @@ deliberately **not** `couple.jpg`: the story section already shows that one, and
 same photo twice on a page reads as a bug. The `Caption` column is the line underneath;
 with no caption the `figcaption` is removed rather than left as empty space.
 
+Photos are shown at their own shape, portrait or landscape, not cropped to a square.
+A 1/1 crop cut the sides off a landscape group shot and the heads off a tall portrait,
+which is worse than an uneven column. The generator reads each file's real pixel size
+from its header, EXIF rotation included, and writes it into the `img` so the browser
+reserves the right shape and the page does not jump as the photo loads. Tall photos are
+capped at `max-height: 28rem` so they cannot push the RSVP off the first screen. There
+is no image library here, so the headers are parsed by hand and covered by
+`python3 tools/invite/test_generate.py`.
+
 Curate photos named after guests, then map them through:
 
 ```bash

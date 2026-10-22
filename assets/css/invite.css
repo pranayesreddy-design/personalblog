@@ -343,12 +343,17 @@ a {
   max-width: 22rem;
 }
 
+/* No forced aspect ratio. Guest photos arrive portrait and landscape in roughly
+   equal measure, and a 1/1 crop cut the sides off a landscape group shot and the
+   heads off a tall portrait. The real dimensions are written into the img, so the
+   browser reserves the right shape before the file loads. max-height stops a tall
+   portrait pushing the RSVP off the first screen. */
 .guest-photo img {
   display: block;
-  width: 100%;
+  width: auto;
   height: auto;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 28rem;
 }
 
 /* Sans, like everything else meant to be read. Didot at caption size has too
