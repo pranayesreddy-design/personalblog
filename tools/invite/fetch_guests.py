@@ -760,6 +760,117 @@ def push_tokens(creds, sheet_id, csv_path, cell_range, tabs, dry_run):
     return 0
 
 
+def push_phones(creds, sheet_id, csv_path, tab, dry_run):
+    """Write resolved phone numbers from resolve_phones.py into the sheet.
+
+    Matched on name, not on the review workbook's row number. A row was deleted
+    from the sheet after that workbook was generated, so every row number past
+    it is one too high; trusting them would write eight numbers against the
+    wrong people. The row number is kept only to tell duplicate names apart.
+    """
+    if not csv_path.exists():
+        raise Failure(
+            "no %s. Produce it first:\n"
+            "  python3 tools/invite/resolve_phones.py REVIEW.xlsx \\\n"
+            "      --contacts Contacts.vcf --out %s" % (csv_path, csv_path)
+        )
+
+    with csv_path.open(newline="", encoding="utf-8") as handle:
+        wanted = [r for r in csv.DictReader(handle) if (r.get("phone") or "").strip()]
+    if not wanted:
+        raise Failure("%s has no resolved numbers" % csv_path)
+    print("%d resolved number(s) in %s" % (len(wanted), csv_path.name))
+
+    token = access_token(creds, SCOPE_WRITE)
+    email = creds["client_email"]
+    cells = read_values(token, sheet_id, "'%s'!A:Z" % tab, email)
+    if not cells:
+        raise Failure("the %s tab came back empty" % tab)
+
+    mapping = map_headers(cells[0])
+    target = mapping.get("phone")
+    if target is None:
+        target = max([len(row) for row in cells] + [len(cells[0])])
+        print("no phone column found; adding one at %s" % column_letter(target))
+
+    where = {}
+    for index, row in enumerate(cells):
+        name = (row[1] if len(row) > 1 else "").strip()
+        if index and name:
+            where.setdefault(normalise(name), []).append(index + 1)
+
+    column = [cells[0][target] if target < len(cells[0]) else "Phone number"]
+    column += [
+        (row[target] if target < len(row) else "").strip() for row in cells[1:]
+    ]
+
+    placed = 0
+    skipped = []
+    conflicts = []
+    for item in wanted:
+        name = (item.get("name") or "").strip()
+        rows = where.get(normalise(name), [])
+        if not rows:
+            skipped.append("%s (not on the %s tab)" % (name, tab))
+            continue
+        if len(rows) == 1:
+            row = rows[0]
+        else:
+            # Same name twice. Pick whichever is nearest the row the review
+            # workbook recorded, which is still a good enough pointer for that.
+            try:
+                hint = int(item.get("sheet_row") or 0)
+            except ValueError:
+                hint = 0
+            if not hint:
+                skipped.append("%s (appears %d times, no row to tell them apart)"
+                               % (name, len(rows)))
+                continue
+            row = min(rows, key=lambda r: abs(r - hint))
+
+        existing = column[row - 1]
+        phone = item["phone"].strip()
+        if existing and last_ten(existing) != last_ten(phone):
+            conflicts.append("row %d %s: sheet has %s, CSV says %s"
+                             % (row, name, existing, phone))
+            continue
+        if not existing:
+            placed += 1
+        column[row - 1] = phone
+
+    for note in conflicts:
+        warn("not overwriting a different number, %s" % note)
+    if skipped:
+        warn(
+            "%d number(s) had nowhere to go: %s"
+            % (len(skipped), "; ".join(skipped[:6]))
+        )
+
+    letter = column_letter(target)
+    print(
+        "%s: %d number(s) into column %s%s"
+        % (tab, placed, letter, " (dry run)" if dry_run else "")
+    )
+    if placed and not dry_run:
+        write_column(
+            token,
+            sheet_id,
+            "'%s'!%s1:%s%d" % (tab, letter, letter, len(column)),
+            column,
+            email,
+        )
+        print("written")
+    elif dry_run:
+        print("\ndry run, the sheet was not changed")
+    return 0
+
+
+def last_ten(number):
+    """Compare numbers by their last ten digits, so +91 and bare agree."""
+    digits = re.sub(r"\D", "", str(number or ""))
+    return digits[-10:] if len(digits) >= 10 else digits
+
+
 def write_csv(rows, path):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="", encoding="utf-8") as handle:
@@ -808,6 +919,12 @@ def main(argv=None):
         action="store_true",
         help="accept an event with no guests at all, instead of treating it as a broken column",
     )
+    parser.add_argument(
+        "--push-phones",
+        metavar="CSV",
+        type=Path,
+        help="write resolved numbers from resolve_phones.py into the sheet (needs Editor)",
+    )
     args = parser.parse_args(argv)
 
     # Needs no sheet and no network: this is the address the sheet has to be
@@ -824,6 +941,15 @@ def main(argv=None):
     creds = load_credentials(args.credentials)
     print("authenticating as %s" % creds["client_email"])
     chosen = [name.strip() for name in args.tabs.split(",") if name.strip()]
+
+    if args.push_phones:
+        return push_phones(
+            creds,
+            args.sheet,
+            args.push_phones,
+            chosen[0] if chosen else "Pranay",
+            args.dry_run,
+        )
 
     if args.push_tokens:
         return push_tokens(
