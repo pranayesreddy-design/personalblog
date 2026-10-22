@@ -84,6 +84,10 @@ ALIASES = {
     "sno": ["sno", "srno", "serialno", "serial", "id", "no", "number"],
 }
 
+# Every event the invite knows about, in the order the schedule shows them.
+# Must match data-event-key in the template.
+EVENT_KEYS = ("pellikoduku", "cocktail", "haldimehendi", "wedding")
+
 # A guest list is far easier to keep by hand as a grid with one column per
 # event, so accept that shape too and fold it into events_invited. Keys on the
 # right must match data-event-key in the template.
@@ -499,7 +503,7 @@ def events_from_grid(raw, event_cols):
     """
     keys = []
     party = 0
-    for key in ("pellikoduku", "cocktail", "haldimehendi", "wedding"):
+    for key in EVENT_KEYS:
         index = event_cols.get(key)
         if index is None or index >= len(raw):
             continue
@@ -566,9 +570,11 @@ def build_rows(values, mapping, event_cols, carried, side=""):
     if blank:
         print("skipped %d row(s) with no name" % blank)
     if reused:
+        # Truncated: on a full re-import this is every guest on the tab, and a
+        # 190-name wall buries the warnings printed around it.
         print(
-            "kept %d existing token(s) the sheet does not have yet: %s"
-            % (len(reused), ", ".join(reused))
+            "kept %d existing token(s) the sheet does not have yet: %s%s"
+            % (len(reused), ", ".join(reused[:6]), "..." if len(reused) > 6 else "")
         )
 
     names = [row["name"].lower() for row in rows]
@@ -771,6 +777,11 @@ def main(argv=None):
         action="store_true",
         help="write tokens from the CSV back into the sheet (needs Editor access)",
     )
+    parser.add_argument(
+        "--allow-empty-events",
+        action="store_true",
+        help="accept an event with no guests at all, instead of treating it as a broken column",
+    )
     args = parser.parse_args(argv)
 
     # Needs no sheet and no network: this is the address the sheet has to be
@@ -821,6 +832,25 @@ def main(argv=None):
             print("\n%s tab:" % tab)
             describe_mapping(cells[0], mapping, event_cols)
 
+        # Per tab, not merged across tabs. Checking the merged set let a renamed
+        # Wedding column on one tab hide behind an intact one on the other, and
+        # every guest on that tab silently lost their wedding invitation.
+        if "events_invited" not in mapping:
+            absent = sorted(set(EVENT_KEYS) - set(event_cols))
+            if absent and event_cols:
+                warn(
+                    "the %s tab has no column for: %s\n"
+                    "Those columns exist on other tabs, so this is probably a renamed\n"
+                    "or inserted header rather than a deliberate omission. Nobody on\n"
+                    "this tab will be invited to them.\n"
+                    "Headers seen here: %s"
+                    % (
+                        tab,
+                        ", ".join(absent),
+                        ", ".join(repr(h) for h in cells[0] if str(h).strip()),
+                    )
+                )
+
         if "events_invited" not in mapping and not event_cols:
             raise Failure(
                 "found no events on the %s tab, so those invites would show an\n"
@@ -842,12 +872,10 @@ def main(argv=None):
     without = sum(1 for row in rows if not row["token"])
     print("read %d guest(s) in total; %d still need a token" % (len(rows), without))
 
-    missing = sorted(
-        set(("pellikoduku", "cocktail", "haldimehendi", "wedding")) - set(all_event_cols)
-    )
+    missing = sorted(set(EVENT_KEYS) - set(all_event_cols))
     if all_event_cols and missing and not explicit_list:
         warn(
-            "no column found for: %s\n"
+            "no column found on any tab for: %s\n"
             "Nobody will be invited to those, which is wrong unless they are deliberate."
             % ", ".join(missing)
         )
@@ -865,10 +893,25 @@ def main(argv=None):
     # Rows and people are different numbers once a row can stand for a party,
     # which is what the caterer actually needs.
     print("invited per event (rows / people):")
-    for key in ("pellikoduku", "cocktail", "haldimehendi", "wedding"):
+    deserted = []
+    for key in EVENT_KEYS:
         invited = [row for row in rows if key in row["events_invited"].split()]
         people = sum(int(row["party_size"] or 1) for row in invited)
         print("  %-14s %4d / %4d" % (key, len(invited), people))
+        if not invited:
+            deserted.append(key)
+
+    # Nobody at all is the loudest possible symptom of a header that stopped
+    # matching, and it is otherwise invisible: the run succeeds and every page
+    # renders, just without that event on it.
+    if deserted and not args.allow_empty_events:
+        raise Failure(
+            "nobody is invited to: %s\n"
+            "That is almost certainly a renamed or moved column rather than the\n"
+            "truth. Check the headers against the names in EVENT_COLUMNS, or pass\n"
+            "--allow-empty-events if an event really has no guests yet."
+            % ", ".join(deserted)
+        )
 
     parties = [row for row in rows if (row["party_size"] or "") not in ("", "1")]
     if parties:
