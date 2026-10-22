@@ -158,7 +158,7 @@
                 <p class="slot-day">Sunday, 7 February</p>
                 <p class="slot-head">
                   <strong class="slot-name">Pelli Koduku</strong>
-                  <span class="slot-time">| Morning</span>
+                  <span class="slot-time">| 9 AM</span>
                 </p>
                 <p class="slot-venue">At home, Kurnool</p>
               </li>
@@ -166,7 +166,7 @@
                 <p class="slot-day">Monday, 8 February</p>
                 <p class="slot-head">
                   <strong class="slot-name">Cocktail party</strong>
-                  <span class="slot-time">| Evening</span>
+                  <span class="slot-time">| 7 PM</span>
                 </p>
                 <p class="slot-venue">Hyderabad, venue to be confirmed</p>
               </li>
@@ -174,7 +174,7 @@
                 <p class="slot-day">Tuesday, 9 February</p>
                 <p class="slot-head">
                   <strong class="slot-name">Haldi &amp; Mehendi</strong>
-                  <span class="slot-time">| Evening</span>
+                  <span class="slot-time">| 4 PM</span>
                 </p>
                 <p class="slot-venue">Hyderabad, venue to be confirmed</p>
               </li>
@@ -182,7 +182,7 @@
                 <p class="slot-day">Wednesday, 10 February</p>
                 <p class="slot-head">
                   <strong class="slot-name">The Marriage</strong>
-                  <span class="slot-time">| 8 AM</span>
+                  <span class="slot-time">| 8 AM onwards</span>
                 </p>
                 <p class="slot-venue">Hyderabad, venue to be confirmed</p>
               </li>
@@ -238,22 +238,25 @@
               </fieldset>
 
               <div class="rsvp-field" data-rsvp-events>
+                <!-- Each day and time repeats the schedule above, so a guest ticking boxes
+                     does not have to scroll back up. test_generate.py fails if
+                     the two ever disagree. -->
                 <span class="rsvp-label">Which ones can you make?</span>
                 <label class="rsvp-check">
                   <input type="checkbox" name="events" value="pellikoduku" />
-                  <span>Pelli Koduku</span>
+                  <span>Pelli Koduku<small class="rsvp-when">Sunday, 7 February &middot; 9 AM</small></span>
                 </label>
                 <label class="rsvp-check">
                   <input type="checkbox" name="events" value="cocktail" />
-                  <span>Cocktail party</span>
+                  <span>Cocktail party<small class="rsvp-when">Monday, 8 February &middot; 7 PM</small></span>
                 </label>
                 <label class="rsvp-check">
                   <input type="checkbox" name="events" value="haldimehendi" />
-                  <span>Haldi &amp; Mehendi</span>
+                  <span>Haldi &amp; Mehendi<small class="rsvp-when">Tuesday, 9 February &middot; 4 PM</small></span>
                 </label>
                 <label class="rsvp-check">
                   <input type="checkbox" name="events" value="wedding" />
-                  <span>The Marriage</span>
+                  <span>The Marriage<small class="rsvp-when">Wednesday, 10 February &middot; 8 AM onwards</small></span>
                 </label>
               </div>
 

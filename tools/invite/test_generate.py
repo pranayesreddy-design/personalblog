@@ -204,4 +204,27 @@ rule = css.split(".guest-photo img")[1].split("}")[0]
 assert "aspect-ratio" not in rule, "a forced ratio crops landscape and portrait photos"
 assert "max-height" in rule, "a tall portrait would push the RSVP off the screen"
 
+check("every RSVP checkbox shows the same day and time as the schedule")
+# Written out twice in the template, once per section, so a time changed in one
+# place and not the other would tell a guest two different things.
+import html as _html  # noqa: E402
+import re as _re  # noqa: E402
+
+template = g.strip_comments(g.TEMPLATE.read_text(encoding="utf-8"))
+schedule = {}
+for key, body in _re.findall(r'<li class="slot" data-event-key="(\w+)".*?>(.*?)</li>', template, _re.S):
+    day = _re.search(r'class="slot-day">(.*?)<', body, _re.S).group(1).strip()
+    time = _re.search(r'class="slot-time">\|?\s*(.*?)<', body, _re.S).group(1).strip()
+    schedule[key] = "%s · %s" % (_html.unescape(day), _html.unescape(time))
+checklist = {
+    key: _html.unescape(when).strip()
+    for key, when in _re.findall(
+        r'name="events" value="(\w+)".*?class="rsvp-when">(.*?)</small>', template, _re.S
+    )
+}
+assert schedule and set(schedule) == set(checklist), (sorted(schedule), sorted(checklist))
+for key in schedule:
+    assert schedule[key] == checklist[key], "%s: schedule says %r, RSVP says %r" % (
+        key, schedule[key], checklist[key])
+
 print("\n%d checks passed" % passed)

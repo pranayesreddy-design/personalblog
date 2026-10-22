@@ -336,10 +336,11 @@ a {
   height: auto;
 }
 
-/* The guest photo, beside the RSVP heading. Square, because a per-guest photo
-   can arrive in any shape. */
+/* The guest photo, under the RSVP heading. On a phone the form follows it
+   directly, so the bottom margin is what keeps the caption from running into
+   the sign-off line. Side by side on wide screens, the grid gap does that job. */
 .guest-photo {
-  margin: 2rem 0 0;
+  margin: 2rem 0 2.8rem;
   max-width: 22rem;
 }
 
@@ -353,7 +354,7 @@ a {
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: 28rem;
+  max-height: 22rem;
 }
 
 /* Sans, like everything else meant to be read. Didot at caption size has too
@@ -521,7 +522,13 @@ a {
   cursor: pointer;
 }
 
+/* A grid so the box stays beside the event name while the day and time sit on
+   their own line underneath it, aligned with the name rather than the box. */
 .rsvp-check span {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.8rem;
+  align-items: center;
   font-size: 0.74rem;
   font-weight: 500;
   letter-spacing: 0.16em;
@@ -531,13 +538,23 @@ a {
 
 .rsvp-check span::before {
   content: "";
-  display: inline-block;
-  vertical-align: -0.2em;
+  grid-row: 1 / span 2;
   width: 1.05rem;
   height: 1.05rem;
-  margin-right: 0.8rem;
   border: 1px solid var(--red);
   background: no-repeat center / 0.72rem 0.72rem;
+}
+
+/* Quieter than the name: sentence case, body colour, no tracking, so the eye
+   reads the event first and the time second. */
+.rsvp-when {
+  grid-column: 2;
+  margin-top: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--body);
 }
 
 .rsvp-check input:checked + span::before {
@@ -695,6 +712,16 @@ a {
 
   .split-title {
     margin-bottom: 0;
+  }
+
+  /* Beside the form rather than above it, so the photo can be taller without
+     pushing anything down, and the gap under it is the grid's job. */
+  .guest-photo {
+    margin-bottom: 0;
+  }
+
+  .guest-photo img {
+    max-height: 28rem;
   }
 
   /* This heading's ink top sits 4px above the first line of copy beside it.
