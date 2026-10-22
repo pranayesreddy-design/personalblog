@@ -158,7 +158,8 @@ var gridHeader = [
   "S.No", "Name", "Pelli Koduku", "Cocktail", "Confidence Cocktail", "Haldi",
   "Confidence Haldi", "Wedding", "Confidence Wedding", "Token",
   "RSVP Status", "Responded At",
-  "RSVP Pelli Koduku", "RSVP Cocktail", "RSVP Haldi", "RSVP Wedding", "RSVP Note"
+  "RSVP Pelli Koduku", "RSVP Cocktail", "RSVP Haldi", "RSVP Wedding", "RSVP Note",
+  "RSVP Changes"
 ];
 var G = {};
 gridHeader.forEach(function (h, i) { G[h] = i; });
@@ -166,7 +167,7 @@ gridHeader.forEach(function (h, i) { G[h] = i; });
 // with the Haldi marked by a tick rather than a number.
 var grid = makeSheet("Grid", [
   gridHeader,
-  ["1", "Household", "0", 2, 1, "\u2713", "", "1", "", "grid1234", "", "", "", "", "", "", ""]
+  ["1", "Household", "0", 2, 1, "\u2713", "", "1", "", "grid1234", "", "", "", "", "", "", "", ""]
 ]);
 sheets.unshift(grid);
 function cell(name) { return grid.rows[1][G[name]]; }
@@ -177,17 +178,29 @@ expect("an event invited as 1 counts as 1", cell("RSVP Wedding"), 1);
 expect("an invited event they did not tick is 0, not blank", cell("RSVP Haldi"), 0);
 expect("an event they were never invited to stays blank", cell("RSVP Pelli Koduku"), "");
 expect("the note is copied onto the guest row", cell("RSVP Note"), "Both of us!");
+expect("a first answer counts zero changes, not blank", cell("RSVP Changes"), 0);
 expect("a Confidence column is never written to", [cell("Confidence Cocktail"), cell("Confidence Wedding")], [1, ""]);
 expect("the invite columns themselves are untouched", [cell("Cocktail"), cell("Haldi"), cell("Wedding")], [2, "\u2713", "1"]);
 
 post({ token: "grid1234", attending: "yes", events: ["haldimehendi"] });
 expect("changing their mind moves the counts", [cell("RSVP Cocktail"), cell("RSVP Haldi"), cell("RSVP Wedding")], [0, 1, 0]);
 expect("an answer with no note clears the old note", cell("RSVP Note"), "");
+expect("picking different events counts as one change", cell("RSVP Changes"), 1);
+
+post({ token: "grid1234", attending: "yes", events: ["haldimehendi"] });
+expect("sending the same answer again is not a change", cell("RSVP Changes"), 1);
+post({ token: "grid1234", attending: "yes", events: ["haldimehendi"], note: "reworded" });
+expect("editing only the note is not a change", cell("RSVP Changes"), 1);
 
 post({ token: "grid1234", attending: "no", events: ["cocktail"], note: "So sorry" });
 expect("a no zeroes every invited event, whatever was ticked", [cell("RSVP Cocktail"), cell("RSVP Haldi"), cell("RSVP Wedding")], [0, 0, 0]);
 expect("a no still keeps its note", cell("RSVP Note"), "So sorry");
 expect("status reads no", cell("RSVP Status"), "no");
+expect("yes to no counts as another change", cell("RSVP Changes"), 2);
+
+post({ token: "grid1234", attending: "yes", events: ["wedding", "cocktail"] });
+post({ token: "grid1234", attending: "yes", events: ["cocktail", "wedding"] });
+expect("the same events in a different order are not a change", cell("RSVP Changes"), 3);
 
 expect("head counts follow the importer's rules",
   [headCount(""), headCount(0), headCount("0"), headCount(1.5), headCount("2"), headCount("Yes"), headCount("maybe")],

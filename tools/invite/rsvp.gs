@@ -201,6 +201,10 @@ function doPost(e) {
       note = note.slice(0, 2000);
     }
 
+    // Read before appending, or the answer being saved would be compared with
+    // itself and nothing would ever count as a change.
+    var previous = latestAnswer(book, token);
+
     var now = new Date();
     appendRsvp(book, [
       now,
@@ -211,7 +215,7 @@ function doPost(e) {
       events.join(" "),
       note
     ]);
-    markGuestResponded(guest, attending, now, events, note);
+    markGuestResponded(guest, attending, now, events, note, previous);
 
     return reply({ ok: true });
   } catch (err) {
@@ -312,6 +316,16 @@ var EVENT_RSVP = [
   }
 ];
 
+/** Whether an answer differs from the one before it, ignoring event order. */
+function answerChanged(previous, attending, events) {
+  if (previous.attending !== attending) {
+    return true;
+  }
+  var before = (previous.events || []).slice().sort().join(" ");
+  var after = (events || []).slice().sort().join(" ");
+  return before !== after;
+}
+
 var TRUTHY = ["y", "yes", "true", "x", "\u2713", "\u2714", "yep"];
 
 /**
@@ -345,12 +359,26 @@ function headCount(value) {
  * declined" rather than "not on the list". The form does not ask how many are
  * coming, so a household invited as 2 that says yes counts as 2.
  */
-function markGuestResponded(guest, attending, when, events, note) {
+function markGuestResponded(guest, attending, when, events, note, previous) {
   var index = guest.index;
   var cells = guest.values || [];
 
   function write(col, value) {
     guest.sheet.getRange(guest.row, col + 1).setValue(value);
+  }
+
+  // How many times the answer itself has changed: yes to no, or a different
+  // set of events. The same answer sent twice, or a reworded note, is not a
+  // change, so a double tap does not make a guest look undecided. 0 means one
+  // answer and never changed; blank means never answered.
+  var changesCol = firstIndexOf(index, ["rsvpchanges", "rsvpchanged", "changes"]);
+  if (changesCol >= 0) {
+    if (!previous) {
+      write(changesCol, 0);
+    } else if (answerChanged(previous, attending, events)) {
+      var count = Number(cells[changesCol]);
+      write(changesCol, (isNaN(count) ? 0 : count) + 1);
+    }
   }
 
   var statusCol = firstIndexOf(index, ["rsvpstatus", "rsvp", "status", "attending"]);

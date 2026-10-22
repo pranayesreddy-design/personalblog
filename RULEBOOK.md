@@ -524,6 +524,12 @@ never invited to. The form does not ask how many are coming, so a household invi
 that says yes counts as 2. Every new answer overwrites all of these, including clearing
 an old note. A tab without the columns, such as Shruti's for now, is left alone.
 
+`RSVP Changes` (column X) counts how many times a guest changed their answer: 0 after
+the first reply, blank if they never replied. Only a switch between yes and no, or a
+different set of events, counts. The same answer resent, events in a different order,
+or a reworded note do not, so a double tap does not inflate it. It is worked out from the
+RSVPs tab, so deleting a guest's rows there makes their next reply count as the first.
+
 **Seeing an answer again** - `GET /exec?token=...` returns the latest answer for that
 invite, so a guest who replied on a laptop sees it on their phone. The page paints
 whatever that browser remembers first, then replaces it with what the sheet says. If
