@@ -75,12 +75,15 @@
     });
   }
 
-  function petals(hero) {
+  // One fixed layer behind the whole page, so petals keep falling all the way
+  // down the invite rather than only over the hero. Sparse on purpose: they
+  // pass behind the text, and the cards and photos cover them.
+  function petals() {
     if (reducedMotion) {
       return;
     }
     const field = box("decor-petals");
-    const count = window.innerWidth < 700 ? 12 : 20;
+    const count = window.innerWidth < 700 ? 10 : 16;
     for (let i = 0; i < count; i += 1) {
       const petal = document.createElement("span");
       petal.className = i % 3 === 0 ? "decor-petal decor-petal--alt" : "decor-petal";
@@ -92,7 +95,7 @@
       petal.style.setProperty("--spin", `${Math.random() > 0.5 ? 1 : -1}`);
       field.appendChild(petal);
     }
-    hero.appendChild(field);
+    document.body.insertBefore(field, document.body.firstChild);
   }
 
   // Waves are one long path in two layers moving at different speeds, shifted
@@ -153,13 +156,14 @@
     watch.observe(wrap);
   }
 
+  // The garland is opt-in per theme (--decor-toran: on). Themes that already
+  // run a border along the top read as cluttered with a garland under it.
   const hero = document.querySelector(".hero");
-  if (hero) {
-    if (document.body.dataset.decorToran !== "off") {
-      thoranam(hero);
-    }
-    petals(hero);
+  const wantsToran = getComputedStyle(document.documentElement).getPropertyValue("--decor-toran").trim() === "on";
+  if (hero && wantsToran) {
+    thoranam(hero);
   }
+  petals();
   const story = document.getElementById("story");
   if (story) {
     river(story);

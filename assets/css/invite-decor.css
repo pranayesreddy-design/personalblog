@@ -13,29 +13,25 @@
   --decor-lotus-2: #f6b3c6;
 }
 
-/* Hero: garland and petals are full-bleed even where the hero itself is
-   capped to the content width, and sit behind the text. */
-.decor-on .hero {
-  position: relative;
-}
-
-.decor-on .hero > :not(.decor-toran):not(.decor-petals) {
+/* Everything on the page sits above the fixed petal layer. */
+.decor-on .topbar,
+.decor-on .hero,
+.decor-on .ribbon,
+.decor-on main,
+.decor-on .foot {
   position: relative;
   z-index: 1;
 }
 
-.decor-toran,
-.decor-petals {
+/* Full-bleed even where the hero itself is capped to the content width. */
+.decor-toran {
   position: absolute;
+  top: 0;
   left: 50%;
   width: 100vw;
+  height: 70px;
   transform: translateX(-50%);
   pointer-events: none;
-}
-
-.decor-toran {
-  top: 0;
-  height: 70px;
 }
 
 /* Visible overflow, so a strand swinging at the far edge is not clipped. */
@@ -82,9 +78,11 @@
 }
 
 .decor-petals {
-  top: 0;
-  bottom: 0;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .decor-petal {
@@ -105,8 +103,8 @@
 
 @keyframes decor-fall {
   0% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  50% { transform: translate3d(calc(var(--drift) * 0.6), 52svh, 0) rotate(calc(200deg * var(--spin))); }
-  100% { transform: translate3d(var(--drift), 106svh, 0) rotate(calc(380deg * var(--spin))); }
+  50% { transform: translate3d(calc(var(--drift) * 0.6), 55vh, 0) rotate(calc(200deg * var(--spin))); }
+  100% { transform: translate3d(var(--drift), 110vh, 0) rotate(calc(380deg * var(--spin))); }
 }
 
 /* River ------------------------------------------------------------------- */
