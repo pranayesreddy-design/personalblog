@@ -155,24 +155,20 @@
 
   // Kolam dividers -------------------------------------------------------------
 
-  // A sikku-style line weaving round a row of dots, traced from one end to the
-  // other when the section scrolls into view. The theme's still divider is
-  // switched off on these pages, so there is one divider, not two.
+  // A four-petal loop inside a diamond, the centre of a pulli kolam, with a
+  // dotted line running out either side. Traced from the centre outwards when
+  // it scrolls into view. The theme's still divider is switched off on these
+  // pages, so there is one divider, not two.
   function kolamDivider(section) {
     const wrap = box("plus-kolam");
     const svg = el("svg", { viewBox: "0 0 220 44" }, wrap);
-    const dots = [30, 70, 110, 150, 190];
-    let d = "M10 22";
-    dots.forEach((x) => {
-      d += ` C${x - 14} 2 ${x + 14} 2 ${x + 20} 22`;
-    });
-    let back = "M210 22";
-    dots.slice().reverse().forEach((x) => {
-      back += ` C${x + 14} 42 ${x - 14} 42 ${x - 20} 22`;
-    });
-    el("path", { class: "plus-kolam-line", d, pathLength: 1 }, svg);
-    el("path", { class: "plus-kolam-line plus-kolam-line--back", d: back, pathLength: 1 }, svg);
-    dots.forEach((x, i) => el("circle", { class: "plus-kolam-dot", cx: x, cy: 22, r: 2.6, style: `--i:${i}` }, svg));
+    const line = (d, extra) => el("path", { class: `plus-kolam-line ${extra || ""}`, d, pathLength: 1 }, svg);
+    line("M110 22 C100 4 120 4 110 22 C128 12 128 32 110 22 C120 40 100 40 110 22 C92 32 92 12 110 22");
+    line("M110 1 L131 22 L110 43 L89 22 Z", "plus-kolam-line--late");
+    line("M84 22 H12", "plus-kolam-line--side");
+    line("M136 22 H208", "plus-kolam-line--side");
+    const dots = [[110, 22], [97, 9], [123, 9], [123, 35], [97, 35], [64, 22], [156, 22], [40, 22], [180, 22], [12, 22], [208, 22]];
+    dots.forEach(([x, y], i) => el("circle", { class: "plus-kolam-dot", cx: x, cy: y, r: i ? 2.2 : 2.8, style: `--i:${i}` }, svg));
     section.insertBefore(wrap, section.firstChild);
     onceVisible(wrap, 0.5, () => wrap.classList.add("is-drawn"));
   }
@@ -218,6 +214,13 @@
     hero.appendChild(bananaTree("right"));
     bells(hero);
   }
-  document.querySelectorAll(".split").forEach(kolamDivider);
+  // Not where the river already marks the break: two dividers on one
+  // boundary collide.
+  document.querySelectorAll(".split").forEach((section) => {
+    const before = section.previousElementSibling;
+    if (!(before && before.classList.contains("decor-river"))) {
+      kolamDivider(section);
+    }
+  });
   document.documentElement.classList.add("plus-on");
 })();

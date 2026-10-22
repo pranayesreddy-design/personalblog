@@ -109,6 +109,12 @@
 
 /* River ------------------------------------------------------------------- */
 
+/* The river is the break here, so the theme's divider would only collide
+   with its bottom edge. */
+.decor-river + .split {
+  background-image: none;
+}
+
 .decor-river {
   position: relative;
   height: 110px;

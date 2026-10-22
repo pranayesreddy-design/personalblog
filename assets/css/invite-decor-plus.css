@@ -227,8 +227,10 @@
 
 /* Kolam dividers ------------------------------------------------------------ */
 
-/* Replaces the theme's still divider, so there is only ever one. */
-.plus-on .split {
+/* Replaces the theme's still divider, so there is only ever one. The html
+   element in the selector outranks the theme's ".intro + .split", which
+   otherwise wins by loading later. */
+html.plus-on .split {
   position: relative;
   background-image: none;
 }
@@ -257,8 +259,13 @@
   transition: stroke-dashoffset 1.6s ease-in-out;
 }
 
-.plus-kolam-line--back {
-  transition-delay: 0.9s;
+.plus-kolam-line--late {
+  transition-delay: 0.7s;
+}
+
+.plus-kolam-line--side {
+  transition-duration: 1.1s;
+  transition-delay: 1.1s;
 }
 
 .plus-kolam-dot {
