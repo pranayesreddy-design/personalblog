@@ -454,6 +454,23 @@ a {
   text-underline-offset: 3px;
 }
 
+/* Same label treatment as "Change my answer". The padding is there for a
+   thumb, not the eye. */
+.slot-directions {
+  display: inline-block;
+  margin-top: 0.35rem;
+  padding: 0.35rem 0;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--red);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 0.3em;
+}
+
 /* RSVP -------------------------------------------------------------------- */
 
 .rsvp-form {
