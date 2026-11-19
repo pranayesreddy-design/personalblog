@@ -217,6 +217,25 @@
   transform: rotate(var(--a)) scale(1);
 }
 
+.decor-lotus--painted {
+  width: 9.5rem;
+}
+
+.decor-lotus--painted img {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  transform: translateY(14px) scale(0.92);
+  transform-origin: 50% 100%;
+  transition: opacity 1s ease, transform 1.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.decor-lotus--painted.is-open img {
+  opacity: 1;
+  transform: none;
+}
+
 .decor-lotus-outer {
   fill: var(--decor-lotus);
 }

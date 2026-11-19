@@ -8,6 +8,17 @@
 (function () {
   const SVG = "http://www.w3.org/2000/svg";
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // <html data-art="painted"> swaps the drawn pieces for painted artwork.
+  const painted = document.documentElement.dataset.art === "painted";
+  const ART = new URL("../images/invite-art/", document.currentScript.src).href;
+
+  function art(name) {
+    const img = document.createElement("img");
+    img.src = `${ART}${name}.webp`;
+    img.alt = "";
+    img.decoding = "async";
+    return img;
+  }
 
   function el(tag, attrs, parent) {
     const node = document.createElementNS(SVG, tag);
@@ -129,16 +140,22 @@
 
   function lotus(foot) {
     const wrap = box("decor-lotus");
-    const svg = el("svg", { viewBox: "-60 -70 120 80" }, wrap);
+    if (painted) {
+      wrap.classList.add("decor-lotus--painted");
+      wrap.appendChild(art("lotus"));
+    }
+    const svg = painted ? null : el("svg", { viewBox: "-60 -70 120 80" }, wrap);
     const petalPath = "M0 0 C-12 -16 -10 -40 0 -56 C10 -40 12 -16 0 0 Z";
-    [-64, -32, 32, 64, -16, 16, 0].forEach((angle, i) => {
+    (painted ? [] : [-64, -32, 32, 64, -16, 16, 0]).forEach((angle, i) => {
       el("path", {
         d: petalPath,
         class: i < 4 ? "decor-lotus-outer" : "decor-lotus-inner",
         style: `--a:${angle}deg; --i:${i}`
       }, svg);
     });
-    el("path", { class: "decor-lotus-pad", d: "M-46 4 C-30 12 30 12 46 4 C30 0 -30 0 -46 4 Z" }, svg);
+    if (svg) {
+      el("path", { class: "decor-lotus-pad", d: "M-46 4 C-30 12 30 12 46 4 C30 0 -30 0 -46 4 Z" }, svg);
+    }
     foot.insertBefore(wrap, foot.firstChild);
 
     if (reducedMotion || !("IntersectionObserver" in window)) {
@@ -160,7 +177,8 @@
   // run a border along the top read as cluttered with a garland under it.
   const hero = document.querySelector(".hero");
   const wantsToran = getComputedStyle(document.documentElement).getPropertyValue("--decor-toran").trim() === "on";
-  if (hero && wantsToran) {
+  // Painted pages hang jasmine strings instead (invite-decor-plus.js).
+  if (hero && wantsToran && !painted) {
     thoranam(hero);
   }
   petals();

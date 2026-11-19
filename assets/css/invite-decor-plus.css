@@ -5,7 +5,7 @@
 /* Cover ------------------------------------------------------------------- */
 
 /* The cover's own text sits above the trees and bells. */
-.plus-on .hero > :not(.plus-banana):not(.plus-bell):not(.decor-toran) {
+.plus-on .hero > :not(.plus-banana):not(.plus-bell):not(.decor-toran):not(.plus-jasmine) {
   position: relative;
   z-index: 1;
 }
@@ -222,6 +222,156 @@
 
   .plus-bell--right {
     right: 18%;
+  }
+}
+
+/* Painted artwork (<html data-art="painted">) ------------------------------ */
+
+.plus-elephants--painted {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  width: min(330px, 84vw);
+}
+
+.plus-ele-img {
+  display: block;
+  width: 50%;
+  height: auto;
+}
+
+.plus-ele-img--mirror {
+  transform: scaleX(-1);
+}
+
+.plus-banana--painted {
+  height: 30svh;
+  aspect-ratio: 560 / 718;
+}
+
+.plus-banana-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left bottom;
+  transform-origin: 8% 100%;
+  animation: plus-banana-sway 7s ease-in-out infinite alternate;
+}
+
+.plus-banana--right .plus-banana-img {
+  animation-delay: -3.5s;
+}
+
+@keyframes plus-banana-sway {
+  from { transform: rotate(-1.6deg); }
+  to { transform: rotate(1.4deg); }
+}
+
+.plus-jasmine {
+  --w: 24px;
+  position: absolute;
+  top: 0;
+  z-index: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.plus-jasmine--left {
+  left: 0.6rem;
+}
+
+.plus-jasmine--right {
+  right: 0.6rem;
+  flex-direction: row-reverse;
+}
+
+/* Cropped from the top, so every string ends in its bell; capped at the
+   painting's own height so a tall screen never shows a gap above it. */
+.plus-jasmine-strand {
+  position: relative;
+  width: var(--w);
+  height: min(var(--len), calc(var(--w) * 18.4));
+  overflow: hidden;
+  transform-origin: 50% 0;
+  animation: plus-jasmine-sway 4.8s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -1.3s);
+}
+
+.plus-jasmine-strand img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@keyframes plus-jasmine-sway {
+  from { transform: rotate(-1.4deg); }
+  to { transform: rotate(1.4deg); }
+}
+
+.plus-bell--painted {
+  width: 34px;
+}
+
+.plus-bell--painted.plus-bell--left {
+  left: 6.6rem;
+}
+
+.plus-bell--painted.plus-bell--right {
+  right: 6.6rem;
+}
+
+.plus-bell--painted img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform-origin: 50% 0;
+}
+
+@media (min-width: 48rem) {
+  .plus-elephants--painted {
+    width: 400px;
+  }
+
+  .plus-banana--painted {
+    height: 36svh;
+  }
+
+  .plus-jasmine {
+    --w: 30px;
+    gap: 0.75rem;
+  }
+
+  .plus-jasmine--left {
+    left: 1rem;
+  }
+
+  .plus-jasmine--right {
+    right: 1rem;
+  }
+
+  .plus-bell--painted {
+    width: 46px;
+  }
+
+  .plus-bell--painted.plus-bell--left {
+    left: 12.5rem;
+  }
+
+  .plus-bell--painted.plus-bell--right {
+    right: 12.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plus-banana-img,
+  .plus-jasmine-strand {
+    animation: none;
   }
 }
 

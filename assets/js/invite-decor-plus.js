@@ -7,6 +7,19 @@
 (function () {
   const SVG = "http://www.w3.org/2000/svg";
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const painted = document.documentElement.dataset.art === "painted";
+  const ART = new URL("../images/invite-art/", document.currentScript.src).href;
+
+  function art(name, className) {
+    const img = document.createElement("img");
+    img.src = `${ART}${name}.webp`;
+    img.alt = "";
+    img.decoding = "async";
+    if (className) {
+      img.className = className;
+    }
+    return img;
+  }
 
   function el(tag, attrs, parent) {
     const node = document.createElementNS(SVG, tag);
@@ -72,6 +85,14 @@
   function elephants(hero) {
     const countdown = hero.querySelector("[data-countdown]");
     const wrap = box("plus-elephants");
+    if (painted) {
+      // The painting faces right; the right-hand one is mirrored so the pair
+      // face each other.
+      wrap.classList.add("plus-elephants--painted");
+      wrap.append(art("elephant", "plus-ele-img"), art("elephant", "plus-ele-img plus-ele-img--mirror"));
+      hero.insertBefore(wrap, countdown || null);
+      return;
+    }
     const svg = el("svg", { viewBox: "0 0 260 80" }, wrap);
     elephant(el("g", {}, svg), false);
     kalasam(svg);
@@ -85,6 +106,11 @@
   // its own, rooted where it meets the trunk.
   function bananaTree(side) {
     const wrap = box(`plus-banana plus-banana--${side}`);
+    if (painted) {
+      wrap.classList.add("plus-banana--painted");
+      wrap.appendChild(art("banana", "plus-banana-img"));
+      return wrap;
+    }
     const svg = el("svg", { viewBox: "0 0 120 400", preserveAspectRatio: "xMidYMax meet" }, wrap);
     el("path", { class: "plus-trunk-fill", d: "M52 400 C50 300 54 200 58 120 L66 120 C68 200 70 300 72 400 Z" }, svg);
     el("path", { class: "plus-trunk-line", d: "M60 396 C59 300 61 210 62 126", fill: "none" }, svg);
@@ -111,6 +137,13 @@
   function bells(hero) {
     const nodes = ["left", "right"].map((side) => {
       const wrap = box(`plus-bell plus-bell--${side}`);
+      if (painted) {
+        wrap.classList.add("plus-bell--painted");
+        const img = art("bell", "plus-bell-swing");
+        wrap.appendChild(img);
+        hero.appendChild(wrap);
+        return img;
+      }
       const svg = el("svg", { viewBox: "0 0 40 120" }, wrap);
       const g = el("g", { class: "plus-bell-swing" }, svg);
       for (let y = 4; y < 62; y += 8) {
@@ -151,6 +184,28 @@
     }, { passive: true });
 
     requestAnimationFrame(frame);
+  }
+
+  // Jasmine -------------------------------------------------------------------
+
+  // Painted pages only: strings of mallepoolu hung down both sides of the
+  // cover, longest at the edge, each swaying on its own beat.
+  function jasmine(hero) {
+    // On a wide screen the kicker and the date sit under the strings, at the
+    // far left and right of the cover, so the strings stop short of them.
+    const lengths = window.innerWidth < 768 ? [58, 40, 26] : [27, 21, 16, 12];
+    ["left", "right"].forEach((side) => {
+      const wrap = box(`plus-jasmine plus-jasmine--${side}`);
+      lengths.forEach((length, i) => {
+        const strand = document.createElement("div");
+        strand.className = "plus-jasmine-strand";
+        strand.style.setProperty("--len", `${length}svh`);
+        strand.style.setProperty("--i", i + (side === "right" ? 0.5 : 0));
+        strand.appendChild(art("jasmine"));
+        wrap.appendChild(strand);
+      });
+      hero.appendChild(wrap);
+    });
   }
 
   // Kolam dividers -------------------------------------------------------------
@@ -343,6 +398,9 @@
     elephants(hero);
     hero.appendChild(bananaTree("left"));
     hero.appendChild(bananaTree("right"));
+    if (painted) {
+      jasmine(hero);
+    }
     bells(hero);
   }
   // Not where the river already marks the break: two dividers on one
