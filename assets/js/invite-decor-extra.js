@@ -81,26 +81,26 @@
     el("path", { d: "M14 35 C16 40 24 40 26 35", class: "extra-diya-clay" }, svg);
   }
 
+  // A group in each bottom corner, standing on the page's closing band, lit
+  // from the outside in on both sides at once.
   function diyas(foot) {
-    const row = box("extra-diyas");
-    const count = window.innerWidth < 700 ? 5 : 7;
-    for (let i = 0; i < count; i += 1) {
-      diya(row, i);
-    }
-    const lotus = foot.querySelector(".decor-lotus");
-    if (lotus) {
-      lotus.after(row);
-    } else {
-      foot.insertBefore(row, foot.firstChild);
-    }
-    onceVisible(row, 0.9, () => row.classList.add("is-lit"));
+    const count = window.innerWidth < 700 ? 2 : 3;
+    const groups = ["left", "right"].map((side) => {
+      const group = box(`extra-diyas extra-diyas--${side}`);
+      for (let i = 0; i < count; i += 1) {
+        diya(group, side === "left" ? i : count - 1 - i);
+      }
+      foot.appendChild(group);
+      return group;
+    });
+    onceVisible(groups[0], 0.9, () => groups.forEach((group) => group.classList.add("is-lit")));
   }
 
   const haldi = document.querySelector('.slot[data-event-key="haldimehendi"]');
   if (haldi) {
     mehendi(haldi);
   }
-  const foot = document.querySelector(".foot .wrap");
+  const foot = document.querySelector(".foot");
   if (foot) {
     diyas(foot);
   }

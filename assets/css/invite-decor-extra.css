@@ -51,18 +51,35 @@
 
 /* Diyas -------------------------------------------------------------------- */
 
+/* The band is the last thing in the footer, above its bottom padding, so the
+   lamps stand on it rather than on the edge of the screen. */
 .extra-diyas {
+  position: absolute;
+  bottom: calc(3.4rem + var(--band-h, 0px) - 0.15rem);
   display: flex;
-  justify-content: center;
-  gap: clamp(0.8rem, 4vw, 1.8rem);
-  margin: 0 auto 1.6rem;
+  align-items: flex-end;
+  gap: clamp(0.4rem, 2vw, 1rem);
   pointer-events: none;
 }
 
+.extra-diyas--left {
+  left: clamp(0.6rem, 3vw, 2.5rem);
+}
+
+.extra-diyas--right {
+  right: clamp(0.6rem, 3vw, 2.5rem);
+}
+
 .extra-diya {
-  width: 2.7rem;
+  display: block;
+  width: 2.5rem;
   height: auto;
   overflow: visible;
+}
+
+.extra-diyas--left .extra-diya:first-child,
+.extra-diyas--right .extra-diya:last-child {
+  width: 3rem;
 }
 
 .extra-diya-clay {
