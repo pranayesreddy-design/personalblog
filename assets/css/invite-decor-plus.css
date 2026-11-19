@@ -230,8 +230,8 @@
 .plus-elephants--painted {
   display: flex;
   justify-content: center;
-  gap: 0.4rem;
-  width: min(330px, 84vw);
+  gap: 1.2rem;
+  width: min(230px, 58vw);
 }
 
 .plus-ele-img {
@@ -335,7 +335,7 @@
 
 @media (min-width: 48rem) {
   .plus-elephants--painted {
-    width: 400px;
+    width: 320px;
   }
 
   .plus-banana--painted {

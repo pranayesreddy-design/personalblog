@@ -86,10 +86,10 @@
     const countdown = hero.querySelector("[data-countdown]");
     const wrap = box("plus-elephants");
     if (painted) {
-      // The painting faces right; the right-hand one is mirrored so the pair
-      // face each other.
+      // A pair of calves rather than elephants. The painting faces right; the
+      // right-hand one is mirrored so the pair face each other.
       wrap.classList.add("plus-elephants--painted");
-      wrap.append(art("elephant", "plus-ele-img"), art("elephant", "plus-ele-img plus-ele-img--mirror"));
+      wrap.append(art("calf", "plus-ele-img"), art("calf", "plus-ele-img plus-ele-img--mirror"));
       hero.insertBefore(wrap, countdown || null);
       return;
     }
