@@ -86,10 +86,9 @@
     const countdown = hero.querySelector("[data-countdown]");
     const wrap = box("plus-elephants");
     if (painted) {
-      // A pair of calves rather than elephants. The painting faces right; the
-      // right-hand one is mirrored so the pair face each other.
+      // One peacock with its fan open, in place of the pair of elephants.
       wrap.classList.add("plus-elephants--painted");
-      wrap.append(art("calf", "plus-ele-img"), art("calf", "plus-ele-img plus-ele-img--mirror"));
+      wrap.append(art("peacock", "plus-ele-img"));
       hero.insertBefore(wrap, countdown || null);
       return;
     }

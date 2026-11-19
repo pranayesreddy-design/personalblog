@@ -23,6 +23,13 @@
   z-index: 1;
 }
 
+/* Corner pieces are tucked partly off the edge on purpose. Without this a
+   phone lets the page be dragged sideways, and the layout looks off-centre. */
+html.decor-on,
+html.decor-on body {
+  overflow-x: clip;
+}
+
 /* Full-bleed even where the hero itself is capped to the content width. */
 .decor-toran {
   position: absolute;

@@ -228,20 +228,13 @@
 /* Painted artwork (<html data-art="painted">) ------------------------------ */
 
 .plus-elephants--painted {
-  display: flex;
-  justify-content: center;
-  gap: 1.2rem;
-  width: min(230px, 58vw);
+  width: min(200px, 52vw);
 }
 
 .plus-ele-img {
   display: block;
-  width: 50%;
+  width: 100%;
   height: auto;
-}
-
-.plus-ele-img--mirror {
-  transform: scaleX(-1);
 }
 
 .plus-banana--painted {
@@ -335,7 +328,7 @@
 
 @media (min-width: 48rem) {
   .plus-elephants--painted {
-    width: 320px;
+    width: 250px;
   }
 
   .plus-banana--painted {
